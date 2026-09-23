@@ -17,8 +17,6 @@ export function App() {
     <div ref={containerRef} className="relative h-full w-full overflow-hidden">
       <TileWave columns={columns} rows={rows} time={stats.time} />
 
-      {/* Marks the edges of #root so a lagging layout is visible against the canvas. */}
-      <div className="pointer-events-none absolute inset-0 border-2 border-dashed border-zinc-400 dark:border-zinc-500" />
       <span className="absolute right-3 bottom-3 rounded bg-zinc-900 px-2 py-1 font-mono text-xs text-zinc-50 dark:bg-zinc-50 dark:text-zinc-900">
         #root ↘
       </span>
@@ -64,19 +62,19 @@ interface TileWaveProps {
 }
 
 /** Radians per second; the wave speed does not depend on the frame rate. */
-const WAVE_SPEED = 5;
+const WAVE_SPEED = 1.5;
 
 /** A grid of tiles whose opacity moves as a wave, sampled at `time`. */
 function TileWave({ columns, rows, time }: TileWaveProps) {
   const tiles = [];
   for (let row = 0; row < rows; row += 1) {
     for (let column = 0; column < columns; column += 1) {
-      const phase = (time / 1000) * WAVE_SPEED - column * 0.45 - row * 0.3;
+      const phase = (time / 1000) * WAVE_SPEED - (column + row) * 0.12;
       tiles.push(
         <div
           key={`${row}:${column}`}
           className="rounded-md bg-zinc-500"
-          style={{ opacity: 0.06 + 0.22 * (0.5 + 0.5 * Math.sin(phase)) }}
+          style={{ opacity: 0.08 + 0.06 * Math.sin(phase) }}
         />,
       );
     }
