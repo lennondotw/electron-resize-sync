@@ -39,7 +39,7 @@ export function App() {
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 tabular-nums">
             <dt className="text-zinc-500">fps</dt>
             <dd>{stats.fps.toFixed(1)}</dd>
-            <dt className="text-zinc-500">max fps</dt>
+            <dt className="text-zinc-500">estimated max fps</dt>
             <dd>{formatMaxFps(busyMs)}</dd>
             <dt className="text-zinc-500">frame</dt>
             <dd>{stats.frameMs.toFixed(1)} ms</dd>
