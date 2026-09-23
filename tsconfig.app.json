@@ -1,8 +1,18 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["es2024", "dom", "dom.iterable"],
-    "types": []
+    "lib": [
+      "es2024",
+      "dom",
+      "dom.iterable"
+    ],
+    "types": [
+      "vite/client"
+    ],
+    "jsx": "react-jsx",
+    "allowImportingTsExtensions": true
   },
-  "include": ["src/renderer"]
+  "include": [
+    "src/renderer"
+  ]
 }
