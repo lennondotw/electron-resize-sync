@@ -1,17 +1,23 @@
 import { Slider } from "@base-ui/react/slider";
 import { Switch } from "@base-ui/react/switch";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { loadHudSettings, saveHudSettings, type HudSettings } from "./hudSettings.ts";
 import { fitTiles, TileWave } from "./TileWave.tsx";
 import { TitleBar } from "./TitleBar.tsx";
 import { useElementSize } from "./useElementSize.ts";
 import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
 
 export function App() {
-  const [busyMs, setBusyMs] = useState(30);
-  const [dither, setDither] = useState(true);
+  const [settings, setSettings] = useState(loadHudSettings);
+  const { busyMs, playing, dither } = settings;
+  const updateSettings = (patch: Partial<HudSettings>) =>
+    setSettings((current) => ({ ...current, ...patch }));
+  useEffect(() => saveHudSettings(settings), [settings]);
+
   const stats = useJankyFrameLoop(busyMs);
-  // While paused the loop and its busy work keep running; only the tiles hold still.
-  const [pausedAt, setPausedAt] = useState<number | null>(null);
+  // While paused the loop and its busy work keep running; only the tiles hold
+  // still, at the time they were paused (or the start, after a paused reload).
+  const [pausedAt, setPausedAt] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const rootSize = useElementSize(rootRef);
 
@@ -27,7 +33,7 @@ export function App() {
           height={rootSize.height}
           columns={columns}
           rows={rows}
-          time={pausedAt ?? stats.time}
+          time={playing ? stats.time : pausedAt}
           dither={dither}
         />
       </div>
@@ -56,7 +62,7 @@ export function App() {
             max={150}
             step={5}
             value={busyMs}
-            onValueChange={(value) => setBusyMs(value)}
+            onValueChange={(value) => updateSettings({ busyMs: value })}
           >
             <Slider.Label className="text-zinc-500">busy work per frame</Slider.Label>
             <Slider.Value className="tabular-nums">{(_, [value]) => `${value} ms`}</Slider.Value>
@@ -69,10 +75,17 @@ export function App() {
           </Slider.Root>
           <HudSwitch
             label="playing"
-            checked={pausedAt === null}
-            onCheckedChange={(playing) => setPausedAt(playing ? null : stats.time)}
+            checked={playing}
+            onCheckedChange={(next) => {
+              if (!next) setPausedAt(stats.time);
+              updateSettings({ playing: next });
+            }}
           />
-          <HudSwitch label="dithering" checked={dither} onCheckedChange={setDither} />
+          <HudSwitch
+            label="dithering"
+            checked={dither}
+            onCheckedChange={(next) => updateSettings({ dither: next })}
+          />
         </section>
       </main>
 
