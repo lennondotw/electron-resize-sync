@@ -4,7 +4,17 @@ import { TitleBar } from "./TitleBar.tsx";
 import { useElementSize } from "./useElementSize.ts";
 import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
 
-const TILE = 48;
+/** Preferred tile edge; tiles stretch so the grid fills #root exactly. */
+const TILE_TARGET = 44;
+/** Same gap on both axes. */
+const TILE_GAP = 6;
+const GRID_PADDING = 16;
+
+/** Number of whole tiles along an axis of `length`, closest to TILE_TARGET. */
+function fitTiles(length: number) {
+  const available = length - 2 * GRID_PADDING + TILE_GAP;
+  return Math.max(1, Math.round(available / (TILE_TARGET + TILE_GAP)));
+}
 
 export function App() {
   const [busyMs, setBusyMs] = useState(65);
@@ -12,8 +22,8 @@ export function App() {
   const rootRef = useRef<HTMLDivElement>(null);
   const rootSize = useElementSize(rootRef);
 
-  const columns = Math.ceil(rootSize.width / TILE);
-  const rows = Math.ceil(rootSize.height / TILE);
+  const columns = fitTiles(rootSize.width);
+  const rows = fitTiles(rootSize.height);
 
   return (
     <div ref={rootRef} className="relative flex h-full w-full flex-col overflow-hidden">
@@ -104,10 +114,12 @@ function TileWave({ columns, rows, time }: TileWaveProps) {
 
   return (
     <div
-      className="grid gap-1 p-1"
+      className="grid h-full"
       style={{
-        gridTemplateColumns: `repeat(${columns}, ${TILE - 4}px)`,
-        gridAutoRows: `${TILE - 4}px`,
+        padding: GRID_PADDING,
+        gap: TILE_GAP,
+        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+        gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
       }}
     >
       {tiles}
