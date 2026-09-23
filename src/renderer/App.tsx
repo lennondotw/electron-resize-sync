@@ -7,7 +7,7 @@ import { useElementSize } from "./useElementSize.ts";
 import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
 
 export function App() {
-  const [busyMs, setBusyMs] = useState(65);
+  const [busyMs, setBusyMs] = useState(30);
   const [dither, setDither] = useState(true);
   const stats = useJankyFrameLoop(busyMs);
   // While paused the loop and its busy work keep running; only the tiles hold still.

@@ -7,7 +7,7 @@ in sync with requestAnimationFrame rendering.
 ## What it does
 
 - A `requestAnimationFrame` loop blocks the renderer for a configurable amount
-  of busy work per frame (65ms by default, about 15fps) and re-renders a grid
+  of busy work per frame (30ms by default, at most about 33fps) and re-renders a grid
   of tiles with React on every frame.
 - `<html>` and the native window are painted with `--canvas`; `#root` fills
   the viewport and is painted with `--surface`. The two greys differ slightly
