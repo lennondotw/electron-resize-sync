@@ -83,7 +83,7 @@ export function App() {
  */
 function formatMaxFps(busyMs: number) {
   const maxFps = 1000 / busyMs;
-  return maxFps > 1000 ? "> 1000" : `≈ ${maxFps.toFixed(1)}`;
+  return maxFps > 1000 ? "> 1000" : maxFps.toFixed(1);
 }
 
 interface TileWaveProps {
