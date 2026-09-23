@@ -5,5 +5,5 @@
     "types": ["node"],
     "allowImportingTsExtensions": true
   },
-  "include": ["src/main", "src/preload", "src/shared", "scripts", "*.config.ts"]
+  "include": ["src/main", "src/preload", "src/shared", "scripts", "experiments", "*.config.ts"]
 }
