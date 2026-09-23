@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 export interface FrameStats {
-  frame: number;
+  /** rAF timestamp of the latest frame, for time-based animation. */
+  time: number;
   /** Exponential moving average of frames per second. */
   fps: number;
   /** Time between the last two rAF callbacks. */
@@ -14,11 +15,10 @@ export interface FrameStats {
  * work the loop settles around 15fps.
  */
 export function useJankyFrameLoop(busyMs: number): FrameStats {
-  const [stats, setStats] = useState<FrameStats>({ frame: 0, fps: 0, frameMs: 0 });
+  const [stats, setStats] = useState<FrameStats>({ time: 0, fps: 0, frameMs: 0 });
 
   useEffect(() => {
     let handle = 0;
-    let frame = 0;
     let fps = 0;
     let last = performance.now();
 
@@ -32,8 +32,7 @@ export function useJankyFrameLoop(busyMs: number): FrameStats {
       let sink = 0;
       while (performance.now() < until) sink += Math.sqrt(sink + 1);
 
-      frame += 1;
-      setStats({ frame, fps, frameMs });
+      setStats({ time: now, fps, frameMs });
       handle = requestAnimationFrame(tick);
     };
 

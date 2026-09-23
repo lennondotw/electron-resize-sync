@@ -15,7 +15,7 @@ export function App() {
 
   return (
     <div ref={containerRef} className="relative h-full w-full overflow-hidden">
-      <TileWave columns={columns} rows={rows} frame={stats.frame} />
+      <TileWave columns={columns} rows={rows} time={stats.time} />
 
       {/* Marks the edges of #root so a lagging layout is visible against the canvas. */}
       <div className="pointer-events-none absolute inset-0 border-2 border-dashed border-zinc-400 dark:border-zinc-500" />
@@ -59,15 +59,19 @@ export function App() {
 interface TileWaveProps {
   columns: number;
   rows: number;
-  frame: number;
+  /** Milliseconds, e.g. a rAF timestamp. */
+  time: number;
 }
 
-/** A grid of tiles whose opacity moves as a wave, one step per frame. */
-function TileWave({ columns, rows, frame }: TileWaveProps) {
+/** Radians per second; the wave speed does not depend on the frame rate. */
+const WAVE_SPEED = 5;
+
+/** A grid of tiles whose opacity moves as a wave, sampled at `time`. */
+function TileWave({ columns, rows, time }: TileWaveProps) {
   const tiles = [];
   for (let row = 0; row < rows; row += 1) {
     for (let column = 0; column < columns; column += 1) {
-      const phase = frame * 0.35 - column * 0.45 - row * 0.3;
+      const phase = (time / 1000) * WAVE_SPEED - column * 0.45 - row * 0.3;
       tiles.push(
         <div
           key={`${row}:${column}`}
