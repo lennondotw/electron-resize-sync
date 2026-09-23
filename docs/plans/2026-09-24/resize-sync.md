@@ -28,19 +28,21 @@ inconsistencies, so it does not decide on its own.
 
 ## Why the background leaks
 
-A summary from memory of how Chromium on macOS behaves; not yet verified
-against source:
+Verified in source; see [the research record](../../research/2026-09-24/chromium-resize-sync.md):
 
-1. During a drag, AppKit changes the native window frame on the browser main
-   thread first.
-2. The browser sends the new size to the renderer and allocates a new surface.
-3. The compositor (viz) waits briefly, a few vsyncs, for a frame of the new size.
-4. The renderer is inside its busy work, so the frame arrives late; the
-   compositor presents the old frame and the new area shows the window
-   background (`--canvas`).
-
-The window size is decided by the system, independently of when the renderer
-is free.
+1. **The window frame waits, but only for the browser's frame.** During a
+   drag, AppKit changes the native window frame on the browser main thread,
+   and Chromium holds that Core Animation transaction (up to 500 ms) until the
+   window's own compositor has a frame at the new size.
+2. **The web content is not waited for.** When the web contents' view
+   resizes, its new surface is embedded with a deadline of 0
+   (`BrowserCompositorMac::GetResizeDeadlinePolicy`). The browser frame
+   therefore uses the renderer's previous frame at the old size, and the
+   frame change and that stale content reach the screen together. Chromium
+   made this change in M147 to keep resizing at 60 fps. Only PWA windows
+   (`ShouldUseDefaultDeadlineOnResize`) still wait.
+3. **Nothing public changes this.** Electron uses the same path and exposes
+   no API or switch for it.
 
 ## Options
 
@@ -54,9 +56,8 @@ is free.
 
 ## Decision
 
-Open. Option B is kept behind a switch as a measurement baseline. C is the most
-promising option under our control for growing; D is the only one that also
-covers shrinking and needs research first.
+Open, with D as the focus (decided by the user on 2026-09-24): every option is
+to be tried, D in most depth. Option B stays behind a switch as a baseline.
 
 ## Tried so far
 
@@ -65,14 +66,23 @@ covers shrinking and needs research first.
 - [Resize pacing experiment](../../experiments/2026-09-24/resize-pacing.md):
   pacing cuts applied sizes to about the renderer's frame rate but does not
   bring the unpainted duration to zero.
+- Pacing anchors the edge opposite the drag (`1853363`); Electron's
+  `will-resize` bounds are wrong on macOS for bottom and right drags.
+- [Source reading](../../research/2026-09-24/chromium-resize-sync.md) of
+  Chromium 152 and Electron 44.4.5: why the content trails, and candidate
+  implementations of D.
+- [Resize recording](../../experiments/2026-09-24/resize-recording.md): the
+  screen-recorded measure (`dac568f`). With no switch, with pacing, and with
+  three Chromium switches, 60–95 % of drag frames are out of step.
 
 ## Next steps
 
-1. Record real drags in all eight directions, both ways, with `resize sync` off
-   and on, and measure content offset against the window frame per frame. This
-   needs Screen Recording and Accessibility permission for scripted drags, or
-   recordings made by hand. It also checks that cancelling `will-resize` and
-   calling `setBounds` does not break a real AppKit drag.
-2. Research option D in the Chromium and Electron sources for 44.4.5.
-3. Prototype option C behind its own switch, and extend the resize-pacing run
+1. Option D: force `ShouldUseDefaultDeadlineOnResize()` to true in a copy of
+   the Electron framework (binary patch located with the official breakpad
+   symbols), run with `--deadline-to-synchronize-surfaces` raised, and
+   measure with the resize recording. Then decide whether a source patch of
+   Electron is worth it.
+2. Record corners and the remaining edges for the baseline.
+3. Research option D in the Chromium and Electron sources for 44.4.5.
+4. Prototype option C behind its own switch, and extend the resize-pacing run
    to report, per size, whether the window changed before or after the frame.

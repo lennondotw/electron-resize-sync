@@ -5,7 +5,7 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { launchSession, runDirectory } from "../harness/session.ts";
+import { collectEnvironment, launchSession, runDirectory } from "../harness/session.ts";
 
 const { values: args } = parseArgs({
   options: {
@@ -73,6 +73,7 @@ const geometry = await session.main<{
 })()`);
 
 const { display, window, backdrop } = geometry;
+const environment = await collectEnvironment(session);
 const scale = display.scaleFactor;
 /** Recording crop in pixels of the primary display capture. */
 const crop = {
@@ -137,7 +138,7 @@ for (const [edge, { at, dir }] of Object.entries(handles)) {
 const outPath = args.out ?? path.join(runDir, "geometry.json");
 await writeFile(
   outPath,
-  `${JSON.stringify({ args, display, window, backdrop, crop, drag: DRAG, drags }, null, 2)}\n`,
+  `${JSON.stringify({ args, environment, display, window, backdrop, crop, drag: DRAG, drags }, null, 2)}\n`,
 );
 console.log(`Staged. Geometry in ${outPath}. Interrupt to stop.`);
 
