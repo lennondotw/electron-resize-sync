@@ -1,6 +1,10 @@
 import path from "node:path";
 import { app, BrowserWindow, nativeTheme } from "electron";
-import { RESIZE_COMMIT_CHANNEL, type ResizeCommit } from "../shared/resizeBridge.ts";
+import {
+  MARKERS_ARGUMENT,
+  RESIZE_COMMIT_CHANNEL,
+  type ResizeCommit,
+} from "../shared/resizeBridge.ts";
 import { TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
 import { paceResizes } from "./resizePacer.ts";
 
@@ -31,6 +35,7 @@ function createWindow() {
     }),
     webPreferences: {
       preload: path.join(import.meta.dirname, "preload.cjs"),
+      additionalArguments: process.env["ELECTRON_RESIZE_SYNC_MARKERS"] ? [MARKERS_ARGUMENT] : [],
     },
   });
 

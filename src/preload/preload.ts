@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from "electron";
 import {
+  MARKERS_ARGUMENT,
   RESIZE_ACK_CHANNEL,
   RESIZE_COMMIT_CHANNEL,
   RESIZE_SYNC_CHANNEL,
@@ -19,6 +20,7 @@ const resizeBridge: ResizeBridge = {
   setSync(enabled) {
     ipcRenderer.send(RESIZE_SYNC_CHANNEL, enabled);
   },
+  markers: process.argv.includes(MARKERS_ARGUMENT),
 };
 
 contextBridge.exposeInMainWorld("resizeBridge", resizeBridge);

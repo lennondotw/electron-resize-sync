@@ -19,7 +19,12 @@ export interface ResizeBridge {
   ack(size: ContentSize): void;
   /** Turns paced resizing on or off in the main process. */
   setSync(enabled: boolean): void;
+  /** Whether to draw edge markers that screen-recording experiments track. */
+  readonly markers: boolean;
 }
+
+/** Renderer argument that turns on edge markers; set by ELECTRON_RESIZE_SYNC_MARKERS. */
+export const MARKERS_ARGUMENT = "--resize-sync-markers";
 
 export const RESIZE_COMMIT_CHANNEL = "resize:commit";
 export const RESIZE_ACK_CHANNEL = "resize:ack";

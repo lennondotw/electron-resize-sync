@@ -20,6 +20,10 @@ export interface SessionOptions {
   runDir: string;
   settings: HudSettings;
   colorScheme?: "light" | "dark";
+  /** Extra environment variables for the Electron process. */
+  env?: Record<string, string>;
+  /** Extra command-line switches for Electron and Chromium, e.g. `--disable-features=X`. */
+  args?: string[];
 }
 
 export interface Session {
@@ -32,7 +36,13 @@ export interface Session {
   close(): Promise<void>;
 }
 
-export async function launchSession({ runDir, settings, colorScheme }: SessionOptions) {
+export async function launchSession({
+  runDir,
+  settings,
+  colorScheme,
+  env,
+  args = [],
+}: SessionOptions) {
   await mkdir(runDir, { recursive: true });
   const userDataDir = await mkdtemp(path.join(runDir, "profile-"));
   const [cdpPort, inspectPort] = [await freePort(), await freePort()];
@@ -41,10 +51,10 @@ export async function launchSession({ runDir, settings, colorScheme }: SessionOp
   const electronBin = (await import("electron")).default as unknown as string;
   const child = spawn(
     electronBin,
-    [`--inspect=${inspectPort}`, ".", `--remote-debugging-port=${cdpPort}`],
+    [`--inspect=${inspectPort}`, ".", `--remote-debugging-port=${cdpPort}`, ...args],
     {
       cwd: repoRoot,
-      env: { ...process.env, ELECTRON_RESIZE_SYNC_USER_DATA: userDataDir },
+      env: { ...process.env, ...env, ELECTRON_RESIZE_SYNC_USER_DATA: userDataDir },
       stdio: "ignore",
     },
   );

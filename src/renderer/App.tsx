@@ -104,6 +104,8 @@ export function App() {
       <span className="absolute right-3 bottom-3 rounded bg-zinc-900 px-2 py-1 font-mono text-xs text-zinc-50 dark:bg-zinc-50 dark:text-zinc-900">
         #root ↘
       </span>
+
+      {window.resizeBridge?.markers && <EdgeMarkers />}
     </div>
   );
 }
@@ -115,6 +117,27 @@ export function App() {
 function formatMaxFps(busyMs: number) {
   const maxFps = 1000 / busyMs;
   return maxFps > 1000 ? "> 1000" : maxFps.toFixed(1);
+}
+
+/**
+ * Pure green squares at the middle of each edge of #root, for screen-recording
+ * experiments that measure where the content sits relative to the window frame.
+ * Edge midpoints stay clear of the window's rounded corners.
+ */
+function EdgeMarkers() {
+  const edges = [
+    "top-0.5 left-1/2 -translate-x-1/2",
+    "bottom-0.5 left-1/2 -translate-x-1/2",
+    "top-1/2 left-0.5 -translate-y-1/2",
+    "top-1/2 right-0.5 -translate-y-1/2",
+  ];
+  return edges.map((position) => (
+    <span
+      key={position}
+      aria-hidden
+      className={`pointer-events-none absolute size-2.5 bg-[#00ff00] ${position}`}
+    />
+  ));
 }
 
 function formatLatency(ms: number | null) {
