@@ -9,8 +9,9 @@ import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
 export function App() {
   const [busyMs, setBusyMs] = useState(65);
   const [dither, setDither] = useState(true);
-  const [playing, setPlaying] = useState(true);
-  const stats = useJankyFrameLoop(busyMs, playing);
+  const stats = useJankyFrameLoop(busyMs);
+  // While paused the loop and its busy work keep running; only the tiles hold still.
+  const [pausedAt, setPausedAt] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const rootSize = useElementSize(rootRef);
 
@@ -26,7 +27,7 @@ export function App() {
           height={rootSize.height}
           columns={columns}
           rows={rows}
-          time={stats.time}
+          time={pausedAt ?? stats.time}
           dither={dither}
         />
       </div>
@@ -66,7 +67,11 @@ export function App() {
               </Slider.Track>
             </Slider.Control>
           </Slider.Root>
-          <HudSwitch label="playing" checked={playing} onCheckedChange={setPlaying} />
+          <HudSwitch
+            label="playing"
+            checked={pausedAt === null}
+            onCheckedChange={(playing) => setPausedAt(playing ? null : stats.time)}
+          />
           <HudSwitch label="dithering" checked={dither} onCheckedChange={setDither} />
         </section>
       </main>
