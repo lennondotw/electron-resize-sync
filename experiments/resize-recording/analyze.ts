@@ -245,10 +245,18 @@ const drags = segments.map(({ start, end }) => {
       return `${edge}${sign * (extreme - origin[edge]) > 0 ? "+" : "-"}`;
     })
     .join(" ");
+  // How often the window itself changed size: the resize rate the user sees.
+  let sizeUpdates = 0;
+  for (let i = 1; i < span.length; i++) {
+    if (EDGES.some((edge) => span[i]!.edges[edge] !== span[i - 1]!.edges[edge])) sizeUpdates++;
+  }
+  const seconds = span.at(-1)!.t - span[0]!.t;
   return {
     firstFrame: start,
     lastFrame: end,
     frames: span.length,
+    seconds: Math.round(seconds * 1000) / 1000,
+    sizeUpdates,
     movedEdges: moved,
     direction,
     outOfStepFrames: outOfStep.length,
