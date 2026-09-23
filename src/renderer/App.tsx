@@ -1,3 +1,4 @@
+import { Slider } from "@base-ui/react/slider";
 import { useRef, useState } from "react";
 import { useElementSize } from "./useElementSize.ts";
 import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
@@ -35,20 +36,23 @@ export function App() {
           <dt className="text-zinc-500">tiles</dt>
           <dd>{columns * rows}</dd>
         </dl>
-        <label className="flex flex-col gap-1">
-          <span className="flex justify-between">
-            <span className="text-zinc-500">busy work per frame</span>
-            <span className="tabular-nums">{busyMs} ms</span>
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={150}
-            step={5}
-            value={busyMs}
-            onChange={(event) => setBusyMs(Number(event.target.value))}
-          />
-        </label>
+        <Slider.Root
+          className="grid grid-cols-[1fr_auto] gap-y-1"
+          min={0}
+          max={150}
+          step={5}
+          value={busyMs}
+          onValueChange={(value) => setBusyMs(value)}
+        >
+          <Slider.Label className="text-zinc-500">busy work per frame</Slider.Label>
+          <Slider.Value className="tabular-nums">{(_, [value]) => `${value} ms`}</Slider.Value>
+          <Slider.Control className="col-span-2 flex touch-none items-center py-2 select-none">
+            <Slider.Track className="h-1 w-full rounded-full bg-zinc-300 dark:bg-zinc-700">
+              <Slider.Indicator className="rounded-full bg-zinc-900 dark:bg-zinc-100" />
+              <Slider.Thumb className="size-3.5 rounded-full bg-white shadow ring-1 ring-black/20 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-zinc-900 dark:bg-zinc-100 dark:ring-white/20 dark:has-[:focus-visible]:outline-zinc-100" />
+            </Slider.Track>
+          </Slider.Control>
+        </Slider.Root>
       </section>
     </div>
   );
