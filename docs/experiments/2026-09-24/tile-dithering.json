@@ -1,0 +1,282 @@
+{
+  "experiment": "tile-dithering",
+  "tileInsetPx": 4,
+  "environment": {
+    "capturedAt": "2026-09-23T16:54:18.264Z",
+    "os": {
+      "productVersion": "27.0",
+      "buildVersion": "26A428"
+    },
+    "hardware": {
+      "model": "Mac15,8",
+      "cpu": "Apple M3 Max"
+    },
+    "runtime": {
+      "electron": "44.4.5",
+      "chrome": "152.0.7977.130",
+      "node": "24.21.0",
+      "arch": "arm64",
+      "platform": "darwin",
+      "displayScaleFactor": "2",
+      "displayRefreshRate": "60.000003814697266",
+      "displayColorDepth": "30",
+      "displaySize": "1800x1169"
+    },
+    "page": {
+      "devicePixelRatio": 2,
+      "screenColorDepth": 30,
+      "colorGamutP3": true,
+      "dynamicRangeHigh": true
+    },
+    "repository": {
+      "commit": "0dbf83bde35284274333ee7a8627821a1658edfa",
+      "dirtyPaths": []
+    }
+  },
+  "cases": [
+    {
+      "colorScheme": "light",
+      "dither": false,
+      "channel": "green",
+      "tiles": [
+        {
+          "mean": 238,
+          "distinct": 1
+        },
+        {
+          "mean": 239,
+          "distinct": 1
+        },
+        {
+          "mean": 239,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 239,
+          "distinct": 1
+        },
+        {
+          "mean": 239,
+          "distinct": 1
+        },
+        {
+          "mean": 238,
+          "distinct": 1
+        },
+        {
+          "mean": 238,
+          "distinct": 1
+        },
+        {
+          "mean": 237,
+          "distinct": 1
+        }
+      ],
+      "steps": [1, 0, 1, 0, 0, 0, 0, -1, 0, -1, 0, -1],
+      "flatSteps": 7
+    },
+    {
+      "colorScheme": "light",
+      "dither": true,
+      "channel": "green",
+      "tiles": [
+        {
+          "mean": 237.69,
+          "distinct": 2
+        },
+        {
+          "mean": 238.25,
+          "distinct": 2
+        },
+        {
+          "mean": 238.69,
+          "distinct": 2
+        },
+        {
+          "mean": 239.06,
+          "distinct": 2
+        },
+        {
+          "mean": 239.25,
+          "distinct": 2
+        },
+        {
+          "mean": 240.31,
+          "distinct": 2
+        },
+        {
+          "mean": 240.25,
+          "distinct": 2
+        },
+        {
+          "mean": 239.06,
+          "distinct": 2
+        },
+        {
+          "mean": 238.75,
+          "distinct": 2
+        },
+        {
+          "mean": 238.37,
+          "distinct": 2
+        },
+        {
+          "mean": 237.81,
+          "distinct": 2
+        },
+        {
+          "mean": 237.19,
+          "distinct": 2
+        },
+        {
+          "mean": 236.44,
+          "distinct": 2
+        }
+      ],
+      "steps": [0.56, 0.44, 0.37, 0.19, 1.06, -0.06, -1.19, -0.31, -0.38, -0.56, -0.62, -0.75],
+      "flatSteps": 0
+    },
+    {
+      "colorScheme": "dark",
+      "dither": false,
+      "channel": "green",
+      "tiles": [
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 45,
+          "distinct": 1
+        }
+      ],
+      "steps": [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+      "flatSteps": 9
+    },
+    {
+      "colorScheme": "dark",
+      "dither": true,
+      "channel": "green",
+      "tiles": [
+        {
+          "mean": 44.06,
+          "distinct": 2
+        },
+        {
+          "mean": 43.63,
+          "distinct": 2
+        },
+        {
+          "mean": 43.31,
+          "distinct": 2
+        },
+        {
+          "mean": 43.06,
+          "distinct": 2
+        },
+        {
+          "mean": 42.94,
+          "distinct": 2
+        },
+        {
+          "mean": 42.87,
+          "distinct": 2
+        },
+        {
+          "mean": 42.94,
+          "distinct": 2
+        },
+        {
+          "mean": 43.06,
+          "distinct": 2
+        },
+        {
+          "mean": 43.25,
+          "distinct": 2
+        },
+        {
+          "mean": 43.56,
+          "distinct": 2
+        },
+        {
+          "mean": 43.94,
+          "distinct": 2
+        },
+        {
+          "mean": 44.44,
+          "distinct": 2
+        },
+        {
+          "mean": 44.94,
+          "distinct": 2
+        }
+      ],
+      "steps": [-0.43, -0.32, -0.25, -0.12, -0.07, 0.07, 0.12, 0.19, 0.31, 0.38, 0.5, 0.5],
+      "flatSteps": 0
+    }
+  ]
+}

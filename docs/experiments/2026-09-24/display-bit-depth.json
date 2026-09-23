@@ -1,0 +1,54 @@
+{
+  "experiment": "display-bit-depth",
+  "environment": {
+    "capturedAt": "2026-09-23T16:54:31.631Z",
+    "os": {
+      "productVersion": "27.0",
+      "buildVersion": "26A428"
+    },
+    "hardware": {
+      "model": "Mac15,8",
+      "cpu": "Apple M3 Max"
+    },
+    "runtime": {
+      "electron": "44.4.5",
+      "chrome": "152.0.7977.130",
+      "node": "24.21.0",
+      "arch": "arm64",
+      "platform": "darwin",
+      "displayScaleFactor": "2",
+      "displayRefreshRate": "60.000003814697266",
+      "displayColorDepth": "30",
+      "displaySize": "1800x1169"
+    },
+    "page": {
+      "devicePixelRatio": 2,
+      "screenColorDepth": 30,
+      "colorGamutP3": true,
+      "dynamicRangeHigh": true
+    },
+    "repository": {
+      "commit": "0dbf83bde35284274333ee7a8627821a1658edfa",
+      "dirtyPaths": []
+    }
+  },
+  "macos": [
+    {
+      "bitsPerPixel": 24,
+      "bitsPerSample": 8,
+      "colorSpace": "Color LCD",
+      "edrCurrent": 1.2000000476837158,
+      "edrPotential": 16,
+      "name": "Built-in Retina Display"
+    }
+  ],
+  "chromium": {
+    "screenColorDepth": 30,
+    "minColor10": true,
+    "colorGamutP3": true,
+    "colorGamutRec2020": false,
+    "dynamicRangeHigh": true,
+    "canvasFloat16": true,
+    "webgpu": true
+  }
+}
