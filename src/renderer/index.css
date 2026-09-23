@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+/*
+ * Two deliberately different greys, so anything that is not painted by the
+ * app itself is easy to spot while the window is being resized:
+ *   --canvas  paints <html> (and the native window, see src/main/main.ts)
+ *   --surface paints #root, which fills the viewport
+ */
+:root {
+  color-scheme: light dark;
+  --canvas: light-dark(#e4e4e7, #18181b);
+  --surface: light-dark(#f4f4f5, #27272a);
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+}
+
+html {
+  background-color: var(--canvas);
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  background-color: var(--surface);
+}
