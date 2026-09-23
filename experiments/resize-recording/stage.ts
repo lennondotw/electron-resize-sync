@@ -13,6 +13,8 @@ const { values: args } = parseArgs({
     sync: { type: "string", default: "off" },
     /** Skip the busy work while a resize is in progress. */
     yield: { type: "string", default: "off" },
+    /** Per-tile dithering (masked layers) on or off. */
+    dither: { type: "string", default: "on" },
     env: { type: "string", multiple: true, default: [] },
     /** Passed to Electron as-is, e.g. --electron-arg=--disable-features=X. */
     "electron-arg": { type: "string", multiple: true, default: [] },
@@ -36,7 +38,7 @@ const session = await launchSession({
   settings: {
     busyMs: Number(args.busy),
     playing: true,
-    dither: true,
+    dither: args.dither === "on",
     resizeSync: args.sync === "on",
     yieldOnResize: args.yield === "on",
   },

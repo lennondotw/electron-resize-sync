@@ -1,6 +1,6 @@
 {
   "experiment": "resize-deadline-patch-cost",
-  "method": "Main-process probe (experiments/resize-recording/probe.ts logic, run ad hoc before it was committed): resize event timestamps and a 1 ms timer's extra delay, during one right-edge drag out 120 pt and back in 24 moves of 10 pt, about one move per 67 ms from the drag tool.",
+  "method": "Main-process probe (experiments/resize-recording/probe.ts logic, run ad hoc before it was committed): resize event timestamps and a 1 ms timer's extra delay, during one right-edge drag out 120 pt and back in 24 moves of 10 pt, about one move per 67 ms from the drag tool. Runs from \"best, yield\" on use probe.ts and both right-edge drags (out and in), so they count 46 resizes.",
   "environment": "Same machine, display and Electron as resize-deadline-patch.json; each run a fresh isolated session.",
   "runs": [
     {
@@ -9,8 +9,15 @@
       "switches": [],
       "busyMs": 30,
       "resizes": 23,
-      "resizeIntervalMs": { "median": 66.8, "p90": 67.1, "max": 67.3 },
-      "mainThreadBlockMs": { "max": 54.1, "over16": 12 }
+      "resizeIntervalMs": {
+        "median": 66.8,
+        "p90": 67.1,
+        "max": 67.3
+      },
+      "mainThreadBlockMs": {
+        "max": 54.1,
+        "over16": 12
+      }
     },
     {
       "label": "best, busy 0",
@@ -21,8 +28,15 @@
       ],
       "busyMs": 0,
       "resizes": 23,
-      "resizeIntervalMs": { "median": 166.2, "p90": 174.9, "max": 175.7 },
-      "mainThreadBlockMs": { "max": 172.2, "over16": 23 }
+      "resizeIntervalMs": {
+        "median": 166.2,
+        "p90": 174.9,
+        "max": 175.7
+      },
+      "mainThreadBlockMs": {
+        "max": 172.2,
+        "over16": 23
+      }
     },
     {
       "label": "best, busy 30",
@@ -33,8 +47,15 @@
       ],
       "busyMs": 30,
       "resizes": 23,
-      "resizeIntervalMs": { "median": 99.8, "p90": 107, "max": 109 },
-      "mainThreadBlockMs": { "max": 102.7, "over16": 23 }
+      "resizeIntervalMs": {
+        "median": 99.8,
+        "p90": 107,
+        "max": 109
+      },
+      "mainThreadBlockMs": {
+        "max": 102.7,
+        "over16": 23
+      }
     },
     {
       "label": "best, busy 65",
@@ -45,8 +66,96 @@
       ],
       "busyMs": 65,
       "resizes": 23,
-      "resizeIntervalMs": { "median": 136.6, "p90": 141.6, "max": 142 },
-      "mainThreadBlockMs": { "max": 139.5, "over16": 23 }
+      "resizeIntervalMs": {
+        "median": 136.6,
+        "p90": 141.6,
+        "max": 142
+      },
+      "mainThreadBlockMs": {
+        "max": 139.5,
+        "over16": 23
+      }
+    },
+    {
+      "label": "best, yield",
+      "electron": "patched",
+      "switches": [
+        "--deadline-to-synchronize-surfaces=30",
+        "--disable-features=RemoteCoreAnimationAPI"
+      ],
+      "busyMs": 30,
+      "yieldOnResize": true,
+      "dither": true,
+      "resizes": 46,
+      "resizeIntervalMs": {
+        "median": 144,
+        "p90": 167.1,
+        "max": 190.6
+      },
+      "mainThreadBlockMs": {
+        "max": 178.3,
+        "over16": 46
+      }
+    },
+    {
+      "label": "best, no dithering",
+      "electron": "patched",
+      "switches": [
+        "--deadline-to-synchronize-surfaces=30",
+        "--disable-features=RemoteCoreAnimationAPI"
+      ],
+      "busyMs": 30,
+      "yieldOnResize": false,
+      "dither": false,
+      "resizes": 46,
+      "resizeIntervalMs": {
+        "median": 66.7,
+        "p90": 67.7,
+        "max": 72.4
+      },
+      "mainThreadBlockMs": {
+        "max": 65.2,
+        "over16": 46
+      }
+    },
+    {
+      "label": "best, yield, no dithering",
+      "electron": "patched",
+      "switches": [
+        "--deadline-to-synchronize-surfaces=30",
+        "--disable-features=RemoteCoreAnimationAPI"
+      ],
+      "busyMs": 30,
+      "yieldOnResize": true,
+      "dither": false,
+      "resizes": 46,
+      "resizeIntervalMs": {
+        "median": 66.8,
+        "p90": 67.4,
+        "max": 67.9
+      },
+      "mainThreadBlockMs": {
+        "max": 34.3,
+        "over16": 1
+      }
+    },
+    {
+      "label": "baseline, no dithering",
+      "electron": "unpatched",
+      "switches": [],
+      "busyMs": 30,
+      "yieldOnResize": false,
+      "dither": false,
+      "resizes": 46,
+      "resizeIntervalMs": {
+        "median": 66.6,
+        "p90": 67.6,
+        "max": 68.5
+      },
+      "mainThreadBlockMs": {
+        "max": 14.7,
+        "over16": 0
+      }
     }
   ]
 }

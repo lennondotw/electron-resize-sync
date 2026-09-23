@@ -80,12 +80,15 @@ to be tried, D in most depth. Option B stays behind a switch as a baseline.
   `--disable-features=RemoteCoreAnimationAPI` together keep every drag in
   step, in all eight directions and both ways (0 of 2,818 frames). Each part
   is necessary; paced resizing is no longer needed.
+- Cost of D (`a7d1567`, `127541b`): each size step waits for a renderer
+  frame. With the tiles' dithering off, a drag keeps the input's pace and
+  the longest wait is one busy frame (65 ms); skipping the busy work during a
+  resize (`yield on resize`) cuts it to 34 ms. The slow steps seen first
+  (100–166 ms) came from GPU load of the dithering masks, found with a trace.
 
 ## Next steps
 
-1. The cost of D is measured: about one renderer frame of main-thread
-   blocking per size step (~100 ms at 30 ms busy). Next, explain the slow busy-0
-   case with a trace, and try a continuous drag by hand.
+1. Try a continuous drag by hand with the patched build.
 2. Decide how to ship D: a source patch of Electron (or an upstream option),
    or a build-time binary patch re-signed with the app.
 3. Try option C (render before reveal) and B′ for comparison, as planned.

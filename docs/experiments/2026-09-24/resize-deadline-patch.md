@@ -64,9 +64,19 @@ drags 120 pt in and back.
 | `c4-busy0`      | patched   | 30                | off                    | 0    | off           | right ±                 | 0/225, 0/198                         |
 | `c3-sync-on`    | patched   | 30                | off                    | 30   | on            | right ±                 | 0/161, 0/144                         |
 
+Controls added later (`127541b`), all busy 30 and `resize sync` off, right ±:
+
+| Run                     | Electron  | Deadline (frames) | RemoteCoreAnimationAPI | Dithering | `yield on resize` | Out of step    |
+| ----------------------- | --------- | ----------------- | ---------------------- | --------- | ----------------- | -------------- |
+| `c7-yield`              | patched   | 30                | off                    | on        | on                | 0/212, 0/190   |
+| `c8-nodither`           | patched   | 30                | off                    | off       | off               | 0/101, 0/99    |
+| `c9-yield-nodither`     | patched   | 30                | off                    | off       | on                | 0/99, 0/100    |
+| `c10-no-patch-nodither` | unpatched | 4 (default)       | on                     | off       | off               | 53/100, 47/101 |
+
 In every run each drag produced 22–23 window size updates. The drags took
-1.6–1.7 s without the patch and 2.1–3.7 s with it (per-drag `seconds` and
-`sizeUpdates` in the data file).
+1.6–1.7 s without the patch and 2.1–3.7 s with it and dithering on, and
+1.6–1.7 s with it and dithering off (per-drag `seconds` and `sizeUpdates` in
+the data file).
 
 ### Observations
 
@@ -86,6 +96,9 @@ In every run each drag produced 22–23 window size updates. The drags took
   Dragging the left or top edge, which moves the window origin, is covered
   too.
 - **Paced resizing is compatible but no longer needed** (`c3`).
+- **Dithering does not change the outcome:** without it the patch still
+  keeps every frame in step (`c8`, `c9`), and the unpatched build still
+  falls out of step (`c10`).
 - **The cost is time:** each size step now waits for a renderer frame, and the
   browser main thread is blocked while it waits. How much slower a drag feels
   cannot be read reliably from these runs, because the drag tool's pace also
@@ -111,10 +124,31 @@ right-edge drag per run; data in
 - **With the patch, the main thread blocks once per size step**, for about
   one renderer frame plus the time to finish the frame in progress, and the
   window updates only that often. At 30 ms busy that is ~10 updates per second.
-- **Unexplained:** busy 0 was the slowest (166 ms per step). It needs a
-  trace (for example Perfetto with `viz`, `cc`, `ui`) to explain; one
-  suspect is Electron's patch that holds back new sizes until the renderer
-  acknowledges the previous one.
+- **Most of that time was GPU work from the per-tile dithering.** A
+  `contentTracing` trace of the best configuration showed the GPU process
+  saturated: `IOSurfaceImageBacking::WaitForCommandsToBeScheduled` took up
+  to 83 ms, from the masked layers the dithering adds to every tile. This
+  also explains why busy 0 was the slowest (166 ms per step): the renderer
+  produced frames as fast as it could, each queueing more GPU work.
+
+With dithering off (`127541b`, both right-edge drags per run, so 46 resizes):
+
+| Run                        | Yield on resize | Resize interval, median (ms) | Longest main-thread block (ms) | Blocks over 16 ms |
+| -------------------------- | --------------- | ---------------------------- | ------------------------------ | ----------------- |
+| Unpatched, no switch       | off             | 66.6                         | 14.7                           | 0                 |
+| Best configuration         | off             | 66.7                         | 65.2                           | 46                |
+| Best configuration         | on              | 66.8                         | 34.3                           | 1                 |
+| Best configuration, dither | on              | 144.0                        | 178.3                          | 46                |
+
+- **Without the GPU load, the patched build keeps pace with the drag tool**
+  (one step per ~67 ms, like the baseline) and stays in step.
+- **The main thread still waits for the renderer on every step:** up to
+  one busy frame plus the frame in progress (65 ms at busy 30).
+- **Skipping the busy work during a resize** (`yield on resize`) shortens
+  that wait to at most 34 ms, with one wait over 16 ms. The window stays in
+  step because the renderer only has to produce frames quickly, which it
+  can once it stops doing extra work.
+- **Yield does not help while the GPU is the bottleneck** (last row).
 
 ## Conclusion and limits
 
@@ -134,6 +168,8 @@ right-edge drag per run; data in
     the deadline. A hung renderer would make resizing crawl.
   - Disabling RemoteCoreAnimationAPI moves compositing work into the browser
     process; its power and performance cost was not measured.
+  - Heavy GPU work in the page slows every resize step, since each step now
+    waits for a finished frame.
 - **Coverage:**
   - One display at 120 Hz with 60 fps capture: a mismatch shorter than one
     capture frame can be missed.
@@ -143,6 +179,5 @@ right-edge drag per run; data in
 
 ## Next step
 
-- Explain why busy 0 is the slowest (trace).
 - Try a real, continuous drag by hand with the patched build.
 - Decide whether to carry a source patch of Electron.
