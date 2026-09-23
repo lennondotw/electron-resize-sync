@@ -20,12 +20,14 @@ export function useJankyFrameLoop(busyMs: number): FrameStats {
   useEffect(() => {
     let handle = 0;
     let fps = 0;
-    let last = performance.now();
+    // rAF timestamps mark the start of the frame and can precede
+    // performance.now() taken here, so measure only between two callbacks.
+    let last: number | undefined;
 
     const tick = (now: number) => {
-      const frameMs = now - last;
+      const frameMs = last === undefined ? 0 : now - last;
       last = now;
-      fps = fps === 0 ? 1000 / frameMs : fps * 0.9 + (1000 / frameMs) * 0.1;
+      if (frameMs > 0) fps = fps === 0 ? 1000 / frameMs : fps * 0.9 + (1000 / frameMs) * 0.1;
 
       // The long task: spin until the budget is used up.
       const until = performance.now() + busyMs;
