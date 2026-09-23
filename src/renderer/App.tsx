@@ -8,7 +8,7 @@ import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
 const TILE_TARGET = 44;
 /** Same gap on both axes. */
 const TILE_GAP = 6;
-const GRID_PADDING = 16;
+const GRID_PADDING = 8;
 
 /** Number of whole tiles along an axis of `length`, closest to TILE_TARGET. */
 function fitTiles(length: number) {
