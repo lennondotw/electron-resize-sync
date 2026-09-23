@@ -12,8 +12,10 @@ function canvasColor() {
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
+    width: 760,
     height: 480,
+    minWidth: 480,
+    minHeight: 360,
     backgroundColor: canvasColor(),
     // On macOS the title bar is transparent and the renderer draws its own,
     // so web content spans the full window height.
