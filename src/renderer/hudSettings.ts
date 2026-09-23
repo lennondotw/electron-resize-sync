@@ -4,9 +4,15 @@ export interface HudSettings {
   busyMs: number;
   playing: boolean;
   dither: boolean;
+  resizeSync: boolean;
 }
 
-const DEFAULT_SETTINGS: HudSettings = { busyMs: 30, playing: true, dither: true };
+const DEFAULT_SETTINGS: HudSettings = {
+  busyMs: 30,
+  playing: true,
+  dither: true,
+  resizeSync: false,
+};
 const STORAGE_KEY = "hud-settings";
 
 /** Reads saved settings, falling back to defaults for anything missing or malformed. */
@@ -19,12 +25,13 @@ export function loadHudSettings(): HudSettings {
   }
   if (typeof saved !== "object" || saved === null) return DEFAULT_SETTINGS;
 
-  const { busyMs, playing, dither } = saved as Record<string, unknown>;
+  const { busyMs, playing, dither, resizeSync } = saved as Record<string, unknown>;
   return {
     busyMs:
       typeof busyMs === "number" && Number.isFinite(busyMs) ? busyMs : DEFAULT_SETTINGS.busyMs,
     playing: typeof playing === "boolean" ? playing : DEFAULT_SETTINGS.playing,
     dither: typeof dither === "boolean" ? dither : DEFAULT_SETTINGS.dither,
+    resizeSync: typeof resizeSync === "boolean" ? resizeSync : DEFAULT_SETTINGS.resizeSync,
   };
 }
 

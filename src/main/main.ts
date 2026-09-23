@@ -2,6 +2,7 @@ import path from "node:path";
 import { app, BrowserWindow, nativeTheme } from "electron";
 import { RESIZE_COMMIT_CHANNEL, type ResizeCommit } from "../shared/resizeBridge.ts";
 import { TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
+import { paceResizes } from "./resizePacer.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
 
@@ -36,6 +37,7 @@ function createWindow() {
     const commit: ResizeCommit = { width, height, at: performance.timeOrigin + performance.now() };
     win.webContents.send(RESIZE_COMMIT_CHANNEL, commit);
   });
+  paceResizes(win);
 
   const syncBackground = () => win.setBackgroundColor(canvasColor());
   nativeTheme.on("updated", syncBackground);

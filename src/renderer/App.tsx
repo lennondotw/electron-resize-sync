@@ -10,10 +10,11 @@ import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
 
 export function App() {
   const [settings, setSettings] = useState(loadHudSettings);
-  const { busyMs, playing, dither } = settings;
+  const { busyMs, playing, dither, resizeSync } = settings;
   const updateSettings = (patch: Partial<HudSettings>) =>
     setSettings((current) => ({ ...current, ...patch }));
   useEffect(() => saveHudSettings(settings), [settings]);
+  useEffect(() => window.resizeBridge?.setSync(resizeSync), [resizeSync]);
 
   const stats = useJankyFrameLoop(busyMs);
   const resizeLatency = useResizeLatency();
@@ -86,6 +87,11 @@ export function App() {
               if (!next) setPausedAt(stats.time);
               updateSettings({ playing: next });
             }}
+          />
+          <HudSwitch
+            label="resize sync"
+            checked={resizeSync}
+            onCheckedChange={(next) => updateSettings({ resizeSync: next })}
           />
           <HudSwitch
             label="dithering"

@@ -9,7 +9,7 @@ declare global {
 }
 
 export interface ResizeLatency {
-  /** Milliseconds from a size change to the end of the first frame painted at that size. */
+  /** Milliseconds from a size change to the end of the first frame rendered at that size. */
   last: number | null;
   /** Largest `last` during the current resize gesture. */
   max: number | null;
@@ -35,29 +35,39 @@ window.resizeBridge?.onCommit(({ width, height, at }) => {
   commitTimes.set(sizeKey(width, height), at);
 });
 
-// Runs independently of the app's frame loop. Registered first, it fires at
-// the start of each frame, so it sees the previous frame as finished.
+// Runs alongside the app's frame loop and watches for the first frame at each
+// new size. A message posted from a rAF callback is handled right after that
+// frame's rendering update, which is when the frame is done and the main
+// thread is idle.
 let seenSize = sizeKey(window.innerWidth, window.innerHeight);
-let paintedCommitAt: number | undefined;
+const afterPaint = new MessageChannel();
 
 function onFrame() {
-  const now = performance.timeOrigin + performance.now();
-  if (paintedCommitAt !== undefined) {
-    const last = now - paintedCommitAt;
-    latency = { last, max: Math.max(latency.max ?? 0, last) };
-    paintedCommitAt = undefined;
-    notify();
-  }
-
   const size = sizeKey(window.innerWidth, window.innerHeight);
   if (size !== seenSize) {
     seenSize = size;
-    // This frame is the first at the new size; measure when the next one starts.
-    paintedCommitAt = commitTimes.get(size);
+    afterPaint.port2.postMessage(commitTimes.get(size) ?? null);
   }
   requestAnimationFrame(onFrame);
 }
 requestAnimationFrame(onFrame);
+
+afterPaint.port1.addEventListener("message", ({ data: commitAt }: MessageEvent<number | null>) => {
+  // Lets the main process apply the next pending size, if resizes are paced.
+  window.resizeBridge?.ack();
+  if (commitAt === null) return;
+  const last = performance.timeOrigin + performance.now() - commitAt;
+  latency = { last, max: Math.max(latency.max ?? 0, last) };
+  notify();
+});
+afterPaint.port1.start();
+
+// rAF pauses while the page is hidden, so a size first seen after it becomes
+// visible again says nothing about paint latency.
+document.addEventListener("visibilitychange", () => {
+  commitTimes.clear();
+  seenSize = sizeKey(window.innerWidth, window.innerHeight);
+});
 
 function sizeKey(width: number, height: number) {
   return `${width}×${height}`;
