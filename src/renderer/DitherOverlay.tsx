@@ -1,12 +1,16 @@
 import { useSyncExternalStore } from "react";
+import { createBlueNoise } from "./blueNoise.ts";
 
-/** Edge of the noise texture in device pixels; it repeats across the overlay. */
-const NOISE_SIZE = 128;
+/**
+ * Edge of the noise texture in device pixels; it repeats across the overlay.
+ * Void-and-cluster is quadratic, so 64 (~30ms) rather than 128 (~600ms).
+ */
+const NOISE_SIZE = 64;
 /** Peak deviation from mid-grey, in 8-bit levels, before blending. */
-const NOISE_AMPLITUDE = 8;
+const NOISE_AMPLITUDE = 6;
 
-// Every pixel is independent, so the texture tiles seamlessly. It is generated
-// once per page load and reused on every resize.
+// The blue-noise map wraps at its edges, so the texture tiles seamlessly. It is
+// generated once per page load and reused on every resize.
 const noiseUrl = createNoiseUrl();
 
 function createNoiseUrl() {
@@ -16,15 +20,17 @@ function createNoiseUrl() {
   const context = canvas.getContext("2d");
   if (!context) throw new Error("2D canvas is unavailable");
 
+  const ranks = createBlueNoise(NOISE_SIZE);
   const image = context.createImageData(NOISE_SIZE, NOISE_SIZE);
-  for (let i = 0; i < image.data.length; i += 4) {
-    // Triangular (TPDF) noise centred on mid-grey, which `overlay` leaves unchanged.
-    const value = 128 + (Math.random() + Math.random() - 1) * NOISE_AMPLITUDE;
+  ranks.forEach((rank, pixel) => {
+    // Uniform noise centred on mid-grey, which `overlay` leaves unchanged.
+    const value = 128 + ((rank + 0.5) / ranks.length - 0.5) * 2 * NOISE_AMPLITUDE;
+    const i = pixel * 4;
     image.data[i] = value;
     image.data[i + 1] = value;
     image.data[i + 2] = value;
     image.data[i + 3] = 255;
-  }
+  });
   context.putImageData(image, 0, 0);
   return canvas.toDataURL("image/png");
 }
