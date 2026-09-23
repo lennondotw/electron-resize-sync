@@ -9,7 +9,8 @@ import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
 export function App() {
   const [busyMs, setBusyMs] = useState(65);
   const [dither, setDither] = useState(true);
-  const stats = useJankyFrameLoop(busyMs);
+  const [playing, setPlaying] = useState(true);
+  const stats = useJankyFrameLoop(busyMs, playing);
   const rootRef = useRef<HTMLDivElement>(null);
   const rootSize = useElementSize(rootRef);
 
@@ -65,16 +66,8 @@ export function App() {
               </Slider.Track>
             </Slider.Control>
           </Slider.Root>
-          <label className="flex items-center justify-between">
-            <span className="text-zinc-500">dithering</span>
-            <Switch.Root
-              checked={dither}
-              onCheckedChange={setDither}
-              className="flex h-4 w-7 shrink-0 rounded-full bg-zinc-300 p-0.5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 data-checked:bg-zinc-900 dark:bg-zinc-700 dark:focus-visible:outline-zinc-100 dark:data-checked:bg-zinc-100"
-            >
-              <Switch.Thumb className="size-3 rounded-full bg-white shadow transition-transform duration-150 data-checked:translate-x-3 dark:data-checked:bg-zinc-900" />
-            </Switch.Root>
-          </label>
+          <HudSwitch label="playing" checked={playing} onCheckedChange={setPlaying} />
+          <HudSwitch label="dithering" checked={dither} onCheckedChange={setDither} />
         </section>
       </main>
 
@@ -92,4 +85,25 @@ export function App() {
 function formatMaxFps(busyMs: number) {
   const maxFps = 1000 / busyMs;
   return maxFps > 1000 ? "> 1000" : maxFps.toFixed(1);
+}
+
+interface HudSwitchProps {
+  label: string;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}
+
+function HudSwitch({ label, checked, onCheckedChange }: HudSwitchProps) {
+  return (
+    <label className="flex items-center justify-between">
+      <span className="text-zinc-500">{label}</span>
+      <Switch.Root
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        className="flex h-4 w-7 shrink-0 rounded-full bg-zinc-300 p-0.5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 data-checked:bg-zinc-900 dark:bg-zinc-700 dark:focus-visible:outline-zinc-100 dark:data-checked:bg-zinc-100"
+      >
+        <Switch.Thumb className="size-3 rounded-full bg-white shadow transition-transform duration-150 data-checked:translate-x-3 dark:data-checked:bg-zinc-900" />
+      </Switch.Root>
+    </label>
+  );
 }
