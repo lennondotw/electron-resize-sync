@@ -1,5 +1,5 @@
 {
-  "name": "resize-leak-lab",
+  "name": "electron-resize-sync",
   "version": "0.0.0",
   "private": true,
   "type": "module",

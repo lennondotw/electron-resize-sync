@@ -1,7 +1,8 @@
-# resize-leak-lab
+# electron-resize-sync
 
 A deliberately slow Electron app for observing the canvas background leaking
-through while a window is being resized.
+through while a window is being resized, and a lab for keeping window resize
+in sync with requestAnimationFrame rendering.
 
 ## What it does
 

@@ -24,7 +24,7 @@ export function App() {
       </span>
 
       <section className="absolute top-4 left-4 flex w-72 flex-col gap-3 rounded-xl bg-white/85 p-4 font-mono text-xs text-zinc-800 shadow-lg ring-1 ring-black/5 dark:bg-zinc-950/85 dark:text-zinc-200 dark:ring-white/10">
-        <h1 className="font-sans text-sm font-semibold">Resize Leak Lab</h1>
+        <h1 className="font-sans text-sm font-semibold">Electron Resize Sync</h1>
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 tabular-nums">
           <dt className="text-zinc-500">fps</dt>
           <dd>{stats.fps.toFixed(1)}</dd>
