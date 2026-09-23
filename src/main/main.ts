@@ -1,5 +1,6 @@
 import path from "node:path";
 import { app, BrowserWindow, nativeTheme } from "electron";
+import { TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
 
@@ -10,7 +11,17 @@ function canvasColor() {
 }
 
 function createWindow() {
-  const win = new BrowserWindow({ width: 960, height: 640, backgroundColor: canvasColor() });
+  const win = new BrowserWindow({
+    width: 960,
+    height: 640,
+    backgroundColor: canvasColor(),
+    // On macOS the title bar is transparent and the renderer draws its own,
+    // so web content spans the full window height.
+    ...(process.platform === "darwin" && {
+      titleBarStyle: "hidden",
+      trafficLightPosition: TRAFFIC_LIGHTS_POSITION,
+    }),
+  });
 
   const syncBackground = () => win.setBackgroundColor(canvasColor());
   nativeTheme.on("updated", syncBackground);
