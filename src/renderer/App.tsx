@@ -102,11 +102,14 @@ function TileWave({ columns, rows, time }: TileWaveProps) {
   for (let row = 0; row < rows; row += 1) {
     for (let column = 0; column < columns; column += 1) {
       const phase = (time / 1000) * WAVE_SPEED - (column + row) * 0.12;
+      const mix = 50 + 50 * Math.sin(phase);
       tiles.push(
         <div
           key={`${row}:${column}`}
-          className="rounded-md bg-zinc-500"
-          style={{ opacity: 0.08 + 0.06 * Math.sin(phase) }}
+          className="rounded-md"
+          style={{
+            backgroundColor: `color-mix(in oklch, var(--tile-high) ${mix.toFixed(1)}%, var(--tile-low))`,
+          }}
         />,
       );
     }
