@@ -6,6 +6,10 @@ import { paceResizes } from "./resizePacer.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
 
+// Lets experiments run against a fresh profile without touching the user's settings.
+const userDataDir = process.env["ELECTRON_RESIZE_SYNC_USER_DATA"];
+if (userDataDir) app.setPath("userData", userDataDir);
+
 // Mirrors --canvas in src/renderer/index.css, so the native window and <html>
 // leak the same colour, which differs slightly from #root's --surface.
 function canvasColor() {

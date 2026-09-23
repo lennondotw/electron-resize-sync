@@ -13,8 +13,8 @@ const resizeBridge: ResizeBridge = {
     ipcRenderer.on(RESIZE_COMMIT_CHANNEL, handler);
     return () => ipcRenderer.off(RESIZE_COMMIT_CHANNEL, handler);
   },
-  ack() {
-    ipcRenderer.send(RESIZE_ACK_CHANNEL);
+  ack(size) {
+    ipcRenderer.send(RESIZE_ACK_CHANNEL, size);
   },
   setSync(enabled) {
     ipcRenderer.send(RESIZE_SYNC_CHANNEL, enabled);

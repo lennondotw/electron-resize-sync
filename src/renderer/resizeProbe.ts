@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import type { ResizeBridge } from "../shared/resizeBridge.ts";
+import type { ContentSize, ResizeBridge } from "../shared/resizeBridge.ts";
 
 declare global {
   interface Window {
@@ -46,15 +46,26 @@ function onFrame() {
   const size = sizeKey(window.innerWidth, window.innerHeight);
   if (size !== seenSize) {
     seenSize = size;
-    afterPaint.port2.postMessage(commitTimes.get(size) ?? null);
+    const rendered: RenderedSize = {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      commitAt: commitTimes.get(size) ?? null,
+    };
+    afterPaint.port2.postMessage(rendered);
   }
   requestAnimationFrame(onFrame);
 }
 requestAnimationFrame(onFrame);
 
-afterPaint.port1.addEventListener("message", ({ data: commitAt }: MessageEvent<number | null>) => {
+interface RenderedSize extends ContentSize {
+  /** When the main process reported this size, if it did. */
+  commitAt: number | null;
+}
+
+afterPaint.port1.addEventListener("message", ({ data }: MessageEvent<RenderedSize>) => {
+  const { width, height, commitAt } = data;
   // Lets the main process apply the next pending size, if resizes are paced.
-  window.resizeBridge?.ack();
+  window.resizeBridge?.ack({ width, height });
   if (commitAt === null) return;
   const last = performance.timeOrigin + performance.now() - commitAt;
   latency = { last, max: Math.max(latency.max ?? 0, last) };
