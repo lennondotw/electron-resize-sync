@@ -1,0 +1,52 @@
+{
+  "experiment": "resize-deadline-patch-cost",
+  "method": "Main-process probe (experiments/resize-recording/probe.ts logic, run ad hoc before it was committed): resize event timestamps and a 1 ms timer's extra delay, during one right-edge drag out 120 pt and back in 24 moves of 10 pt, about one move per 67 ms from the drag tool.",
+  "environment": "Same machine, display and Electron as resize-deadline-patch.json; each run a fresh isolated session.",
+  "runs": [
+    {
+      "label": "baseline",
+      "electron": "unpatched",
+      "switches": [],
+      "busyMs": 30,
+      "resizes": 23,
+      "resizeIntervalMs": { "median": 66.8, "p90": 67.1, "max": 67.3 },
+      "mainThreadBlockMs": { "max": 54.1, "over16": 12 }
+    },
+    {
+      "label": "best, busy 0",
+      "electron": "patched",
+      "switches": [
+        "--deadline-to-synchronize-surfaces=30",
+        "--disable-features=RemoteCoreAnimationAPI"
+      ],
+      "busyMs": 0,
+      "resizes": 23,
+      "resizeIntervalMs": { "median": 166.2, "p90": 174.9, "max": 175.7 },
+      "mainThreadBlockMs": { "max": 172.2, "over16": 23 }
+    },
+    {
+      "label": "best, busy 30",
+      "electron": "patched",
+      "switches": [
+        "--deadline-to-synchronize-surfaces=30",
+        "--disable-features=RemoteCoreAnimationAPI"
+      ],
+      "busyMs": 30,
+      "resizes": 23,
+      "resizeIntervalMs": { "median": 99.8, "p90": 107, "max": 109 },
+      "mainThreadBlockMs": { "max": 102.7, "over16": 23 }
+    },
+    {
+      "label": "best, busy 65",
+      "electron": "patched",
+      "switches": [
+        "--deadline-to-synchronize-surfaces=30",
+        "--disable-features=RemoteCoreAnimationAPI"
+      ],
+      "busyMs": 65,
+      "resizes": 23,
+      "resizeIntervalMs": { "median": 136.6, "p90": 141.6, "max": 142 },
+      "mainThreadBlockMs": { "max": 139.5, "over16": 23 }
+    }
+  ]
+}

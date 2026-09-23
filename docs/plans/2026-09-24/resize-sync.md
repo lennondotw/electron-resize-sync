@@ -83,9 +83,9 @@ to be tried, D in most depth. Option B stays behind a switch as a baseline.
 
 ## Next steps
 
-1. Measure the cost of D directly: resize steps per second and main-thread
-   blocking per step, from main-process timestamps; and try a continuous drag
-   by hand.
+1. The cost of D is measured: about one renderer frame of main-thread
+   blocking per size step (~100 ms at 30 ms busy). Next, explain the slow busy-0
+   case with a trace, and try a continuous drag by hand.
 2. Decide how to ship D: a source patch of Electron (or an upstream option),
    or a build-time binary patch re-signed with the app.
 3. Try option C (render before reveal) and B′ for comparison, as planned.

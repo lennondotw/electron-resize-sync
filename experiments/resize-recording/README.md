@@ -45,6 +45,10 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
    node experiments/resize-recording/analyze.ts --geometry tmp/rec/geometry.json --video tmp/rec/run.mp4 --out tmp/rec/run.json
    ```
 
+5. Optional: timing from the main process. Run `node experiments/resize-recording/probe.ts install`
+   before a drag and `probe.ts dump` after it. It prints the resize interval
+   and how long the main thread was blocked.
+
 ## Staging
 
 - The app runs in an isolated session (see [`harness`](../harness/session.ts))

@@ -91,6 +91,31 @@ In every run each drag produced 22–23 window size updates. The drags took
   cannot be read reliably from these runs, because the drag tool's pace also
   depends on the blocked main thread (busy 0 was not faster than busy 30).
 
+### Cost: resize interval and main-thread blocking
+
+Measured separately with a main-process probe (now
+[`probe.ts`](../../../experiments/resize-recording/probe.ts)) during one
+right-edge drag per run; data in
+[`resize-deadline-patch-cost.json`](resize-deadline-patch-cost.json).
+
+| Run                  | Busy (ms) | Resize interval, median (ms) | Longest main-thread block (ms) | Blocks over 16 ms |
+| -------------------- | --------- | ---------------------------- | ------------------------------ | ----------------- |
+| Unpatched, no switch | 30        | 66.8                         | 54.1                           | 12                |
+| Best configuration   | 0         | 166.2                        | 172.2                          | 23                |
+| Best configuration   | 30        | 99.8                         | 102.7                          | 23                |
+| Best configuration   | 65        | 136.6                        | 139.5                          | 23                |
+
+- **The baseline keeps pace with the drag tool:** one move per ~67 ms. It
+  still blocks the main thread briefly, because Chromium already holds each
+  commit for the browser's own frame.
+- **With the patch, the main thread blocks once per size step**, for about
+  one renderer frame plus the time to finish the frame in progress, and the
+  window updates only that often. At 30 ms busy that is ~10 updates per second.
+- **Unexplained:** busy 0 was the slowest (166 ms per step). It needs a
+  trace (for example Perfetto with `viz`, `cc`, `ui`) to explain; one
+  suspect is Electron's patch that holds back new sizes until the renderer
+  acknowledges the previous one.
+
 ## Conclusion and limits
 
 - **Pass:** with the default surface deadline on resize, a deadline above the
@@ -118,7 +143,6 @@ In every run each drag produced 22–23 window size updates. The drags took
 
 ## Next step
 
-- Measure the resize rate and the main-thread blocking directly (for example
-  per-resize timestamps from the main process) rather than from drag duration.
+- Explain why busy 0 is the slowest (trace).
 - Try a real, continuous drag by hand with the patched build.
 - Decide whether to carry a source patch of Electron.
