@@ -1,5 +1,7 @@
 import { Slider } from "@base-ui/react/slider";
+import { Switch } from "@base-ui/react/switch";
 import { useRef, useState } from "react";
+import { DitherOverlay } from "./DitherOverlay.tsx";
 import { TitleBar } from "./TitleBar.tsx";
 import { useElementSize } from "./useElementSize.ts";
 import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
@@ -18,6 +20,7 @@ function fitTiles(length: number) {
 
 export function App() {
   const [busyMs, setBusyMs] = useState(65);
+  const [dither, setDither] = useState(true);
   const stats = useJankyFrameLoop(busyMs);
   const rootRef = useRef<HTMLDivElement>(null);
   const rootSize = useElementSize(rootRef);
@@ -67,12 +70,24 @@ export function App() {
               </Slider.Track>
             </Slider.Control>
           </Slider.Root>
+          <label className="flex items-center justify-between">
+            <span className="text-zinc-500">dithering</span>
+            <Switch.Root
+              checked={dither}
+              onCheckedChange={setDither}
+              className="flex h-4 w-7 shrink-0 rounded-full bg-zinc-300 p-0.5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 data-checked:bg-zinc-900 dark:bg-zinc-700 dark:focus-visible:outline-zinc-100 dark:data-checked:bg-zinc-100"
+            >
+              <Switch.Thumb className="size-3 rounded-full bg-white shadow transition-transform duration-150 data-checked:translate-x-3 dark:data-checked:bg-zinc-900" />
+            </Switch.Root>
+          </label>
         </section>
       </main>
 
       <span className="absolute right-3 bottom-3 rounded bg-zinc-900 px-2 py-1 font-mono text-xs text-zinc-50 dark:bg-zinc-50 dark:text-zinc-900">
         #root ↘
       </span>
+
+      {dither && <DitherOverlay />}
     </div>
   );
 }
