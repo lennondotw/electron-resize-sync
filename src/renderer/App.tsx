@@ -29,6 +29,8 @@ export function App() {
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 tabular-nums">
             <dt className="text-zinc-500">fps</dt>
             <dd>{stats.fps.toFixed(1)}</dd>
+            <dt className="text-zinc-500">max fps</dt>
+            <dd>{formatMaxFps(busyMs)}</dd>
             <dt className="text-zinc-500">frame</dt>
             <dd>{stats.frameMs.toFixed(1)} ms</dd>
             <dt className="text-zinc-500">#root</dt>
@@ -63,6 +65,15 @@ export function App() {
       </span>
     </div>
   );
+}
+
+/**
+ * Upper bound on the frame rate when every frame spends `busyMs` blocked,
+ * ignoring React and paint cost and the display's refresh rate.
+ */
+function formatMaxFps(busyMs: number) {
+  const maxFps = 1000 / busyMs;
+  return maxFps > 1000 ? "> 1000" : `≈ ${maxFps.toFixed(1)}`;
 }
 
 interface TileWaveProps {
