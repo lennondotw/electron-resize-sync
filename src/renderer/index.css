@@ -10,22 +10,6 @@
   color-scheme: light dark;
   --canvas: light-dark(#e4e4e7, #18181b);
   --surface: light-dark(#f4f4f5, #27272a);
-
-  /* Tile wave endpoints, interpolated in OKLCH so steps look perceptually even. */
-  --tile-low: light-dark(oklch(95.5% 0.002 286), oklch(29% 0.005 286));
-  --tile-high: light-dark(oklch(90% 0.005 286), oklch(34% 0.008 286));
-
-  /*
-   * `overlay` scales the noise by how far the backdrop is from its nearest
-   * extreme, so the lighter theme needs the full layer to reach about one level.
-   */
-  --dither-opacity: 1;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --dither-opacity: 0.5;
-  }
 }
 
 @theme inline {
