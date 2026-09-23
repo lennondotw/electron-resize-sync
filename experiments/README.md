@@ -24,12 +24,13 @@ record's data file, or copy `results.json` there, and commit it with the record.
 
 ## Experiments
 
-| Experiment                                       | Question                                                                           | Latest record                                                     |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [resize-pacing](resize-pacing/README.md)         | How long does a new window size stay unpainted, per edge, with and without pacing? | [2026-09-24](../docs/experiments/2026-09-24/resize-pacing.md)     |
-| [resize-recording](resize-recording/README.md)   | Does the content stay fixed relative to the window frame during a real drag?       | [2026-09-24](../docs/experiments/2026-09-24/resize-recording.md)  |
-| [tile-dithering](tile-dithering/README.md)       | Do dithered tiles average to fractional 8-bit values?                              | [2026-09-24](../docs/experiments/2026-09-24/tile-dithering.md)    |
-| [display-bit-depth](display-bit-depth/README.md) | Is the display path 8-bit or deeper?                                               | [2026-09-24](../docs/experiments/2026-09-24/display-bit-depth.md) |
+| Experiment                                       | Question                                                                           | Latest record                                                         |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [resize-pacing](resize-pacing/README.md)         | How long does a new window size stay unpainted, per edge, with and without pacing? | [2026-09-24](../docs/experiments/2026-09-24/resize-pacing.md)         |
+| [resize-recording](resize-recording/README.md)   | Does the content stay fixed relative to the window frame during a real drag?       | [2026-09-24](../docs/experiments/2026-09-24/resize-recording.md)      |
+| [tile-dithering](tile-dithering/README.md)       | Do dithered tiles average to fractional 8-bit values?                              | [2026-09-24](../docs/experiments/2026-09-24/tile-dithering.md)        |
+| [deadline-patch](deadline-patch/README.md)       | Builds a patched Electron copy that waits for the renderer frame on resize         | [2026-09-24](../docs/experiments/2026-09-24/resize-deadline-patch.md) |
+| [display-bit-depth](display-bit-depth/README.md) | Is the display path 8-bit or deeper?                                               | [2026-09-24](../docs/experiments/2026-09-24/display-bit-depth.md)     |
 
 ## Limits
 

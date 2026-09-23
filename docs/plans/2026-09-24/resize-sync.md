@@ -1,7 +1,7 @@
 # Resize and rAF synchronisation
 
 Date: 2026-09-24\
-Status: proposed; pacing implemented and measured, goal not met
+Status: option D meets the goal in an experiment (binary-patched Electron); productisation open
 
 ## Goal
 
@@ -74,15 +74,22 @@ to be tried, D in most depth. Option B stays behind a switch as a baseline.
 - [Resize recording](../../experiments/2026-09-24/resize-recording.md): the
   screen-recorded measure (`dac568f`). With no switch, with pacing, and with
   three Chromium switches, 60–95 % of drag frames are out of step.
+- [Deadline patch](../../experiments/2026-09-24/resize-deadline-patch.md)
+  (`13720c7`): forcing the default surface deadline on resize,
+  `--deadline-to-synchronize-surfaces=30` and
+  `--disable-features=RemoteCoreAnimationAPI` together keep every drag in
+  step, in all eight directions and both ways (0 of 2,818 frames). Each part
+  is necessary; paced resizing is no longer needed.
 
 ## Next steps
 
-1. Option D: force `ShouldUseDefaultDeadlineOnResize()` to true in a copy of
-   the Electron framework (binary patch located with the official breakpad
-   symbols), run with `--deadline-to-synchronize-surfaces` raised, and
-   measure with the resize recording. Then decide whether a source patch of
-   Electron is worth it.
-2. Record corners and the remaining edges for the baseline.
-3. Research option D in the Chromium and Electron sources for 44.4.5.
-4. Prototype option C behind its own switch, and extend the resize-pacing run
+1. Measure the cost of D directly: resize steps per second and main-thread
+   blocking per step, from main-process timestamps; and try a continuous drag
+   by hand.
+2. Decide how to ship D: a source patch of Electron (or an upstream option),
+   or a build-time binary patch re-signed with the app.
+3. Try option C (render before reveal) and B′ for comparison, as planned.
+4. Record corners and the remaining edges for the baseline.
+5. Research option D in the Chromium and Electron sources for 44.4.5.
+6. Prototype option C behind its own switch, and extend the resize-pacing run
    to report, per size, whether the window changed before or after the frame.

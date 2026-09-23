@@ -8,6 +8,9 @@ for the current state; dated records preserve how conclusions changed.
 - [Resize and rAF synchronisation](plans/2026-09-24/resize-sync.md): the goal
   (window size and content change together; dropped resize frames under load
   are acceptable), options considered, and what has been tried.
+- [Resize with the default surface deadline](experiments/2026-09-24/resize-deadline-patch.md):
+  option D works. A binary-patched Electron with a 30-frame deadline and
+  RemoteCoreAnimationAPI off keeps content in step in every direction.
 - [Chromium resize synchronisation](research/2026-09-24/chromium-resize-sync.md):
   why the content trails the frame on macOS, from Chromium 152 and Electron
   44.4.5 source, and candidate fixes.
@@ -23,10 +26,10 @@ for the current state; dated records preserve how conclusions changed.
 
 ## Date index
 
-| Date                                | Records                                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [2026-09-24](worklog/2026-09-24.md) | [Resize sync plan](plans/2026-09-24/resize-sync.md), [Chromium resize sync research](research/2026-09-24/chromium-resize-sync.md), [Resize recording](experiments/2026-09-24/resize-recording.md), [Resize pacing](experiments/2026-09-24/resize-pacing.md), [Tile dithering](experiments/2026-09-24/tile-dithering.md), [Display bit depth](experiments/2026-09-24/display-bit-depth.md) |
-| [2026-09-23](worklog/2026-09-23.md) | Toolchain, janky renderer app, title bar and HUD                                                                                                                                                                                                                                                                                                                                          |
+| Date                                | Records                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [2026-09-24](worklog/2026-09-24.md) | [Resize sync plan](plans/2026-09-24/resize-sync.md), [Chromium resize sync research](research/2026-09-24/chromium-resize-sync.md), [Resize recording](experiments/2026-09-24/resize-recording.md), [Deadline patch](experiments/2026-09-24/resize-deadline-patch.md), [Resize pacing](experiments/2026-09-24/resize-pacing.md), [Tile dithering](experiments/2026-09-24/tile-dithering.md), [Display bit depth](experiments/2026-09-24/display-bit-depth.md) |
+| [2026-09-23](worklog/2026-09-23.md) | Toolchain, janky renderer app, title bar and HUD                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 ## Organization
 
