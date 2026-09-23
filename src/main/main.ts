@@ -2,6 +2,7 @@ import path from "node:path";
 import { app, BrowserWindow, nativeTheme } from "electron";
 import {
   MARKERS_ARGUMENT,
+  RESIZE_ACTIVE_CHANNEL,
   RESIZE_COMMIT_CHANNEL,
   type ResizeCommit,
 } from "../shared/resizeBridge.ts";
@@ -46,6 +47,19 @@ function createWindow() {
     const commit: ResizeCommit = { width, height, at: performance.timeOrigin + performance.now() };
     win.webContents.send(RESIZE_COMMIT_CHANNEL, commit);
   });
+  // Tell the renderer while a user resize is in progress, so it can defer
+  // expensive work (will-resize fires for each step, resized once at the end).
+  let resizing = false;
+  win.on("will-resize", () => {
+    if (resizing) return;
+    resizing = true;
+    win.webContents.send(RESIZE_ACTIVE_CHANNEL, true);
+  });
+  win.on("resized", () => {
+    resizing = false;
+    win.webContents.send(RESIZE_ACTIVE_CHANNEL, false);
+  });
+
   paceResizes(win);
 
   const syncBackground = () => win.setBackgroundColor(canvasColor());

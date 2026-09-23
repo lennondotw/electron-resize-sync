@@ -13,6 +13,7 @@ export interface HudSettings {
   playing: boolean;
   dither: boolean;
   resizeSync: boolean;
+  yieldOnResize?: boolean;
 }
 
 export interface SessionOptions {

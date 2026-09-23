@@ -6,17 +6,18 @@ import { useResizeLatency } from "./resizeProbe.ts";
 import { fitTiles, TileWave } from "./TileWave.tsx";
 import { TitleBar } from "./TitleBar.tsx";
 import { useElementSize } from "./useElementSize.ts";
+import { isResizing } from "./resizeActivity.ts";
 import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
 
 export function App() {
   const [settings, setSettings] = useState(loadHudSettings);
-  const { busyMs, playing, dither, resizeSync } = settings;
+  const { busyMs, playing, dither, resizeSync, yieldOnResize } = settings;
   const updateSettings = (patch: Partial<HudSettings>) =>
     setSettings((current) => ({ ...current, ...patch }));
   useEffect(() => saveHudSettings(settings), [settings]);
   useEffect(() => window.resizeBridge?.setSync(resizeSync), [resizeSync]);
 
-  const stats = useJankyFrameLoop(busyMs);
+  const stats = useJankyFrameLoop(busyMs, yieldOnResize ? isResizing : undefined);
   const resizeLatency = useResizeLatency();
   // While paused the loop and its busy work keep running; only the tiles hold
   // still, at the time they were paused (or the start, after a paused reload).
@@ -92,6 +93,11 @@ export function App() {
             label="resize sync"
             checked={resizeSync}
             onCheckedChange={(next) => updateSettings({ resizeSync: next })}
+          />
+          <HudSwitch
+            label="yield on resize"
+            checked={yieldOnResize}
+            onCheckedChange={(next) => updateSettings({ yieldOnResize: next })}
           />
           <HudSwitch
             label="dithering"

@@ -11,6 +11,8 @@ const { values: args } = parseArgs({
   options: {
     busy: { type: "string", default: "30" },
     sync: { type: "string", default: "off" },
+    /** Skip the busy work while a resize is in progress. */
+    yield: { type: "string", default: "off" },
     env: { type: "string", multiple: true, default: [] },
     /** Passed to Electron as-is, e.g. --electron-arg=--disable-features=X. */
     "electron-arg": { type: "string", multiple: true, default: [] },
@@ -36,6 +38,7 @@ const session = await launchSession({
     playing: true,
     dither: true,
     resizeSync: args.sync === "on",
+    yieldOnResize: args.yield === "on",
   },
   env: { ELECTRON_RESIZE_SYNC_MARKERS: "1", ...extraEnv },
   args: args["electron-arg"],

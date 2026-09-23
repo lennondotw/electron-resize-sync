@@ -19,6 +19,8 @@ export interface ResizeBridge {
   ack(size: ContentSize): void;
   /** Turns paced resizing on or off in the main process. */
   setSync(enabled: boolean): void;
+  /** Called with true when a user resize starts and false when it ends. */
+  onResizeActive(listener: (active: boolean) => void): () => void;
   /** Whether to draw edge markers that screen-recording experiments track. */
   readonly markers: boolean;
 }
@@ -29,3 +31,4 @@ export const MARKERS_ARGUMENT = "--resize-sync-markers";
 export const RESIZE_COMMIT_CHANNEL = "resize:commit";
 export const RESIZE_ACK_CHANNEL = "resize:ack";
 export const RESIZE_SYNC_CHANNEL = "resize:set-sync";
+export const RESIZE_ACTIVE_CHANNEL = "resize:active";

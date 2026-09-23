@@ -14,7 +14,11 @@ export interface FrameStats {
  * `busyMs` on every frame, then commits a React update. With ~65ms of busy
  * work the loop settles around 15fps.
  */
-export function useJankyFrameLoop(busyMs: number): FrameStats {
+export function useJankyFrameLoop(
+  busyMs: number,
+  /** While this returns true, frames skip the busy work. */
+  skipBusyWork?: () => boolean,
+): FrameStats {
   const [stats, setStats] = useState<FrameStats>({ time: 0, fps: 0, frameMs: 0 });
 
   useEffect(() => {
@@ -30,7 +34,7 @@ export function useJankyFrameLoop(busyMs: number): FrameStats {
       if (frameMs > 0) fps = fps === 0 ? 1000 / frameMs : fps * 0.9 + (1000 / frameMs) * 0.1;
 
       // The long task: spin until the budget is used up.
-      const until = performance.now() + busyMs;
+      const until = performance.now() + (skipBusyWork?.() ? 0 : busyMs);
       let sink = 0;
       while (performance.now() < until) sink += Math.sqrt(sink + 1);
 
@@ -40,7 +44,7 @@ export function useJankyFrameLoop(busyMs: number): FrameStats {
 
     handle = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(handle);
-  }, [busyMs]);
+  }, [busyMs, skipBusyWork]);
 
   return stats;
 }
