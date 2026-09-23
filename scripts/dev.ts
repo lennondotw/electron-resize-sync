@@ -1,5 +1,5 @@
-// Starts the renderer dev server, watches the main process build, and
-// (re)launches Electron whenever the main bundle is rebuilt.
+// Starts the renderer dev server, watches the main process and preload builds,
+// and (re)launches Electron whenever either bundle is rebuilt.
 import { spawn, type ChildProcess } from "node:child_process";
 import { build, createServer } from "vite";
 
@@ -29,9 +29,19 @@ function restartElectron() {
   });
 }
 
-const watcher = await build({ configFile: "vite.main.config.ts", build: { watch: {} } });
-if (!("on" in watcher)) throw new Error("Expected a watcher from vite build --watch");
-watcher.on("event", (event) => {
-  if (event.code === "END") restartElectron();
-  if (event.code === "ERROR") console.error(event.error);
-});
+// The main build empties dist-electron, so it must finish before the preload
+// build starts. Electron launches once both have built at least once.
+const built = new Set<string>();
+for (const configFile of ["vite.main.config.ts", "vite.preload.config.ts"]) {
+  const watcher = await build({ configFile, build: { watch: {} } });
+  if (!("on" in watcher)) throw new Error("Expected a watcher from vite build --watch");
+  await new Promise<void>((resolve) => {
+    watcher.on("event", (event) => {
+      if (event.code === "ERROR") console.error(event.error);
+      if (event.code !== "END") return;
+      built.add(configFile);
+      resolve();
+      if (built.size === 2) restartElectron();
+    });
+  });
+}

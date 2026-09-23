@@ -1,5 +1,6 @@
 import path from "node:path";
 import { app, BrowserWindow, nativeTheme } from "electron";
+import { RESIZE_COMMIT_CHANNEL, type ResizeCommit } from "../shared/resizeBridge.ts";
 import { TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
@@ -23,6 +24,17 @@ function createWindow() {
       titleBarStyle: "hidden",
       trafficLightPosition: TRAFFIC_LIGHTS_POSITION,
     }),
+    webPreferences: {
+      preload: path.join(import.meta.dirname, "preload.cjs"),
+    },
+  });
+
+  // Tell the renderer when each new size lands, so it can measure how long it
+  // takes to paint a frame at that size.
+  win.on("resize", () => {
+    const [width = 0, height = 0] = win.getContentSize();
+    const commit: ResizeCommit = { width, height, at: performance.timeOrigin + performance.now() };
+    win.webContents.send(RESIZE_COMMIT_CHANNEL, commit);
   });
 
   const syncBackground = () => win.setBackgroundColor(canvasColor());

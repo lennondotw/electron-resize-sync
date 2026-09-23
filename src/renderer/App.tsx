@@ -2,6 +2,7 @@ import { Slider } from "@base-ui/react/slider";
 import { Switch } from "@base-ui/react/switch";
 import { useEffect, useRef, useState } from "react";
 import { loadHudSettings, saveHudSettings, type HudSettings } from "./hudSettings.ts";
+import { useResizeLatency } from "./resizeProbe.ts";
 import { fitTiles, TileWave } from "./TileWave.tsx";
 import { TitleBar } from "./TitleBar.tsx";
 import { useElementSize } from "./useElementSize.ts";
@@ -15,6 +16,7 @@ export function App() {
   useEffect(() => saveHudSettings(settings), [settings]);
 
   const stats = useJankyFrameLoop(busyMs);
+  const resizeLatency = useResizeLatency();
   // While paused the loop and its busy work keep running; only the tiles hold
   // still, at the time they were paused (or the start, after a paused reload).
   const [pausedAt, setPausedAt] = useState(0);
@@ -53,6 +55,10 @@ export function App() {
             <dd>
               {Math.round(rootSize.width)} × {Math.round(rootSize.height)}
             </dd>
+            <dt className="text-zinc-500">resize latency</dt>
+            <dd>{formatLatency(resizeLatency.last)}</dd>
+            <dt className="text-zinc-500">max this drag</dt>
+            <dd>{formatLatency(resizeLatency.max)}</dd>
             <dt className="text-zinc-500">tiles</dt>
             <dd>{columns * rows}</dd>
           </dl>
@@ -103,6 +109,10 @@ export function App() {
 function formatMaxFps(busyMs: number) {
   const maxFps = 1000 / busyMs;
   return maxFps > 1000 ? "> 1000" : maxFps.toFixed(1);
+}
+
+function formatLatency(ms: number | null) {
+  return ms === null ? "–" : `${ms.toFixed(1)} ms`;
 }
 
 interface HudSwitchProps {
