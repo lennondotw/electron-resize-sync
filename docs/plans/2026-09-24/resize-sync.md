@@ -86,13 +86,18 @@ to be tried, D in most depth. Option B stays behind a switch as a baseline.
   resize (`yield on resize`) cuts it to 34 ms. The slow steps seen first
   (100–166 ms) came from GPU load of the dithering masks, found with a trace.
 
+- [Resize matrix on the built-in display](../../experiments/2026-09-24/resize-matrix-builtin.md)
+  (`6ceea54`): option D with the switches set by the app is in step with and
+  without busy work, and costs nothing measurable with nothing to render.
+  Option C (render before reveal, `9f7010f`) fails when shrinking and is the
+  slowest. B′ reduces the error without removing it.
+
 ## Next steps
 
-1. Try a continuous drag by hand with the patched build.
-2. Decide how to ship D: a source patch of Electron (or an upstream option),
-   or a build-time binary patch re-signed with the app.
-3. Try option C (render before reveal) and B′ for comparison, as planned.
-4. Record corners and the remaining edges for the baseline.
-5. Research option D in the Chromium and Electron sources for 44.4.5.
-6. Prototype option C behind its own switch, and extend the resize-pacing run
-   to report, per size, whether the window changed before or after the frame.
+1. Try a continuous drag by hand with the patched build and everything off,
+   to judge smoothness directly.
+2. Decide how to ship D: build Electron with the
+   [source patch](../../../experiments/deadline-patch/electron-v44.4.5-resize-deadline.patch),
+   or run the binary patch at build time and re-sign the app.
+3. Record top and left drags on the built-in display, which the background
+   drag tool cannot express.
