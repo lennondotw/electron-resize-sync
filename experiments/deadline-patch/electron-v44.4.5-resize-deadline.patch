@@ -1,0 +1,57 @@
+diff --git a/docs/api/structures/web-preferences.md b/docs/api/structures/web-preferences.md
+index faa3b6d..3116743 100644
+--- a/docs/api/structures/web-preferences.md
++++ b/docs/api/structures/web-preferences.md
+@@ -86,6 +86,11 @@
+   [browserWindow](../browser-window.md) has disabled `backgroundThrottling` then
+   frames will be drawn and swapped for the whole window and other
+   [webContents](../web-contents.md) displayed by it. Defaults to `true`.
++* `resizeDeadlineFrames` Integer (optional) - How many display frames a
++  resize waits for the page to render a frame at the new size, so that the
++  window and its content change size together. The window resizes at most as
++  often as the page can render, and a page that does not render in time is
++  shown at its old size after the deadline. Default is to not wait.
+ * `offscreen` Object | boolean (optional) - Whether to enable offscreen rendering for the browser
+   window. Defaults to `false`. See the
+   [offscreen rendering tutorial](../../tutorial/offscreen-rendering.md) for
+diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/electron_api_web_contents.cc
+index f1b6581..ec777d0 100644
+--- a/shell/browser/api/electron_api_web_contents.cc
++++ b/shell/browser/api/electron_api_web_contents.cc
+@@ -904,6 +904,7 @@ WebContents::WebContents(v8::Isolate* isolate,
+ {
+   // Read options.
+   options.Get("backgroundThrottling", &background_throttling_);
++  options.Get("resizeDeadlineFrames", &resize_deadline_frames_);
+ 
+   // Get type
+   options.Get("type", &type_);
+@@ -2114,6 +2115,13 @@ void WebContents::HandleNewRenderFrame(
+   if (!background_throttling_)
+     render_frame_host->GetRenderViewHost()->SetSchedulerThrottling(false);
+ 
++  // Since M147, a resized top-level view embeds the renderer's new surface
++  // with a deadline of 0, so the window shows its new size with the old
++  // content. A deadline makes the resize wait for the new frame instead.
++  if (resize_deadline_frames_ >= 0 && !render_frame_host->GetParent())
++    rwhv->SetForceSpecifiedDeadline(
++        static_cast<uint32_t>(resize_deadline_frames_));
++
+   auto* rwh_impl =
+       static_cast<content::RenderWidgetHostImpl*>(rwhv->GetRenderWidgetHost());
+   if (rwh_impl)
+diff --git a/shell/browser/api/electron_api_web_contents.h b/shell/browser/api/electron_api_web_contents.h
+index 6793667..0d6febd 100644
+--- a/shell/browser/api/electron_api_web_contents.h
++++ b/shell/browser/api/electron_api_web_contents.h
+@@ -857,6 +857,10 @@ class WebContents final : public ExclusiveAccessContext,
+   // Whether background throttling is disabled.
+   bool background_throttling_ = true;
+ 
++  // How many frames a resize of the top-level view waits for the renderer's
++  // frame at the new size; negative keeps Chromium's policy (no wait on macOS).
++  int32_t resize_deadline_frames_ = -1;
++
+   bool ignore_menu_shortcuts_ = false;
+ 
+   // Kept by JS while 'console-message' has listeners.

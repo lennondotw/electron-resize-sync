@@ -22,6 +22,17 @@ const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
 // chosen at launch rather than with a HUD switch.
 const revealMode = Boolean(process.env["ELECTRON_RESIZE_SYNC_REVEAL"]);
 
+// Option D's switches, set by the app instead of on the command line. They take
+// effect only with an Electron that waits for the page on resize (see
+// experiments/deadline-patch): a long enough surface deadline, and the browser
+// process presenting GPU output itself, which removes a race between the two
+// processes' Core Animation commits.
+const deadlineFrames = process.env["ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES"];
+if (deadlineFrames) {
+  app.commandLine.appendSwitch("deadline-to-synchronize-surfaces", deadlineFrames);
+  app.commandLine.appendSwitch("disable-features", "RemoteCoreAnimationAPI");
+}
+
 // Lets experiments run against a fresh profile without touching the user's settings.
 const userDataDir = process.env["ELECTRON_RESIZE_SYNC_USER_DATA"];
 if (userDataDir) app.setPath("userData", userDataDir);

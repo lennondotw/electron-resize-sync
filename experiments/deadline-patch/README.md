@@ -65,8 +65,12 @@ The script:
 - **Tied to one build:** the expected bytes are for Electron 44.4.5 on arm64.
   Any other build fails the check rather than being patched blindly.
 - **Experiment only, not for distribution:** the ad hoc signature is local.
-  A product needs the same change as a source patch to Electron (call
-  `SetShouldUseDefaultDeadlineOnResize(true)` on the window's view, or change
-  the policy).
+  A product needs the same change as a source patch to Electron:
+  [`electron-v44.4.5-resize-deadline.patch`](electron-v44.4.5-resize-deadline.patch)
+  adds `webPreferences.resizeDeadlineFrames` (written and checked to apply,
+  not built). See [shipping option D](../../docs/research/2026-09-24/shipping-option-d.md).
 - **Deadline:** the default deadline is `--deadline-to-synchronize-surfaces`
-  frames (4 unless set). A renderer slower than that still misses it.
+  frames (4 unless set). A renderer slower than that still misses it. The app
+  can set the switch itself: `ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` makes
+  `src/main/main.ts` append it, together with
+  `--disable-features=RemoteCoreAnimationAPI`.
