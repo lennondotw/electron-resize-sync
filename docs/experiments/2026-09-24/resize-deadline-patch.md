@@ -130,6 +130,11 @@ right-edge drag per run; data in
   to 83 ms, from the masked layers the dithering adds to every tile. This
   also explains why busy 0 was the slowest (166 ms per step): the renderer
   produced frames as fast as it could, each queueing more GPU work.
+  Summary of the trace (busy 30, yield on, dithering on):
+  [`resize-deadline-patch-trace.json`](resize-deadline-patch-trace.json),
+  made with `trace.ts`. The GPU main thread spent 7.4 s in 285 swaps of
+  20 ms or more, and the browser's Core Animation pre-commit handler waited
+  up to 158 ms.
 
 With dithering off (`127541b`, both right-edge drags per run, so 46 resizes):
 

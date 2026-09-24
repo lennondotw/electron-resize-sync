@@ -60,6 +60,11 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
    before a drag and `probe.ts dump` after it. It prints the resize interval
    and how long the main thread was blocked.
 
+7. Optional: a Chromium trace of a drag. Run `node experiments/resize-recording/trace.ts start`
+   before the drag and `trace.ts stop tmp/trace/<run>.json` after it, then
+   `trace.ts summarize tmp/trace/<run>.json --out <summary.json>` for the
+   longest events per thread.
+
 ## Staging
 
 - The app runs in an isolated session (see [`harness`](../harness/session.ts))

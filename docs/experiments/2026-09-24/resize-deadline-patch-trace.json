@@ -1,0 +1,140 @@
+{
+  "experiment": "resize-deadline-patch-trace",
+  "run": {
+    "electron": "patched (13720c7)",
+    "switches": [
+      "--deadline-to-synchronize-surfaces=30",
+      "--disable-features=RemoteCoreAnimationAPI"
+    ],
+    "busyMs": 30,
+    "playing": true,
+    "dither": true,
+    "yieldOnResize": true,
+    "display": "VX2781-4K-PRO, 3008x1692 pt, scale 2, 120 Hz",
+    "os": "macOS 27.0 (26A428)",
+    "hardware": "Mac15,8, Apple M3 Max",
+    "runtime": "Electron 44.4.5, Chromium 152.0.7977.130, arm64",
+    "input": "one right-edge drag out and back by a computer-use tool, 10 pt per move"
+  },
+  "method": "contentTracing.startRecording with the categories below in the staged app, stopRecording after the drag; the raw trace (51 MB) is not published. Summary: complete events of at least longEventUs, grouped by process, thread and name (trace.ts summarize --top 15).",
+  "categories": [
+    "ui",
+    "viz",
+    "cc",
+    "gpu",
+    "benchmark",
+    "blink",
+    "toplevel",
+    "ipc",
+    "disabled-by-default-viz.surface_lifetime",
+    "disabled-by-default-viz.surface_id_flow"
+  ],
+  "longEventUs": 20000,
+  "top": [
+    {
+      "thread": "Renderer/CrRendererMain",
+      "name": "ThreadControllerImpl::RunTask",
+      "count": 236,
+      "totalMs": 7618,
+      "maxMs": 34
+    },
+    {
+      "thread": "Renderer/CrRendererMain",
+      "name": "ProxyMain::BeginMainFrame",
+      "count": 236,
+      "totalMs": 7617,
+      "maxMs": 34
+    },
+    {
+      "thread": "Renderer/CrRendererMain",
+      "name": "WebFrameWidgetImpl::BeginMainFrame",
+      "count": 237,
+      "totalMs": 7442,
+      "maxMs": 32.9
+    },
+    {
+      "thread": "GPU Process/CrGpuMain",
+      "name": "ThreadControllerImpl::RunTask",
+      "count": 286,
+      "totalMs": 7422,
+      "maxMs": 83.3
+    },
+    {
+      "thread": "GPU Process/CrGpuMain",
+      "name": "Scheduler::RunTask",
+      "count": 286,
+      "totalMs": 7422,
+      "maxMs": 83.3
+    },
+    {
+      "thread": "GPU Process/CrGpuMain",
+      "name": "SkiaOutputSurfaceImplOnGpu::SwapBuffers",
+      "count": 286,
+      "totalMs": 7409,
+      "maxMs": 83.2
+    },
+    {
+      "thread": "GPU Process/CrGpuMain",
+      "name": "Graphics.Pipeline",
+      "count": 286,
+      "totalMs": 7402,
+      "maxMs": 83.2
+    },
+    {
+      "thread": "GPU Process/CrGpuMain",
+      "name": "SkiaOutputDevice->ScheduleOverlays()",
+      "count": 285,
+      "totalMs": 7369,
+      "maxMs": 83.2
+    },
+    {
+      "thread": "GPU Process/CrGpuMain",
+      "name": "IOSurfaceImageBacking::WaitForCommandsToBeScheduled",
+      "count": 285,
+      "totalMs": 7366,
+      "maxMs": 83.1
+    },
+    {
+      "thread": "GPU Process/CrGpuMain",
+      "name": "IOSurfaceImageBacking::WaitForCommandsToBeScheduled::Dawn",
+      "count": 285,
+      "totalMs": 7365,
+      "maxMs": 83.1
+    },
+    {
+      "thread": "Renderer/CrRendererMain",
+      "name": "Blink.Animate.UpdateTime",
+      "count": 238,
+      "totalMs": 7149,
+      "maxMs": 30.2
+    },
+    {
+      "thread": "Renderer/CrRendererMain",
+      "name": "PageAnimator::serviceScriptedAnimations",
+      "count": 238,
+      "totalMs": 7148,
+      "maxMs": 30.2
+    },
+    {
+      "thread": "Renderer/CrRendererMain",
+      "name": "FrameRequestCallbackCollection::ExecuteFrameCallbacks",
+      "count": 238,
+      "totalMs": 7146,
+      "maxMs": 30.2
+    },
+    {
+      "thread": "Renderer/CrRendererMain",
+      "name": "AsyncTask Run",
+      "count": 238,
+      "totalMs": 7140,
+      "maxMs": 30.2
+    },
+    {
+      "thread": "Browser/CrBrowserMain",
+      "name": "CATransactionCoordinator: pre-commit handler",
+      "count": 11,
+      "totalMs": 1458,
+      "maxMs": 157.9
+    }
+  ]
+}
