@@ -122,10 +122,17 @@ export async function launchSession({
 export async function collectEnvironment(session: Session) {
   const [versions, display, git] = await Promise.all([
     session.main<Record<string, string>>(
-      `(() => { const { screen } = require("electron"); const d = screen.getPrimaryDisplay();
+      `(() => { const { app, screen } = require("electron"); const d = screen.getPrimaryDisplay();
+        // Switches as the browser process sees them, whether passed on the
+        // command line or appended by the app.
+        const switches = ["deadline-to-synchronize-surfaces", "enable-features", "disable-features"]
+          .filter((name) => app.commandLine.hasSwitch(name))
+          .map((name) => "--" + name + "=" + app.commandLine.getSwitchValue(name));
         return { electron: process.versions.electron, chrome: process.versions.chrome,
           node: process.versions.node, arch: process.arch, platform: process.platform,
-          displayScaleFactor: String(d.scaleFactor), displayRefreshRate: String(d.displayFrequency),
+          electronExecutable: require("node:path").relative(process.cwd(), process.execPath), switches: switches.join(" "),
+          displayLabel: d.label, displayScaleFactor: String(d.scaleFactor),
+          displayRefreshRate: String(d.displayFrequency),
           displayColorDepth: String(d.colorDepth), displaySize: d.size.width + "x" + d.size.height }; })()`,
     ),
     session.page<Record<string, unknown>>(

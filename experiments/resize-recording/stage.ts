@@ -44,7 +44,7 @@ const session = await launchSession({
     resizeSync: args.sync === "on",
     yieldOnResize: args.yield === "on",
   },
-  env: { ELECTRON_RESIZE_SYNC_MARKERS: "1", ...extraEnv },
+  env: { ELECTRON_RESIZE_SYNC_MARKERS: "1", ELECTRON_RESIZE_SYNC_OVERLAY: "0", ...extraEnv },
   args: args["electron-arg"],
 });
 

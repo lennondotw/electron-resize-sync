@@ -15,6 +15,7 @@ import {
 } from "../shared/resizeBridge.ts";
 import { TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
 import { paceResizes } from "./resizePacer.ts";
+import { showResizeRateOverlay } from "./resizeRateOverlay.ts";
 import { createRevealWindow } from "./revealWindow.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
@@ -48,7 +49,7 @@ function createWindow() {
     width: 760,
     height: 480,
     minWidth: 480,
-    minHeight: 360,
+    minHeight: 420,
     backgroundColor: canvasColor(),
     // On macOS the title bar is transparent and the renderer draws its own,
     // so web content spans the full window height.
@@ -97,6 +98,9 @@ function createWindow() {
     resizing = false;
     webContents.send(RESIZE_ACTIVE_CHANNEL, false);
   });
+
+  // On by default; experiments turn it off so it does not add main-thread work.
+  if (process.env["ELECTRON_RESIZE_SYNC_OVERLAY"] !== "0") showResizeRateOverlay(win);
 
   const syncBackground = () => win.setBackgroundColor(canvasColor());
   nativeTheme.on("updated", syncBackground);
