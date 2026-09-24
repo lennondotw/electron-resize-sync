@@ -1,8 +1,13 @@
 import { BrowserWindow, type BaseWindow } from "electron";
+import { TITLEBAR_HEIGHT } from "../shared/titlebar.ts";
 
-const SIZE = { width: 168, height: 26 };
-/** Distance from the window's top and right edges, in points. */
-const INSET = { top: 6, right: 10 };
+/** The label fills the overlay's height; its width fits the longest text. */
+const SIZE = { width: 168, height: 22 };
+/**
+ * Centred in the title bar, like the window buttons, and as far from the
+ * right edge as from the top.
+ */
+const INSET = (TITLEBAR_HEIGHT - SIZE.height) / 2;
 /** How many recent size changes the rate is computed from. */
 const WINDOW_SIZE = 8;
 /** After this long without a size change, the rate is shown as idle. */
@@ -10,9 +15,10 @@ const IDLE_MS = 600;
 
 const PAGE = `<!doctype html><html><head><style>
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
-  body { display: flex; align-items: center; justify-content: flex-end; }
-  span { font: 11px/1 ui-monospace, Menlo, monospace; color: #fafafa; white-space: pre;
-    background: rgb(0 0 0 / 0.72); border-radius: 6px; padding: 5px 7px;
+  body { display: flex; justify-content: flex-end; }
+  span { box-sizing: border-box; height: 100%; display: flex; align-items: center;
+    font: 11px/1 ui-monospace, Menlo, monospace; color: #fafafa; white-space: pre;
+    background: rgb(0 0 0 / 0.72); border-radius: 6px; padding: 0 7px;
     font-variant-numeric: tabular-nums; }
 </style></head><body><span id="t">resize idle</span></body></html>`;
 
@@ -45,8 +51,8 @@ export function showResizeRateOverlay(win: BaseWindow) {
   const place = () => {
     const bounds = win.getContentBounds();
     overlay.setPosition(
-      Math.round(bounds.x + bounds.width - SIZE.width - INSET.right),
-      Math.round(bounds.y + INSET.top),
+      Math.round(bounds.x + bounds.width - SIZE.width - INSET),
+      Math.round(bounds.y + INSET),
     );
   };
 
