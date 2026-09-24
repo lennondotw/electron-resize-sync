@@ -36,6 +36,9 @@ export function showResizeRateOverlay(win: BaseWindow) {
     frame: false,
     transparent: true,
     hasShadow: false,
+    // macOS masks frameless windows to rounded corners, which clips the label
+    // where it touches the window's edge.
+    roundedCorners: false,
     resizable: false,
     movable: false,
     minimizable: false,
