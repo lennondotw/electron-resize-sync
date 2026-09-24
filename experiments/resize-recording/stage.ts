@@ -164,21 +164,21 @@ for (const [edge, { at, dir }] of Object.entries(handles)) {
   }
 }
 
-// The same drags as paths for a background drag tool (computer-use app_drag),
-// in points of the backdrop window, which does not move while the app window
-// resizes. Such a tool delivers a whole path at once, so AppKit coalesces it
-// into a few size changes; the path ends with the same nudge.
+// The same drags as paths for a background drag tool (computer-use app_drag).
+// Such a tool sends the events to one window, in that window's points, and
+// maps the points as the window moves: only drags that keep the window's
+// origin in place (right, bottom, bottom-right) can be expressed. It delivers
+// a whole path at once, so AppKit coalesces it into a few size changes; the
+// path ends with the same nudge.
 const APP_DRAG_STEPS = 6;
 const appDrags: Record<string, number[][]> = {};
-for (const [edge, { at, dir }] of Object.entries(handles)) {
+for (const edge of ["right", "bottom", "bottom-right"] as const) {
+  const { at, dir } = handles[edge];
   for (const way of ["outward", "inward"] as const) {
     const sign = way === "outward" ? 1 : -1;
     const local = (k: number) => {
       const d = (sign * k * DRAG.distance) / APP_DRAG_STEPS;
-      return [
-        Math.round(at[0] + dir[0] * d - backdrop.x),
-        Math.round(at[1] + dir[1] * d - backdrop.y),
-      ];
+      return [Math.round(at[0] + dir[0] * d - window.x), Math.round(at[1] + dir[1] * d - window.y)];
     };
     const offsets = [
       ...Array.from({ length: APP_DRAG_STEPS + 1 }, (_, k) => k),

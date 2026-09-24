@@ -40,8 +40,10 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
 3. While it records, perform the drags listed under `drags` in the geometry
    file (for example `"right outward"` then `"right inward"`), leaving about a
    second between drags. A background drag tool that takes whole paths (such
-   as computer-use `app_drag`) uses `appDrags` instead: paths in points of the
-   backdrop window, which does not move while the app window resizes.
+   as computer-use `app_drag`) uses `appDrags` instead: paths in the app
+   window's own points. Such a tool sends events to one window and maps its
+   points as the window moves, so only the right, bottom and bottom-right
+   drags, which keep the window's origin in place, can be expressed.
 
 4. Analyse:
 

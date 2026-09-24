@@ -122,6 +122,7 @@ disagreed with its reported size.**
 
 ## Next step
 
-- Drag in the backdrop window's coordinates, which do not move, so that top
-  and left drags stay controlled.
+- Top and left drags need a tool that drags in screen coordinates: `app_drag`
+  sends events to one window in that window's points, so dragging in the
+  backdrop window's points resizes nothing.
 - Watch for the 1 pt mismatch in the next recordings.
