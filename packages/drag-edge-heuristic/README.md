@@ -4,9 +4,9 @@
 edges of a window a user resize drags on macOS, so that a cancelled
 `will-resize` can be re-applied with the opposite edges kept in place. Only
 the not-working options need it:
-[`resize-pacing-not-working`](../../packages-not-working/resize-pacing-not-working/README.md) and
-[`render-before-reveal-not-working`](../../packages-not-working/render-before-reveal-not-working/README.md).
-[`resize-deadline`](../resize-deadline/README.md) leaves resizing to AppKit
+[`resize-pacing-not-working`](https://github.com/lennondotw/electron-resize-sync/blob/main/packages-not-working/resize-pacing-not-working/README.md) and
+[`render-before-reveal-not-working`](https://github.com/lennondotw/electron-resize-sync/blob/main/packages-not-working/render-before-reveal-not-working/README.md).
+[`resize-deadline`](https://github.com/lennondotw/electron-resize-sync/blob/main/packages/resize-deadline/README.md) leaves resizing to AppKit
 and does not need it.
 
 ## Why guess

@@ -16,6 +16,6 @@ showResizeRateOverlay(win, { titleBarHeight: 44 });
 It is a separate child window (`setIgnoreMouseEvents(true)`), moved on every
 `resize` and `move`. In a recording with option D it kept its place in every
 frame in which the window's edges moved
-([overlay record](../../docs/experiments/2026-09-24/resize-rate-overlay/README.md)).
+([overlay record](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/experiments/2026-09-24/resize-rate-overlay/README.md)).
 It costs a renderer process and some main-thread work per resize; keep it out
 of measurements of the main thread.

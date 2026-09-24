@@ -1,16 +1,29 @@
 {
   "name": "@electron-resize-sync/resize-rate-overlay",
   "version": "0.1.0",
-  "description": "WORKS (diagnostic). A click-through label that shows how often a window actually changes size.",
+  "description": "A click-through overlay that shows how often an Electron window actually changes size.",
   "keywords": [
+    "diagnostics",
     "electron",
-    "macos",
+    "overlay",
     "resize"
   ],
+  "homepage": "https://github.com/lennondotw/electron-resize-sync/tree/main/packages/resize-rate-overlay#readme",
+  "bugs": {
+    "url": "https://github.com/lennondotw/electron-resize-sync/issues"
+  },
+  "license": "MIT",
+  "author": "lennondotw",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lennondotw/electron-resize-sync.git",
+    "directory": "packages/resize-rate-overlay"
+  },
   "files": [
     "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": false,

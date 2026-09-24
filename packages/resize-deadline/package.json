@@ -1,17 +1,32 @@
 {
   "name": "@electron-resize-sync/resize-deadline",
   "version": "0.1.0",
-  "description": "WORKS. Makes a window resize wait for the page's frame at the new size (option D): app-side switches plus a patch of Electron.",
+  "description": "Keep Electron window content in step with the frame during live resize on macOS: a patch that makes resizes wait for the page's frame, and the switches it needs.",
   "keywords": [
     "electron",
+    "jank",
+    "live-resize",
     "macos",
-    "resize"
+    "resize",
+    "surface-synchronization"
   ],
+  "homepage": "https://github.com/lennondotw/electron-resize-sync/tree/main/packages/resize-deadline#readme",
+  "bugs": {
+    "url": "https://github.com/lennondotw/electron-resize-sync/issues"
+  },
+  "license": "MIT",
+  "author": "lennondotw",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lennondotw/electron-resize-sync.git",
+    "directory": "packages/resize-deadline"
+  },
   "files": [
     "dist",
     "src",
     "README.md",
-    "electron-v44.4.5-resize-deadline.patch"
+    "electron-v44.4.5-resize-deadline.patch",
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": false,

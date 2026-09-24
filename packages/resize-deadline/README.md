@@ -1,16 +1,16 @@
 # @electron-resize-sync/resize-deadline
 
 **Status: works.** Option D in the
-[resize sync plan](../../docs/plans/2026-09-24/resize-sync.md): the window's
+[resize sync plan](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/plans/2026-09-24/resize-sync.md): the window's
 new size and the page's frame at that size reach the screen together, in
 every direction, with and without busy work
-([deadline patch record](../../docs/experiments/2026-09-24/resize-deadline-patch/README.md),
-[built-in display matrix](../../docs/experiments/2026-09-24/resize-matrix-builtin/README.md)).
+([deadline patch record](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/experiments/2026-09-24/resize-deadline-patch/README.md),
+[built-in display matrix](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/experiments/2026-09-24/resize-matrix-builtin/README.md)).
 
 The cost: each size step waits for the page's frame, so the window resizes
 at most at the page's frame rate, and the browser main thread waits up to one
 page frame per step. A page that skips optional work while resizing (see
-[`resize-activity`](../resize-activity/README.md)) keeps the wait short.
+[`resize-activity`](https://github.com/lennondotw/electron-resize-sync/blob/main/packages/resize-activity/README.md)) keeps the wait short.
 
 It needs two things, and neither works alone.
 
@@ -35,10 +35,10 @@ which no switch or API changes. Either:
   ```
 
 - **Or build Electron** with
-  [`electron-v44.4.5-resize-deadline.patch`](electron-v44.4.5-resize-deadline.patch),
+  [`electron-v44.4.5-resize-deadline.patch`](https://github.com/lennondotw/electron-resize-sync/blob/main/packages/resize-deadline/electron-v44.4.5-resize-deadline.patch),
   which adds `webPreferences.resizeDeadlineFrames`. It applies cleanly to
   v44.4.5 but has not been built or run; see
-  [shipping option D](../../docs/research/2026-09-24/shipping-option-d.md).
+  [shipping option D](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/research/2026-09-24/shipping-option-d.md).
 
 ## 2. Two switches, from the app
 

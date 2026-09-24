@@ -1,12 +1,23 @@
 {
   "name": "@electron-resize-sync/render-before-reveal-not-working",
   "version": "0.1.0",
-  "description": "DOES NOT WORK: content trails the frame when shrinking. Lays the page out at the next size before the window takes it (option C).",
+  "private": true,
+  "description": "DOES NOT WORK. Lays the page out before the window takes a new size; kept for comparison. Not published.",
   "keywords": [
     "electron",
-    "macos",
     "resize"
   ],
+  "homepage": "https://github.com/lennondotw/electron-resize-sync/tree/main/packages-not-working/render-before-reveal-not-working#readme",
+  "bugs": {
+    "url": "https://github.com/lennondotw/electron-resize-sync/issues"
+  },
+  "license": "MIT",
+  "author": "lennondotw",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lennondotw/electron-resize-sync.git",
+    "directory": "packages-not-working/render-before-reveal-not-working"
+  },
   "files": [
     "dist",
     "src",
@@ -36,31 +47,9 @@
       "default": "./dist/shared.js"
     }
   },
-  "publishConfig": {
-    "exports": {
-      "./main": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/main.js"
-      },
-      "./preload": {
-        "types": "./dist/preload.d.ts",
-        "default": "./dist/preload.js"
-      },
-      "./renderer": {
-        "types": "./dist/renderer.d.ts",
-        "default": "./dist/renderer.js"
-      },
-      "./shared": {
-        "types": "./dist/shared.d.ts",
-        "default": "./dist/shared.js"
-      }
-    },
-    "access": "public"
-  },
   "scripts": {
     "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p tsconfig.json",
-    "prepack": "pnpm build"
+    "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@electron-resize-sync/drag-edge-heuristic": "workspace:^"

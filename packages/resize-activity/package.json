@@ -1,16 +1,29 @@
 {
   "name": "@electron-resize-sync/resize-activity",
   "version": "0.1.0",
-  "description": "WORKS. Tells the renderer while a user resize is in progress, so it can skip optional work.",
+  "description": "Tell an Electron page while a user resize is in progress, so it can skip optional work.",
   "keywords": [
     "electron",
-    "macos",
+    "live-resize",
+    "performance",
     "resize"
   ],
+  "homepage": "https://github.com/lennondotw/electron-resize-sync/tree/main/packages/resize-activity#readme",
+  "bugs": {
+    "url": "https://github.com/lennondotw/electron-resize-sync/issues"
+  },
+  "license": "MIT",
+  "author": "lennondotw",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lennondotw/electron-resize-sync.git",
+    "directory": "packages/resize-activity"
+  },
   "files": [
     "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": false,

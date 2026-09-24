@@ -1,16 +1,29 @@
 {
   "name": "@electron-resize-sync/drag-edge-heuristic",
   "version": "0.1.0",
-  "description": "A GUESS, NOT A MEASUREMENT. Guesses which window edges a user resize drags on macOS, from the pointer.",
+  "description": "Guess which edges a user resize drags in Electron on macOS, where will-resize does not report them. A heuristic; it can be wrong.",
   "keywords": [
     "electron",
     "macos",
-    "resize"
+    "resize",
+    "will-resize"
   ],
+  "homepage": "https://github.com/lennondotw/electron-resize-sync/tree/main/packages/drag-edge-heuristic#readme",
+  "bugs": {
+    "url": "https://github.com/lennondotw/electron-resize-sync/issues"
+  },
+  "license": "MIT",
+  "author": "lennondotw",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lennondotw/electron-resize-sync.git",
+    "directory": "packages/drag-edge-heuristic"
+  },
   "files": [
     "dist",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": false,
