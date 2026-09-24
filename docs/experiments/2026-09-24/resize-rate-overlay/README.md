@@ -2,8 +2,8 @@
 
 Date: 2026-09-24\
 Status: executed; one recording with synthetic drags; the overlay was in step at every size change\
-Data: [`resize-rate-overlay.json`](resize-rate-overlay.json)\
-Scripts: [`experiments/resize-recording`](../../../experiments/resize-recording/README.md) (`overlay.ts`, `analyze.ts`)
+Data: [`data.json`](data.json)\
+Scripts: [`experiments/resize-recording`](../../../../experiments/resize-recording/README.md) (`overlay.ts`, `analyze.ts`)
 
 ## Question and acceptance criteria
 

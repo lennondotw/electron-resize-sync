@@ -2,8 +2,8 @@
 
 Date: YYYY-MM-DD\
 Status: draft\
-Data: [`<topic>.json`](<topic>.json)\
-Script: [`experiments/<topic>`](../../../experiments/<topic>/README.md)
+Data: [`data.json`](data.json)\
+Script: [`experiments/<topic>`](../../../../experiments/<topic>/README.md)
 
 ## Question and acceptance criteria
 

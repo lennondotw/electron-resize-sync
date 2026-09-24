@@ -1,12 +1,12 @@
 # Shipping option D
 
 Date: 2026-09-24\
-Status: source patch written and checked to apply, not built; app-set switches confirmed to reach the processes that read them\
+Status: source patch written and checked to apply, not built; app-set switches confirmed on screen\
 Evidence: source at Chromium 152.0.7977.130 and Electron v44.4.5 ([S]), local process checks ([R]), inference ([Inf])
 
 ## Question and scope
 
-The [deadline patch experiment](../../experiments/2026-09-24/resize-deadline-patch.md)
+The [deadline patch experiment](../../experiments/2026-09-24/resize-deadline-patch/README.md)
 showed that option D keeps the content in step with the window frame when
 three things hold:
 
@@ -33,8 +33,9 @@ scope.
   With `ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` (see `src/main/main.ts`),
   the GPU and renderer processes were launched with
   `--disable-features=…,RemoteCoreAnimationAPI,…`. [R]
-- Whether the deadline switch set this way has the same effect as on the
-  command line is not yet confirmed on screen (next check).
+- On screen, option D with the switches set this way kept content in step in
+  every drag on the built-in display
+  ([resize matrix](../../experiments/2026-09-24/resize-matrix-builtin/README.md), `m-d`, `m-off-d`). [R]
 
 **Only the deadline on resize needs Electron.** [S]
 
@@ -98,9 +99,6 @@ The cost is the same for 1 and 2 and is measured in the experiment:
 
 ## Unknowns and next check
 
-- Record a drag with the deadline switch set by the app instead of on the
-  command line (`ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` with the patched
-  build), to confirm the equivalence on screen.
 - Build Electron with the source patch and repeat the recording series;
   until then option 1 is unverified.
 - A forced deadline also applies to the first frame after a scale change or

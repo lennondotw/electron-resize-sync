@@ -2,8 +2,8 @@
 
 Date: 2026-09-24\
 Status: executed on one external display\
-Data: [`display-bit-depth.json`](display-bit-depth.json)\
-Script: [`experiments/display-bit-depth`](../../../experiments/display-bit-depth/README.md)
+Data: [`data.json`](data.json)\
+Script: [`experiments/display-bit-depth`](../../../../experiments/display-bit-depth/README.md)
 
 ## Question and acceptance criteria
 
@@ -13,7 +13,7 @@ deeper than 8 bits per channel.
 
 ## Environment
 
-Same machine and runtime as the [resize pacing record](resize-pacing.md#environment);
+Same machine and runtime as the [resize pacing record](../resize-pacing/README.md#environment);
 one external display, LG ULTRAGEAR+ (6016×3384, "looks like" 3008×1692 at 95 Hz).
 Repository `0dbf83b`.
 
@@ -21,7 +21,7 @@ Repository `0dbf83b`.
 
 ```bash
 pnpm build
-node experiments/display-bit-depth/run.ts --out docs/experiments/2026-09-24/display-bit-depth.json
+node experiments/display-bit-depth/run.ts --out docs/experiments/2026-09-24/display-bit-depth/data.json
 ```
 
 ## Results
@@ -44,7 +44,7 @@ The display path is 8-bit on this display: macOS reports an 8-bit framebuffer
 and Chromium sees 24-bit colour and no HDR headroom. Float16 canvases and
 WebGPU exist, but their output would be quantised to 8 bits at the end, so
 higher-precision rendering would not reduce banding here. Dithering is the
-applicable fix ([tile dithering](tile-dithering.md)).
+applicable fix ([tile dithering](../tile-dithering/README.md)).
 
 Limits: one display. The panel may support 10-bit or 8-bit + FRC over a
 different connection or setting; `NSScreen.depth` reports the framebuffer, not

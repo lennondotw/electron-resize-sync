@@ -2,19 +2,19 @@
 
 Date: 2026-09-24\
 Status: executed; real AppKit drags on one display; the content stays in step in every drag with the patch, a 30-frame deadline and RemoteCoreAnimationAPI off\
-Data: [`resize-deadline-patch.json`](resize-deadline-patch.json)\
-Scripts: [`experiments/deadline-patch`](../../../experiments/deadline-patch/README.md), [`experiments/resize-recording`](../../../experiments/resize-recording/README.md)
+Data: [`data.json`](data.json)\
+Scripts: [`experiments/deadline-patch`](../../../../experiments/deadline-patch/README.md), [`experiments/resize-recording`](../../../../experiments/resize-recording/README.md)
 
 ## Question and acceptance criteria
 
-The [source reading](../../research/2026-09-24/chromium-resize-sync.md)
+The [source reading](../../../research/2026-09-24/chromium-resize-sync.md)
 traced the out-of-step content to one decision: when the web contents view
 resizes, Chromium embeds the renderer's new surface with a deadline of 0, so
 the window's new frame is drawn with the renderer's previous content. Does
 making that resize use the default deadline, as Chrome's PWA windows do, keep
 the content in step with the window frame?
 
-Pass, as in the [baseline series](resize-recording.md), means no out-of-step
+Pass, as in the [baseline series](../resize-recording/README.md), means no out-of-step
 frames: all four edge markers stay at their rest offset (±1 px) and visible.
 Fewer window size updates per second are acceptable.
 
@@ -107,9 +107,9 @@ the data file).
 ### Cost: resize interval and main-thread blocking
 
 Measured separately with a main-process probe (now
-[`probe.ts`](../../../experiments/resize-recording/probe.ts)) during one
+[`probe.ts`](../../../../experiments/resize-recording/probe.ts)) during one
 right-edge drag per run; data in
-[`resize-deadline-patch-cost.json`](resize-deadline-patch-cost.json).
+[`cost.json`](cost.json).
 
 | Run                  | Busy (ms) | Resize interval, median (ms) | Longest main-thread block (ms) | Blocks over 16 ms |
 | -------------------- | --------- | ---------------------------- | ------------------------------ | ----------------- |
@@ -131,7 +131,7 @@ right-edge drag per run; data in
   also explains why busy 0 was the slowest (166 ms per step): the renderer
   produced frames as fast as it could, each queueing more GPU work.
   Summary of the trace (busy 30, yield on, dithering on):
-  [`resize-deadline-patch-trace.json`](resize-deadline-patch-trace.json),
+  [`trace.json`](trace.json),
   made with `trace.ts`. The GPU main thread spent 7.4 s in 285 swaps of
   20 ms or more, and the browser's Core Animation pre-commit handler waited
   up to 158 ms.

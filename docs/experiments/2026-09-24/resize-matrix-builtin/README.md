@@ -2,8 +2,8 @@
 
 Date: 2026-09-24\
 Status: executed; synthetic background drags of the right, bottom and bottom-right edges; option D in step in every drag, with busy work and without\
-Data: [`resize-matrix-builtin.json`](resize-matrix-builtin.json)\
-Scripts: [`experiments/resize-recording`](../../../experiments/resize-recording/README.md)
+Data: [`data.json`](data.json)\
+Scripts: [`experiments/resize-recording`](../../../../experiments/resize-recording/README.md)
 
 ## Question and acceptance criteria
 
@@ -13,7 +13,7 @@ built-in display:
 
 - Option D with its two switches set by the app
   (`ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30`, see
-  [shipping option D](../../research/2026-09-24/shipping-option-d.md)).
+  [shipping option D](../../../research/2026-09-24/shipping-option-d.md)).
 - Option C, the render-before-reveal window (`9f7010f`), measured for the
   first time.
 - Option B′, paced resizing with the busy work skipped during a resize.
@@ -57,8 +57,8 @@ timed with `probe.ts`.
 The tool delivers a whole path in well under a second, and AppKit coalesces
 it. Outward drags therefore produced 2–4 size changes, and inward drags
 6–22. Top and left drags cannot be expressed with this tool (see the
-[overlay record](resize-rate-overlay.md)). They were covered for option D on
-the external display in [the deadline patch record](resize-deadline-patch.md).
+[overlay record](../resize-rate-overlay/README.md)). They were covered for option D on
+the external display in [the deadline patch record](../resize-deadline-patch/README.md).
 
 | Run          | Electron | Settings                                                    |
 | ------------ | -------- | ----------------------------------------------------------- |

@@ -2,8 +2,8 @@
 
 Date: 2026-09-24\
 Status: executed; passes on Chromium's composited output\
-Data: [`tile-dithering.json`](tile-dithering.json)\
-Script: [`experiments/tile-dithering`](../../../experiments/tile-dithering/README.md)
+Data: [`data.json`](data.json)\
+Script: [`experiments/tile-dithering`](../../../../experiments/tile-dithering/README.md)
 
 ## Question and acceptance criteria
 
@@ -18,14 +18,14 @@ neighbour step is flat, while dithering off shows plateaus.
 ## Environment
 
 Same machine, display and runtime as the
-[resize pacing record](resize-pacing.md#environment); repository `0dbf83b`,
+[resize pacing record](../resize-pacing/README.md#environment); repository `0dbf83b`,
 no uncommitted changes under `src` or `experiments`.
 
 ## Procedure
 
 ```bash
 pnpm build
-node experiments/tile-dithering/run.ts --out docs/experiments/2026-09-24/tile-dithering.json
+node experiments/tile-dithering/run.ts --out docs/experiments/2026-09-24/tile-dithering/data.json
 ```
 
 Paused at time 0 with no busy work, so every run renders the same wave phase.
@@ -57,4 +57,4 @@ judgement that was not recorded.
 ## Next step
 
 None planned; revisit if the display path changes (see
-[display bit depth](display-bit-depth.md)).
+[display bit depth](../display-bit-depth/README.md)).

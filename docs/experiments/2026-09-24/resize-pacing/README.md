@@ -2,8 +2,8 @@
 
 Date: 2026-09-24\
 Status: executed; simulated drags only; inconclusive for the synchronisation goal\
-Data: [`resize-pacing.json`](resize-pacing.json)\
-Script: [`experiments/resize-pacing`](../../../experiments/resize-pacing/README.md)
+Data: [`data.json`](data.json)\
+Script: [`experiments/resize-pacing`](../../../../experiments/resize-pacing/README.md)
 
 ## Question and acceptance criteria
 
@@ -11,7 +11,7 @@ Does pacing window resizes to renderer acks (`resize sync`) stop the window
 from showing sizes the renderer has not rendered yet, for every edge and corner
 in both directions?
 
-The [plan](../../plans/2026-09-24/resize-sync.md) goal would be supported if the
+The [plan](../../../plans/2026-09-24/resize-sync.md) goal would be supported if the
 unpainted duration (window takes on a size → renderer finishes its first frame
 at that size) stayed near zero with pacing on, at every busy budget. Fewer
 applied sizes under load are acceptable.
@@ -33,7 +33,7 @@ From `environment` in the data file:
 
 ```bash
 pnpm build
-node experiments/resize-pacing/run.ts --out docs/experiments/2026-09-24/resize-pacing.json
+node experiments/resize-pacing/run.ts --out docs/experiments/2026-09-24/resize-pacing/data.json
 ```
 
 Defaults: busy 0, 30 and 65 ms; `resize sync` off and on; eight edges and

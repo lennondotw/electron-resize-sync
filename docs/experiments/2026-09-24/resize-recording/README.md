@@ -2,13 +2,13 @@
 
 Date: 2026-09-24\
 Status: executed; real AppKit drags on one display; no configuration keeps content in step\
-Data: [`resize-recording.json`](resize-recording.json)\
-Script: [`experiments/resize-recording`](../../../experiments/resize-recording/README.md)
+Data: [`data.json`](data.json)\
+Script: [`experiments/resize-recording`](../../../../experiments/resize-recording/README.md)
 
 ## Question and acceptance criteria
 
 During a real live-resize drag, does the content stay fixed relative to the
-window frame? This is the [plan](../../plans/2026-09-24/resize-sync.md)'s goal
+window frame? This is the [plan](../../../plans/2026-09-24/resize-sync.md)'s goal
 measured directly on screen.
 
 - **Pass:** no out-of-step frames during a drag. Every edge marker stays at its
@@ -16,7 +16,7 @@ measured directly on screen.
 - **Checked for:**
   - the default behaviour;
   - paced resizing (`resize sync`, option B);
-  - three Chromium switches that the [source reading](../../research/2026-09-24/chromium-resize-sync.md)
+  - three Chromium switches that the [source reading](../../../research/2026-09-24/chromium-resize-sync.md)
     predicted would not help (part of option D).
 
 ## Environment

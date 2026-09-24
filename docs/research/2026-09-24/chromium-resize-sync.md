@@ -1,7 +1,7 @@
 # Chromium and Electron resize synchronisation on macOS
 
 Date: 2026-09-24\
-Status: source reading at Chromium 152.0.7977.130 and Electron v44.4.5; runtime checks in [resize recording](../../experiments/2026-09-24/resize-recording.md)\
+Status: source reading at Chromium 152.0.7977.130 and Electron v44.4.5; runtime checks in [resize recording](../../experiments/2026-09-24/resize-recording/README.md)\
 Evidence: source permalinks ([S]), issue and commit claims ([I]), inference ([Inf])
 
 Sources were read at the exact tags: Chromium files were fetched from
