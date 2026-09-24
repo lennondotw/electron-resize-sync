@@ -57,6 +57,8 @@ enableResizeDeadline({ frames: 30 });
 
 ## Limits
 
-- macOS arm64 only; measured on macOS 27.0 with Electron 44.4.5.
+- macOS arm64 only; measured on macOS 27.0 with Electron 44.4.5. The peer
+  dependency is Electron 44.4.5 exactly, because the binary patch matches only
+  that build.
 - A hung page makes each resize step wait up to the deadline.
 - Measured with synthetic drags; a person's drag was only tried by eye.

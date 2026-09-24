@@ -62,11 +62,11 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.6",
-    "electron": "^44.4.5",
+    "electron": "catalog:",
     "typescript": "^7.0.2"
   },
   "peerDependencies": {
-    "electron": ">=44.4.5"
+    "electron": "44.4.5"
   },
   "engines": {
     "node": ">=24"

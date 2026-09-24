@@ -26,7 +26,9 @@ const MOV_W0_1 = 0x52800020;
 const RET = 0xd65f03c0;
 /**
  * The bytes are those of Electron 44.4.5 on arm64 (Chromium 152.0.7977.130).
- * Any other build fails the check instead of being patched.
+ * Any other build fails the check instead of being patched. The workspace
+ * pins Electron to this build (the catalog in pnpm-workspace.yaml), and this
+ * package's peer dependency is the same exact version.
  */
 const PATCHES: Patch[] = [
   {

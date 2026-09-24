@@ -3,5 +3,13 @@ packages:
   - packages/*
   - packages-not-working/*
 
+catalog:
+  # Pinned exactly. The option D binary patch (packages/resize-deadline,
+  # patchElectronFramework) matches instruction bytes of this build only and
+  # refuses any other, and every experiment record was measured on it.
+  # Upgrading means finding the patched functions again in the new build's
+  # symbols, updating the expected bytes, and repeating the recordings.
+  electron: 44.4.5
+
 onlyBuiltDependencies:
   - electron
