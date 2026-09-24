@@ -1,13 +1,13 @@
 import { Slider } from "@base-ui/react/slider";
 import { Switch } from "@base-ui/react/switch";
 import { useEffect, useRef, useState } from "react";
-import { loadHudSettings, saveHudSettings, type HudSettings } from "./hudSettings.ts";
-import { useResizeLatency } from "./resizeProbe.ts";
-import { fitTiles, TileWave } from "./TileWave.tsx";
-import { TitleBar } from "./TitleBar.tsx";
-import { useElementSize } from "./useElementSize.ts";
-import { isResizing } from "./resizeActivity.ts";
-import { useJankyFrameLoop } from "./useJankyFrameLoop.ts";
+import { loadHudSettings, saveHudSettings, type HudSettings } from "./hud-settings.ts";
+import { useResizeLatency } from "./resize-probe.ts";
+import { fitTiles, TileWave } from "./tile-wave.tsx";
+import { TitleBar } from "./title-bar.tsx";
+import { useElementSize } from "./use-element-size.ts";
+import { isResizing } from "./resize-activity.ts";
+import { useJankyFrameLoop } from "./use-janky-frame-loop.ts";
 
 export function App() {
   const [settings, setSettings] = useState(loadHudSettings);

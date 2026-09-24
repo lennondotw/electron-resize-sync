@@ -1,4 +1,4 @@
-// In a render-before-reveal window (option C, src/main/revealWindow.ts) the
+// In a render-before-reveal window (option C, src/main/reveal-window.ts) the
 // page is larger than the window, and the main process says where #root goes.
 // Each layout is acknowledged once a frame showing it has been rendered, so
 // the window can take the matching bounds.

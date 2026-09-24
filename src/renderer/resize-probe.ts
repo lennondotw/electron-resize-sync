@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import type { ContentSize, ResizeBridge } from "../shared/resizeBridge.ts";
+import type { ContentSize, ResizeBridge } from "../shared/resize-bridge.ts";
 
 declare global {
   interface Window {

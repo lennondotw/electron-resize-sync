@@ -3,7 +3,7 @@ import {
   RESIZE_ACK_CHANNEL,
   RESIZE_SYNC_CHANNEL,
   type ContentSize,
-} from "../shared/resizeBridge.ts";
+} from "../shared/resize-bridge.ts";
 
 /** Stop waiting for an ack after this long, e.g. when the renderer is hidden or hung. */
 const ACK_TIMEOUT_MS = 500;

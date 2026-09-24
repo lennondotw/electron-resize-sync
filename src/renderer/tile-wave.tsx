@@ -1,7 +1,7 @@
 import { formatRgb, mixOklch, oklchToSrgb, type Oklch, type Rgb } from "./color.ts";
-import { DITHER_LEVELS, DITHER_MASK_SIZE, ditherMaskUrls } from "./ditherMasks.ts";
-import { usePixelRatio } from "./usePixelRatio.ts";
-import { usePrefersDark } from "./usePrefersDark.ts";
+import { DITHER_LEVELS, DITHER_MASK_SIZE, ditherMaskUrls } from "./dither-masks.ts";
+import { usePixelRatio } from "./use-pixel-ratio.ts";
+import { usePrefersDark } from "./use-prefers-dark.ts";
 
 /** Preferred tile edge; tiles stretch so the grid fills #root exactly. */
 const TILE_TARGET = 44;

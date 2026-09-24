@@ -1,4 +1,4 @@
-import { createBlueNoise } from "./blueNoise.ts";
+import { createBlueNoise } from "./blue-noise.ts";
 
 /** Coverage steps between two adjacent 8-bit colours. */
 export const DITHER_LEVELS = 16;

@@ -12,11 +12,11 @@ import {
   RESIZE_COMMIT_CHANNEL,
   REVEAL_ARGUMENT,
   type ResizeCommit,
-} from "../shared/resizeBridge.ts";
+} from "../shared/resize-bridge.ts";
 import { TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
-import { paceResizes } from "./resizePacer.ts";
-import { showResizeRateOverlay } from "./resizeRateOverlay.ts";
-import { createRevealWindow } from "./revealWindow.ts";
+import { paceResizes } from "./resize-pacer.ts";
+import { showResizeRateOverlay } from "./resize-rate-overlay.ts";
+import { createRevealWindow } from "./reveal-window.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
 // Option C (render before reveal) needs a different window structure, so it is

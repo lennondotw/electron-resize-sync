@@ -12,7 +12,7 @@ import {
   type ResizeBridge,
   type ResizeCommit,
   type RevealLayout,
-} from "../shared/resizeBridge.ts";
+} from "../shared/resize-bridge.ts";
 
 const resizeBridge: ResizeBridge = {
   onCommit(listener) {

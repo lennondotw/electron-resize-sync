@@ -12,8 +12,8 @@ import {
   REVEAL_LAYOUT_CHANNEL,
   REVEAL_REQUEST_CHANNEL,
   type RevealLayout,
-} from "../shared/resizeBridge.ts";
-import { anchorOppositeEdges } from "./resizePacer.ts";
+} from "../shared/resize-bridge.ts";
+import { anchorOppositeEdges } from "./resize-pacer.ts";
 
 /**
  * Room around the window, in points, into which the page can lay out #root
