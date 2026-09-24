@@ -134,8 +134,8 @@ const handles = {
   "bottom-right": { at: [right - 1, bottom - 1], dir: [1, 1] },
 } as const;
 /** One frame unit across the drag direction, so the nudge does not change the size. */
-const nudge = ([x, y]: number[], dir: readonly number[]) =>
-  dir[1] === 0 ? [x, (y ?? 0) + 1] : [(x ?? 0) + 1, y];
+const nudge = ([x = 0, y = 0]: number[], dir: readonly number[]) =>
+  dir[1] === 0 ? [x, y + 1] : [x + 1, y];
 const drags: Record<string, unknown[]> = {};
 for (const [edge, { at, dir }] of Object.entries(handles)) {
   for (const way of ["outward", "inward"] as const) {
@@ -164,10 +164,35 @@ for (const [edge, { at, dir }] of Object.entries(handles)) {
   }
 }
 
+// The same drags as paths for a background drag tool (computer-use app_drag),
+// in points of the backdrop window, which does not move while the app window
+// resizes. Such a tool delivers a whole path at once, so AppKit coalesces it
+// into a few size changes; the path ends with the same nudge.
+const APP_DRAG_STEPS = 6;
+const appDrags: Record<string, number[][]> = {};
+for (const [edge, { at, dir }] of Object.entries(handles)) {
+  for (const way of ["outward", "inward"] as const) {
+    const sign = way === "outward" ? 1 : -1;
+    const local = (k: number) => {
+      const d = (sign * k * DRAG.distance) / APP_DRAG_STEPS;
+      return [
+        Math.round(at[0] + dir[0] * d - backdrop.x),
+        Math.round(at[1] + dir[1] * d - backdrop.y),
+      ];
+    };
+    const offsets = [
+      ...Array.from({ length: APP_DRAG_STEPS + 1 }, (_, k) => k),
+      ...Array.from({ length: APP_DRAG_STEPS }, (_, k) => APP_DRAG_STEPS - 1 - k),
+    ];
+    const start = local(0);
+    appDrags[`${edge} ${way}`] = [...offsets.map(local), nudge(start, dir), start];
+  }
+}
+
 const outPath = args.out ?? path.join(runDir, "geometry.json");
 await writeFile(
   outPath,
-  `${JSON.stringify({ args, environment, display, captureScreen, window, backdrop, crop, drag: DRAG, drags }, null, 2)}\n`,
+  `${JSON.stringify({ args, environment, display, captureScreen, window, backdrop, crop, drag: DRAG, drags, appDrags }, null, 2)}\n`,
 );
 console.log(`Staged. Geometry in ${outPath}. Interrupt to stop.`);
 

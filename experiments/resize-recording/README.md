@@ -27,7 +27,9 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
    ```
 
    `--sync on` enables paced resizing; `--electron-arg=<switch>` passes Chromium
-   switches (repeatable); `--env NAME=value` sets environment variables.
+   switches (repeatable); `--env NAME=value` sets environment variables;
+   `--display <part of a name>` stages on that display instead of the primary
+   one (the recording then captures that display).
 
 2. Start a recording long enough to cover the drags:
 
@@ -37,7 +39,9 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
 
 3. While it records, perform the drags listed under `drags` in the geometry
    file (for example `"right outward"` then `"right inward"`), leaving about a
-   second between drags.
+   second between drags. A background drag tool that takes whole paths (such
+   as computer-use `app_drag`) uses `appDrags` instead: paths in points of the
+   backdrop window, which does not move while the app window resizes.
 
 4. Analyse:
 
@@ -45,7 +49,12 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
    node experiments/resize-recording/analyze.ts --geometry tmp/rec/geometry.json --video tmp/rec/run.mp4 --out tmp/rec/run.json
    ```
 
-5. Optional: timing from the main process. Run `node experiments/resize-recording/probe.ts install`
+5. Optional: with `--env ELECTRON_RESIZE_SYNC_OVERLAY=1`, the resize rate
+   overlay is shown, and `overlay.ts --geometry … --video … --out …` measures,
+   per frame, whether its label keeps its offset from the window's top-right
+   corner.
+
+6. Optional: timing from the main process. Run `node experiments/resize-recording/probe.ts install`
    before a drag and `probe.ts dump` after it. It prints the resize interval
    and how long the main thread was blocked.
 
