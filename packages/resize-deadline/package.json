@@ -40,6 +40,11 @@
       "development": "./src/patch.ts",
       "types": "./dist/patch.d.ts",
       "default": "./dist/patch.js"
+    },
+    "./afterpack": {
+      "development": "./src/afterpack.ts",
+      "types": "./dist/afterpack.d.ts",
+      "default": "./dist/afterpack.js"
     }
   },
   "publishConfig": {
@@ -51,6 +56,10 @@
       "./patch": {
         "types": "./dist/patch.d.ts",
         "default": "./dist/patch.js"
+      },
+      "./afterpack": {
+        "types": "./dist/afterpack.d.ts",
+        "default": "./dist/afterpack.js"
       }
     },
     "access": "public"

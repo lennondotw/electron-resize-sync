@@ -19,8 +19,10 @@ script prepares the copy around it. The copy lives in
 node experiments/tools/deadline-patch/patch.ts
 ```
 
-It needs `gh` (to download the symbols), Xcode command-line tools (`dwarfdump`,
-`otool`, `codesign`), and `unzip`. Then launch any script with the patched copy:
+It copies the installed Electron and patches it from the build table in
+[`packages/resize-deadline`](../../../packages/resize-deadline/README.md), so
+no symbols are needed — only `codesign` to re-sign. Then launch any script
+with the patched copy:
 
 ```bash
 ELECTRON_OVERRIDE_DIST_PATH=$PWD/tmp/deadline-patch/dist node experiments/tools/resize-recording/stage.ts …
@@ -53,25 +55,29 @@ patch rewrites the function itself:
 
 The script:
 
-1. Downloads `electron-v<version>-darwin-arm64-symbols.zip` (about 129 MB,
-   official breakpad symbols) from the Electron release, once.
-2. Copies `node_modules/electron/dist/Electron.app` with `ditto`.
-3. Patches it with `patchElectronFramework`, which checks that the symbols
-   match the framework's UUID and that `__TEXT` maps addresses to file
-   offsets, finds each function's address in the `FUNC` records, compares the
-   instructions there with the expected original bytes (stopping if any
-   differ), and only then writes the replacements.
-4. Gives the copy its own bundle identifier
+1. Copies `node_modules/electron/dist/Electron.app` with `ditto`.
+2. Patches it with `patchElectronFramework`, which finds the build by the
+   framework's UUID, checks the bytes at each site against the expected
+   original (stopping if any differ), and writes the replacements. The offsets
+   come from the package's build table, so no symbols are downloaded.
+3. Gives the copy its own bundle identifier
    (`com.github.Electron.deadline-patch`), so automation tools do not mistake
    it for the stock Electron. This is for the experiments only.
-5. Re-signs the copy ad hoc.
+4. Re-signs the copy ad hoc and stamps `patched.json`.
+
+To add a build to the table (a new Electron version, or Intel x64), run
+`find-sites.ts <Electron.app> <symbols.zip> --arch <arm64|x64>` once. It needs
+that release's breakpad symbols and prints an entry for
+`packages/resize-deadline/src/builds.ts`.
 
 ## Limits
 
-- **Tied to one build:** the expected bytes are for Electron 44.4.5 on arm64.
-  Any other build fails the check rather than being patched blindly.
-- **Experiment only, not for distribution:** the ad hoc signature is local.
-  A product needs the same change as a source patch to Electron:
+- **Tied to known builds:** the table covers Electron 44.4.5 on arm64. Any
+  other build fails the check rather than being patched blindly; add it with
+  `find-sites.ts`.
+- **Experiment only, not for distribution:** the ad hoc signature is local. A
+  product patches its own packaged app (the package's `afterpack` hook) or
+  ships a source-patched Electron:
   [`electron-v44.4.5-resize-deadline.patch`](../../../packages/resize-deadline/electron-v44.4.5-resize-deadline.patch)
   adds `webPreferences.resizeDeadlineFrames` (written and checked to apply,
   not built). See [shipping option D](../../../docs/research/2026-09-24/shipping-option-d.md).
