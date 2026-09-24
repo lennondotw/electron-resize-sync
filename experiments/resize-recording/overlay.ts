@@ -43,6 +43,25 @@ const cy = Math.round((rest.y - backdrop.y + rest.height / 2) * scale);
 const TITLE_BAR = 44 * scale;
 /** How far left of the right edge to look for the label. */
 const SEARCH = 210 * scale;
+/** Index of a pixel's first byte in an RGB frame. */
+const at = (x: number, y: number) => (y * W + x) * 3;
+/** Offsets of the three scanlines per edge from the window's centre lines, in pixels. */
+const LANES = [-100 * scale, 0, 100 * scale];
+const median3 = (values: number[]) => values.toSorted((a, b) => a - b)[1]!;
+/** Steps from (x, y) in direction (dx, dy) to the last pixel before the backdrop. */
+function edgeFrom(
+  x: number,
+  y: number,
+  dx: number,
+  dy: number,
+  isBackdrop: (x: number, y: number) => boolean,
+) {
+  while (x + dx >= 0 && x + dx < W && y + dy >= 0 && y + dy < H && !isBackdrop(x + dx, y + dy)) {
+    x += dx;
+    y += dy;
+  }
+  return dx === 0 ? y : x;
+}
 /** A deviation of this many pixels or less counts as in step (edge detection noise). */
 const TOLERANCE = 3;
 
@@ -57,7 +76,6 @@ interface Frame {
 }
 
 function analyzeFrame(pixels: Buffer, t: number): Frame {
-  const at = (x: number, y: number) => (y * W + x) * 3;
   const magenta = (x: number, y: number) => {
     const i = at(x, y);
     return pixels[i]! - pixels[i + 1]! > 40 && pixels[i + 2]! - pixels[i + 1]! > 40;
@@ -68,10 +86,9 @@ function analyzeFrame(pixels: Buffer, t: number): Frame {
     const i = at(x, y);
     return pixels[i]! < 22 && pixels[i + 1]! < 22 && pixels[i + 2]! < 22;
   };
-  let right = cx;
-  while (right < W - 1 && !magenta(right + 1, cy)) right++;
-  let top = cy;
-  while (top > 0 && !magenta(cx, top - 1)) top--;
+  // Median of three scanlines, so a small overlay on one does not move the edge.
+  const right = median3(LANES.map((d) => edgeFrom(cx, cy + d, 1, 0, magenta)));
+  const top = median3(LANES.map((d) => edgeFrom(cx + d, cy, 0, -1, magenta)));
 
   let maxX = -Infinity;
   let minY = Infinity;

@@ -1,7 +1,7 @@
 # Does the resize rate overlay keep up with the window?
 
 Date: 2026-09-24\
-Status: executed; one recording with synthetic drags; the overlay was in step at every size change; one unexplained 1 pt mismatch between the window frame and everything that follows the window's reported size\
+Status: executed; one recording with synthetic drags; the overlay was in step at every size change\
 Data: [`resize-rate-overlay.json`](resize-rate-overlay.json)\
 Scripts: [`experiments/resize-recording`](../../../experiments/resize-recording/README.md) (`overlay.ts`, `analyze.ts`)
 
@@ -72,9 +72,9 @@ minimum height (420 pt), and the corner drags then changed only the width.
 | Measure                                     | Value |
 | ------------------------------------------- | ----- |
 | Captured frames                             | 3,653 |
-| Frames in which the right or top edge moved | 26    |
+| Frames in which the right or top edge moved | 34    |
 | …with the label off its rest offset         | 0     |
-| Frames in the 10 frames after each move     | 154   |
+| Frames in the 10 frames after each move     | 241   |
 | …with the label off its rest offset         | 0     |
 
 - The label's rest offset was 23 px from the right edge and 23 px from the
@@ -82,24 +82,22 @@ minimum height (420 pt), and the corner drags then changed only the width.
 - **Large moves were in step.** The top edge moved 40–160 px between two
   frames, and the right edge 40–120 px. In the same frame the label kept both
   offsets.
+- **Outward right-edge drags barely resized.** Each of the six changed the
+  width by 1 pt and back: AppKit coalesced the fast path.
 
-**The content stayed in step with option D, except where the window frame
-disagreed with its reported size.**
+**The content stayed in step with option D.** 0 out-of-step frames in six of
+seven drags; the top-edge drag had 4 of 23 frames with the right marker up to
+3 px behind.
 
-- The corner drags (reported as `right-`) were in step: 0 of 91 frames out
-  of step.
-- **One unexplained 1 pt mismatch:**
-  - After the first right-edge drags, the window frame on screen was 1 pt
-    wider (the right edge 2 px further out) than both the page content and
-    the overlay placed it. The right edge marker trailed by 2 px, and the
-    label sat 25 px instead of 23 px from the edge.
-  - This lasted about 32 s, until the next drag. It covers the two
-    out-of-step drags in the data (11 of 46 and 27 of 38 frames).
-  - A `setBounds` to the rest size in that interval changed nothing on
-    screen, and `getBounds` reported the rest size throughout. So Electron
-    believed the window was 800 pt wide while the screen showed 801 pt.
-  - Setting 1 pt size changes with `setBounds` did not reproduce it: the
-    overlay followed each change, and each one emitted `resize`.
+**Correction.** The first analysis reported a 1 pt mismatch lasting about
+32 s, in which the window frame looked 1 pt wider than both the content and
+the overlay. It was not the window:
+
+- The drag tool draws its own pointer on screen, and the capture records it.
+- It rested on the window's right edge, on the one scanline that the edge
+  detection used, and was counted as window.
+- Both scripts now take each edge as the median of three scanlines. With that
+  change, the mismatch is gone, and the numbers above are from the re-run.
 
 ## Conclusion and limits
 
@@ -112,11 +110,6 @@ disagreed with its reported size.**
     same screen refresh.
 - **Not seen:** a lag shorter than one capture frame (16.7 ms), since the
   display runs at 120 Hz and the capture at 60 fps.
-- **Open: frame and reported size disagreed by 1 pt after synthetic drags.**
-  Everything that follows the reported size, the page and the overlay, was
-  off by that 1 pt until the next resize. Whether a person's drag can cause
-  this is unknown. The fast, coalesced `app_drag` paths and the final nudge
-  are the likely trigger.
 - **Only one run, with synthetic input:** no human drag, and no run without
   option D.
 
@@ -125,4 +118,3 @@ disagreed with its reported size.**
 - Top and left drags need a tool that drags in screen coordinates: `app_drag`
   sends events to one window in that window's points, so dragging in the
   backdrop window's points resizes nothing.
-- Watch for the 1 pt mismatch in the next recordings.

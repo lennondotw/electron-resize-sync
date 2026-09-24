@@ -36,6 +36,25 @@ const H = crop.height;
 /** A point inside the window for every drag (outward drags grow, inward ones stay far from it). */
 const cx = Math.round((rest.x - backdrop.x + rest.width / 2) * scale);
 const cy = Math.round((rest.y - backdrop.y + rest.height / 2) * scale);
+/** Index of a pixel's first byte in an RGB frame. */
+const at = (x: number, y: number) => (y * W + x) * 3;
+/** Offsets of the three scanlines per edge from the window's centre lines, in pixels. */
+const LANES = [-100 * scale, 0, 100 * scale];
+const median3 = (values: number[]) => values.toSorted((a, b) => a - b)[1]!;
+/** Steps from (x, y) in direction (dx, dy) to the last pixel before the backdrop. */
+function edgeFrom(
+  x: number,
+  y: number,
+  dx: number,
+  dy: number,
+  isBackdrop: (x: number, y: number) => boolean,
+) {
+  while (x + dx >= 0 && x + dx < W && y + dy >= 0 && y + dy < H && !isBackdrop(x + dx, y + dy)) {
+    x += dx;
+    y += dy;
+  }
+  return dx === 0 ? y : x;
+}
 /** How far inside an edge to look for its marker: covers a content lag of several drag steps. */
 const BAND = 200;
 /** A deviation of this many pixels or less counts as in step (encoding noise). */
@@ -52,7 +71,6 @@ interface Frame {
 }
 
 function analyzeFrame(pixels: Buffer, frame: number): Frame {
-  const at = (x: number, y: number) => (y * W + x) * 3;
   const magenta = (x: number, y: number) => {
     const i = at(x, y);
     const r = pixels[i]!;
@@ -69,14 +87,12 @@ function analyzeFrame(pixels: Buffer, frame: number): Frame {
     return g - r > 100 && g - b > 100;
   };
 
-  let left = cx;
-  while (left > 0 && !magenta(left - 1, cy)) left--;
-  let right = cx;
-  while (right < W - 1 && !magenta(right + 1, cy)) right++;
-  let top = cy;
-  while (top > 0 && !magenta(cx, top - 1)) top--;
-  let bottom = cy;
-  while (bottom < H - 1 && !magenta(cx, bottom + 1)) bottom++;
+  // Each edge is the median of three scanlines, so a small overlay resting on
+  // one of them (such as the pointer a drag tool draws) does not move it.
+  const left = median3(LANES.map((d) => edgeFrom(cx, cy + d, -1, 0, magenta)));
+  const right = median3(LANES.map((d) => edgeFrom(cx, cy + d, 1, 0, magenta)));
+  const top = median3(LANES.map((d) => edgeFrom(cx + d, cy, 0, -1, magenta)));
+  const bottom = median3(LANES.map((d) => edgeFrom(cx + d, cy, 0, 1, magenta)));
 
   // Extent of green pixels inside a band along one edge of the window.
   const scan = (x0: number, x1: number, y0: number, y1: number) => {

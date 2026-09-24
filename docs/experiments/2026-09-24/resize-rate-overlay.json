@@ -75,9 +75,9 @@
       "dx": 23,
       "dy": 23
     },
-    "windowChanges": 26,
+    "windowChanges": 34,
     "windowChangesOutOfStep": 0,
-    "framesNearChanges": 154,
+    "framesNearChanges": 241,
     "framesNearChangesOutOfStep": 0,
     "changes": [
       {
@@ -99,11 +99,92 @@
         "inStep": true
       },
       {
-        "frame": 653,
-        "t": 11.2,
+        "frame": 683,
+        "t": 11.7,
         "rightMovedPx": 2,
         "topMovedPx": 0,
-        "dx": 25,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 694,
+        "t": 11.9,
+        "rightMovedPx": -2,
+        "topMovedPx": 0,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 743,
+        "t": 12.733333,
+        "rightMovedPx": 2,
+        "topMovedPx": 0,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 755,
+        "t": 12.933333,
+        "rightMovedPx": -2,
+        "topMovedPx": 0,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 796,
+        "t": 13.816667,
+        "rightMovedPx": 2,
+        "topMovedPx": 0,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 806,
+        "t": 13.983333,
+        "rightMovedPx": -2,
+        "topMovedPx": 0,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 854,
+        "t": 14.833333,
+        "rightMovedPx": 2,
+        "topMovedPx": 0,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 866,
+        "t": 15.033333,
+        "rightMovedPx": -2,
+        "topMovedPx": 0,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 917,
+        "t": 15.9,
+        "rightMovedPx": 2,
+        "topMovedPx": 0,
+        "dx": 23,
+        "dy": 23,
+        "inStep": true
+      },
+      {
+        "frame": 931,
+        "t": 16.15,
+        "rightMovedPx": -2,
+        "topMovedPx": 0,
+        "dx": 23,
         "dy": 23,
         "inStep": true
       },
@@ -112,7 +193,7 @@
         "t": 43.016667,
         "rightMovedPx": 0,
         "topMovedPx": 40,
-        "dx": 25,
+        "dx": 23,
         "dy": 23,
         "inStep": true
       },
@@ -121,7 +202,7 @@
         "t": 43.083333,
         "rightMovedPx": 0,
         "topMovedPx": 100,
-        "dx": 25,
+        "dx": 23,
         "dy": 23,
         "inStep": true
       },
@@ -130,7 +211,7 @@
         "t": 43.15,
         "rightMovedPx": 0,
         "topMovedPx": 160,
-        "dx": 25,
+        "dx": 23,
         "dy": 23,
         "inStep": true
       },
@@ -139,15 +220,6 @@
         "t": 43.2,
         "rightMovedPx": 0,
         "topMovedPx": 60,
-        "dx": 25,
-        "dy": 23,
-        "inStep": true
-      },
-      {
-        "frame": 2532,
-        "t": 43.45,
-        "rightMovedPx": -2,
-        "topMovedPx": 0,
         "dx": 23,
         "dy": 23,
         "inStep": true
@@ -327,12 +399,12 @@
     "drags": [
       {
         "firstFrame": 618,
-        "lastFrame": 663,
-        "frames": 46,
-        "seconds": 0.783,
-        "sizeUpdates": 3,
+        "lastFrame": 642,
+        "frames": 25,
+        "seconds": 0.417,
+        "sizeUpdates": 2,
         "direction": "",
-        "outOfStepFrames": 11,
+        "outOfStepFrames": 0,
         "perEdge": {
           "left": {
             "hiddenFrames": 0,
@@ -346,7 +418,162 @@
           },
           "right": {
             "hiddenFrames": 0,
-            "maxBehindPx": 2,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "bottom": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          }
+        }
+      },
+      {
+        "firstFrame": 682,
+        "lastFrame": 704,
+        "frames": 23,
+        "seconds": 0.383,
+        "sizeUpdates": 2,
+        "direction": "",
+        "outOfStepFrames": 0,
+        "perEdge": {
+          "left": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "top": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "right": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "bottom": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          }
+        }
+      },
+      {
+        "firstFrame": 742,
+        "lastFrame": 765,
+        "frames": 24,
+        "seconds": 0.483,
+        "sizeUpdates": 2,
+        "direction": "",
+        "outOfStepFrames": 0,
+        "perEdge": {
+          "left": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "top": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "right": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "bottom": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          }
+        }
+      },
+      {
+        "firstFrame": 795,
+        "lastFrame": 816,
+        "frames": 22,
+        "seconds": 0.367,
+        "sizeUpdates": 2,
+        "direction": "",
+        "outOfStepFrames": 0,
+        "perEdge": {
+          "left": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "top": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "right": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "bottom": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          }
+        }
+      },
+      {
+        "firstFrame": 853,
+        "lastFrame": 876,
+        "frames": 24,
+        "seconds": 0.4,
+        "sizeUpdates": 2,
+        "direction": "",
+        "outOfStepFrames": 0,
+        "perEdge": {
+          "left": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "top": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "right": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "bottom": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          }
+        }
+      },
+      {
+        "firstFrame": 916,
+        "lastFrame": 941,
+        "frames": 26,
+        "seconds": 0.433,
+        "sizeUpdates": 2,
+        "direction": "",
+        "outOfStepFrames": 0,
+        "perEdge": {
+          "left": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "top": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
+            "maxAheadPx": 0
+          },
+          "right": {
+            "hiddenFrames": 0,
+            "maxBehindPx": 0,
             "maxAheadPx": 0
           },
           "bottom": {
@@ -358,12 +585,12 @@
       },
       {
         "firstFrame": 2505,
-        "lastFrame": 2542,
-        "frames": 38,
-        "seconds": 0.617,
-        "sizeUpdates": 5,
+        "lastFrame": 2527,
+        "frames": 23,
+        "seconds": 0.367,
+        "sizeUpdates": 4,
         "direction": "top-",
-        "outOfStepFrames": 27,
+        "outOfStepFrames": 4,
         "perEdge": {
           "left": {
             "hiddenFrames": 0,
@@ -377,7 +604,7 @@
           },
           "right": {
             "hiddenFrames": 0,
-            "maxBehindPx": 5,
+            "maxBehindPx": 3,
             "maxAheadPx": 0
           },
           "bottom": {
@@ -481,5 +708,6 @@
         }
       }
     ]
-  }
+  },
+  "analysis": "Edges are the median of three scanlines (analyze.ts and overlay.ts after the fix for the drag tool pointer)."
 }
