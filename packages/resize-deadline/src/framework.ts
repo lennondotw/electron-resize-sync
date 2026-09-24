@@ -46,12 +46,12 @@ export interface FrameworkStatus {
   reason?: string;
 }
 
-function readWords(fd: number, position: number, count: number) {
-  const buffer = Buffer.alloc(count * 4);
-  if (readSync(fd, buffer, 0, buffer.length, position) !== buffer.length) {
+function readBytes(fd: number, position: number, length: number) {
+  const buffer = Buffer.alloc(length);
+  if (readSync(fd, buffer, 0, length, position) !== length) {
     throw new Error(`Short read at ${position}`);
   }
-  return Array.from({ length: count }, (_, i) => buffer.readUInt32LE(i * 4));
+  return [...buffer];
 }
 
 const equal = (a: number[], b: number[]) => a.length === b.length && a.every((x, i) => x === b[i]);
@@ -63,9 +63,9 @@ function sitesState(framework: string, sliceOffset: number, build: KnownBuild) {
     let patched = true;
     let original = true;
     for (const site of build.sites) {
-      const words = readWords(fd, sliceOffset + site.offset, site.original.length);
-      if (!equal(words, site.patched)) patched = false;
-      if (!equal(words, site.original)) original = false;
+      const bytes = readBytes(fd, sliceOffset + site.offset, site.original.length);
+      if (!equal(bytes, site.patched)) patched = false;
+      if (!equal(bytes, site.original)) original = false;
     }
     return { patched, original };
   } finally {

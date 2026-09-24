@@ -1,7 +1,8 @@
-// Maintainer tool: finds the patch sites for an Electron build and prints a
-// KNOWN_BUILDS entry for packages/resize-deadline/src/builds.ts. Run it once
-// per Electron version and architecture to add support; the package then
-// patches that build from the table, without symbols.
+// Maintainer tool: locates the three functions the resize deadline patch
+// rewrites, in an Electron build's framework, from that release's breakpad
+// symbols, and disassembles each. Use its output to hand-author a KNOWN_BUILDS
+// entry in packages/resize-deadline/src/builds.ts (the replacement bytes are
+// per architecture; see the existing entries and the disassembly).
 //
 // usage: find-sites.ts <Electron.app> <symbols.zip> [--arch arm64|x64]
 import { execFile } from "node:child_process";
@@ -22,100 +23,69 @@ if (!appPath || !symbolsZip) {
   throw new Error("Usage: find-sites.ts <Electron.app> <symbols.zip> [--arch arm64|x64]");
 }
 
-// The three functions to rewrite, and how (see docs/research/…/shipping-option-d.md).
-const MOV_W0_1 = 0x52800020;
-const RET = 0xd65f03c0;
-const SITES = [
-  {
-    symbol: "content::BrowserCompositorMac::GetResizeDeadlinePolicy() const",
-    original: [0xf9401409],
-    patched: [0x14000005],
-    why: "resize embeds the renderer surface with the default deadline instead of 0",
-  },
-  {
-    symbol: "content::RenderWidgetHostViewMac::ShouldUseDefaultDeadlineOnResize() const",
-    original: [0x3955c008, 0x36000068],
-    patched: [MOV_W0_1, RET],
-    why: "other callers see the same answer",
-  },
-  {
-    symbol:
-      "non-virtual thunk to content::RenderWidgetHostViewMac::ShouldUseDefaultDeadlineOnResize() const",
-    original: [0x394f4008, 0x36000068],
-    patched: [MOV_W0_1, RET],
-    why: "the same, through the DelegatedFrameHostClient interface",
-  },
+const FUNCTIONS = [
+  "content::BrowserCompositorMac::GetResizeDeadlinePolicy() const",
+  "content::RenderWidgetHostViewMac::ShouldUseDefaultDeadlineOnResize() const",
+  "non-virtual thunk to content::RenderWidgetHostViewMac::ShouldUseDefaultDeadlineOnResize() const",
 ];
 
 const framework = path.join(appPath, FRAMEWORK_IN_APP);
 const slice = readSlice(framework, arch);
 if (!slice) throw new Error(`No ${arch} slice in ${framework}`);
-const version = JSON.parse(
-  await (
-    await open(
-      path.join(appPath, "Contents/Frameworks/Electron Framework.framework/Resources/Info.plist"),
-    )
-  )
-    .readFile("utf8")
-    .catch(() => "{}"),
-) as { CFBundleVersion?: string };
+const plist = await open(
+  path.join(appPath, "Contents/Frameworks/Electron Framework.framework/Resources/Info.plist"),
+).then(
+  (handle) => handle.readFile("utf8").finally(() => handle.close()),
+  () => "",
+);
+const electron =
+  /<key>CFBundleVersion<\/key>\s*<string>([^<]+)<\/string>/.exec(plist)?.[1] ?? "UNKNOWN";
 
-// Symbols are named by UUID with no dashes and a trailing 0.
+// The symbol file is named by the slice UUID without dashes, plus a trailing 0.
 const symId = slice.uuid.replaceAll("-", "") + "0";
 const symPath = `breakpad_symbols/Electron Framework/${symId}/Electron Framework.sym`;
-const wanted = new Set(SITES.map((s) => s.symbol));
 const { stdout } = await exec(
   "sh",
   [
     "-c",
-    `unzip -p "${symbolsZip}" "${symPath}" | grep -F -e "${[...wanted].join('" -e "')}" | grep "^FUNC "`,
+    `unzip -p "${symbolsZip}" "${symPath}" | grep -F -e "${FUNCTIONS.join('" -e "')}" | grep "^FUNC "`,
   ],
   { maxBuffer: 1 << 24 },
 );
-const address = new Map<string, number>();
+const found = new Map<string, { offset: number; size: number }>();
 for (const line of stdout.split("\n")) {
-  const match = /^FUNC ([0-9a-f]+) [0-9a-f]+ [0-9a-f]+ (.+)$/.exec(line);
-  if (match && wanted.has(match[2]!)) address.set(match[2]!, Number.parseInt(match[1]!, 16));
-}
-
-// Verify the original bytes at each site before printing, so a wrong build is caught.
-const file = await open(framework, "r");
-const sites = [];
-try {
-  for (const site of SITES) {
-    const found = address.get(site.symbol);
-    if (found === undefined) throw new Error(`Symbol not found: ${site.symbol}`);
-    // __TEXT starts at file offset 0 for the slice, so a symbol address is the offset.
-    const at = slice.offset + found;
-    const current = Buffer.alloc(site.original.length * 4);
-    await file.read(current, 0, current.length, at);
-    const words = Array.from({ length: site.original.length }, (_, i) =>
-      current.readUInt32LE(i * 4),
-    );
-    if (words.join() !== site.original.join()) {
-      throw new Error(
-        `${site.symbol} at 0x${found.toString(16)}: bytes are not the expected original`,
-      );
-    }
-    sites.push({ ...site, offset: found });
+  // FUNC <address> <size> <parameter size> <name>
+  const match = /^FUNC ([0-9a-f]+) ([0-9a-f]+) [0-9a-f]+ (.+)$/.exec(line);
+  if (match && FUNCTIONS.includes(match[3]!)) {
+    found.set(match[3]!, {
+      // __TEXT starts at file offset 0 for the slice, so a symbol address is the offset.
+      offset: slice.offset + Number.parseInt(match[1]!, 16),
+      size: Number.parseInt(match[2]!, 16),
+    });
   }
-} finally {
-  await file.close();
 }
 
-const hex = (words: number[]) => `[${words.map((w) => `0x${w.toString(16)}`).join(", ")}]`;
-console.log(`  {
-    electron: ${JSON.stringify(version.CFBundleVersion ?? "UNKNOWN")},
-    arch: ${JSON.stringify(arch)},
-    uuid: ${JSON.stringify(slice.uuid)},
-    sites: [`);
-for (const site of sites) {
-  console.log(`      {
-        symbol: ${JSON.stringify(site.symbol)},
-        offset: 0x${site.offset.toString(16)},
-        original: ${hex(site.original)},
-        patched: ${hex(site.patched)},
-        why: ${JSON.stringify(site.why)},
-      },`);
+console.log(`Electron ${electron}, ${arch}, UUID ${slice.uuid}\n`);
+for (const symbol of FUNCTIONS) {
+  const site = found.get(symbol);
+  if (!site) {
+    console.log(`  NOT FOUND: ${symbol}\n`);
+    continue;
+  }
+  console.log(`  ${symbol}\n  offset 0x${site.offset.toString(16)}, ${site.size} bytes`);
+  const stop = `0x${(site.offset + site.size).toString(16)}`;
+  const disasm = await exec("llvm-objdump", [
+    "-d",
+    `--start-address=0x${site.offset.toString(16)}`,
+    `--stop-address=${stop}`,
+    framework,
+  ]).then(
+    ({ stdout: out }) =>
+      out
+        .split("\n")
+        .filter((l) => /^\s*[0-9a-f]+:/.test(l))
+        .join("\n"),
+    () => "  (llvm-objdump not available)",
+  );
+  console.log(`${disasm}\n`);
 }
-console.log("    ],\n  },");

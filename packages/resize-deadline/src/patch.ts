@@ -58,15 +58,13 @@ export async function patchElectronFramework({
     for (const { arch, sliceOffset, build } of targets) {
       for (const site of build.sites) {
         const at = sliceOffset + site.offset;
-        const current = Buffer.alloc(site.original.length * 4);
+        const current = Buffer.alloc(site.original.length);
         await file.read(current, 0, current.length, at);
-        const words = Array.from({ length: site.original.length }, (_, i) =>
-          current.readUInt32LE(i * 4),
-        );
-        if (equal(words, site.patched)) continue;
-        if (!equal(words, site.original)) {
+        const bytes = [...current];
+        if (equal(bytes, site.patched)) continue;
+        if (!equal(bytes, site.original)) {
           throw new Error(
-            `${arch} ${site.symbol} at 0x${at.toString(16)}: unexpected bytes ${words.map((w) => w.toString(16))}`,
+            `${arch} ${site.symbol} at 0x${at.toString(16)}: unexpected bytes ${bytes.map((b) => b.toString(16))}`,
           );
         }
       }
@@ -74,8 +72,7 @@ export async function patchElectronFramework({
     for (const { arch, sliceOffset, build } of targets) {
       for (const site of build.sites) {
         const at = sliceOffset + site.offset;
-        const bytes = Buffer.alloc(site.patched.length * 4);
-        site.patched.forEach((word: number, i: number) => bytes.writeUInt32LE(word, i * 4));
+        const bytes = Buffer.from(site.patched);
         await file.write(bytes, 0, bytes.length, at);
         log(`Patched ${arch} 0x${at.toString(16)} ${site.symbol}: ${site.why}`);
       }

@@ -16,13 +16,14 @@ The patch rewrites a few instruction words in the Electron framework binary.
 It works on **one build at a time**, identified by the binary's UUID, and
 refuses any build it does not have an entry for. Today that is:
 
-| Electron | Platform | Arch  |
-| -------- | -------- | ----- |
-| 44.4.5   | macOS    | arm64 |
+| Electron | Platform | Arch  | Verified                                                                                              |
+| -------- | -------- | ----- | ----------------------------------------------------------------------------------------------------- |
+| 44.4.5   | macOS    | arm64 | screen-recorded drags, in step                                                                        |
+| 44.4.5   | macOS    | x64   | patched and resizes without crashing under Rosetta; resize sync not screen-verified on Intel hardware |
 
-`knownBuilds()` returns this list. Other versions and Intel (x64) need an entry
-added first (see [Adding a build](#adding-a-build)); Windows and Linux are not
-supported — the resize problem there has not been confirmed or solved.
+`knownBuilds()` returns this list. Other versions need an entry added first
+(see [Adding a build](#adding-a-build)); Windows and Linux are not supported —
+the resize problem there has not been confirmed or solved.
 
 Patch at package time, in an electron-builder `afterPack` hook:
 
@@ -91,18 +92,23 @@ keeps the wait short. A hung page makes each step wait up to the deadline.
 
 ## Adding a build
 
-Support for a new Electron version or Intel Macs is an entry in
-`src/builds.ts`: the framework UUID and the file offset of each patch site.
-Generate one with the maintainer tool, which needs that release's breakpad
-symbols (`electron-v<version>-darwin-<arch>-symbols.zip`) once:
+Support for a new Electron version is an entry in `src/builds.ts`: the
+framework UUID, and the offset, original bytes and replacement bytes of each
+patch site. The maintainer tool locates the three functions from that
+release's breakpad symbols (`electron-v<version>-darwin-<arch>-symbols.zip`)
+and disassembles them:
 
 ```bash
 node experiments/tools/deadline-patch/find-sites.ts \
   path/to/Electron.app path/to/symbols.zip --arch arm64
 ```
 
-It prints a `KNOWN_BUILDS` entry to paste in, after verifying the original
-bytes at each site. Then re-run the recordings on that build.
+The replacement bytes are hand-authored per architecture from the
+disassembly (see the existing entries: on arm64, force `GetResizeDeadlinePolicy`
+down its default-deadline branch and make `ShouldUseDefaultDeadlineOnResize`
+return true; on x64, flip the corresponding `jne` to `jmp` and rewrite the two
+boolean functions to `mov al, 1; ret`). Then re-run the recordings on that
+build.
 
 ## Source patch (alternative)
 
@@ -115,8 +121,11 @@ without the binary patch.
 
 ## Limits
 
-- macOS only; the binary patch is per build (UUID) and today covers only
-  Electron 44.4.5 on arm64. Measured on macOS 27.0, Apple M3 Max.
+- macOS only; the binary patch is per build (UUID) and today covers Electron
+  44.4.5 on arm64 and x64. arm64 was measured on macOS 27.0, Apple M3 Max;
+  x64 was derived from the same functions and confirmed to patch and resize
+  without crashing under Rosetta, but its resize sync was not screen-verified
+  on Intel hardware.
 - The peer dependency is Electron 44.4.5 exactly, because that is the only
   build the binary patch matches.
 - Measured with synthetic drags; a person's drag was only judged by eye.
