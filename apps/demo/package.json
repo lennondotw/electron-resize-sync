@@ -7,16 +7,16 @@
   "scripts": {
     "dev": "node scripts/dev.ts",
     "build": "vite build && vite build -c vite.main.config.ts && vite build -c vite.preload.config.ts",
-    "start": "pnpm build && electron .",
+    "start": "electron .",
     "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
-    "@electron-resize-sync/render-before-reveal-not-working": "workspace:*",
-    "@electron-resize-sync/resize-activity": "workspace:*",
-    "@electron-resize-sync/resize-deadline": "workspace:*",
-    "@electron-resize-sync/resize-pacing-not-working": "workspace:*",
-    "@electron-resize-sync/resize-rate-overlay": "workspace:*",
+    "@electron-resize-sync/render-before-reveal-not-working": "workspace:^",
+    "@electron-resize-sync/resize-activity": "workspace:^",
+    "@electron-resize-sync/resize-deadline": "workspace:^",
+    "@electron-resize-sync/resize-pacing-not-working": "workspace:^",
+    "@electron-resize-sync/resize-rate-overlay": "workspace:^",
     "es-toolkit": "^1.52.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@electron-resize-sync/resize-deadline':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:packages/resize-deadline
       '@types/node':
         specifier: ^24.13.6
@@ -39,19 +39,19 @@ importers:
         specifier: ^1.8.0
         version: 1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@electron-resize-sync/render-before-reveal-not-working':
-        specifier: workspace:*
-        version: link:../../packages/render-before-reveal-not-working
+        specifier: workspace:^
+        version: link:../../packages-not-working/render-before-reveal-not-working
       '@electron-resize-sync/resize-activity':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/resize-activity
       '@electron-resize-sync/resize-deadline':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/resize-deadline
       '@electron-resize-sync/resize-pacing-not-working':
-        specifier: workspace:*
-        version: link:../../packages/resize-pacing-not-working
+        specifier: workspace:^
+        version: link:../../packages-not-working/resize-pacing-not-working
       '@electron-resize-sync/resize-rate-overlay':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/resize-rate-overlay
       es-toolkit:
         specifier: ^1.52.0
@@ -91,7 +91,11 @@ importers:
         specifier: ^8.3.0
         version: 8.3.0(@types/node@24.13.6)(jiti@2.7.0)
 
-  packages/drag-edge-heuristic:
+  packages-not-working/render-before-reveal-not-working:
+    dependencies:
+      '@electron-resize-sync/drag-edge-heuristic':
+        specifier: workspace:^
+        version: link:../../packages/drag-edge-heuristic
     devDependencies:
       '@types/node':
         specifier: ^24.13.6
@@ -103,11 +107,23 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
-  packages/render-before-reveal-not-working:
+  packages-not-working/resize-pacing-not-working:
     dependencies:
       '@electron-resize-sync/drag-edge-heuristic':
-        specifier: workspace:*
-        version: link:../drag-edge-heuristic
+        specifier: workspace:^
+        version: link:../../packages/drag-edge-heuristic
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.6
+        version: 24.13.6
+      electron:
+        specifier: ^44.4.5
+        version: 44.4.5
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+  packages/drag-edge-heuristic:
     devDependencies:
       '@types/node':
         specifier: ^24.13.6
@@ -132,22 +148,6 @@ importers:
         version: 7.0.2
 
   packages/resize-deadline:
-    devDependencies:
-      '@types/node':
-        specifier: ^24.13.6
-        version: 24.13.6
-      electron:
-        specifier: ^44.4.5
-        version: 44.4.5
-      typescript:
-        specifier: ^7.0.2
-        version: 7.0.2
-
-  packages/resize-pacing-not-working:
-    dependencies:
-      '@electron-resize-sync/drag-edge-heuristic':
-        specifier: workspace:*
-        version: link:../drag-edge-heuristic
     devDependencies:
       '@types/node':
         specifier: ^24.13.6

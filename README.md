@@ -17,17 +17,17 @@ in sync with requestAnimationFrame rendering.
 ## Scripts
 
 A pnpm workspace. The demo app lives in `apps/demo`, each workaround in its
-own package under `packages/`; `experiments/` holds the measurement scripts
+own package under `packages/`, or under `packages-not-working/` for the options that do not work; `experiments/` holds the measurement scripts
 and `docs/` the records.
 
-| Package                                                                                   | Status                | What it does                                                                                         |
-| ----------------------------------------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| [`resize-deadline`](packages/resize-deadline/README.md)                                   | **Works**             | Option D: a resize waits for the page's frame at the new size (a patched Electron plus two switches) |
-| [`resize-activity`](packages/resize-activity/README.md)                                   | Works (a signal)      | Tells the page while a user resize is in progress, so it can skip optional work                      |
-| [`resize-rate-overlay`](packages/resize-rate-overlay/README.md)                           | Works (a diagnostic)  | A click-through label showing how often the window actually changes size                             |
-| [`drag-edge-heuristic`](packages/drag-edge-heuristic/README.md)                           | A guess, can be wrong | Guesses the dragged edges on macOS from the pointer                                                  |
-| [`resize-pacing-not-working`](packages/resize-pacing-not-working/README.md)               | **Does not work**     | Option B: paces resizes to the page's frames                                                         |
-| [`render-before-reveal-not-working`](packages/render-before-reveal-not-working/README.md) | **Does not work**     | Option C: lays the page out before the window takes the size                                         |
+| Package                                                                                               | Status                | What it does                                                                                         |
+| ----------------------------------------------------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
+| [`resize-deadline`](packages/resize-deadline/README.md)                                               | **Works**             | Option D: a resize waits for the page's frame at the new size (a patched Electron plus two switches) |
+| [`resize-activity`](packages/resize-activity/README.md)                                               | Works (a signal)      | Tells the page while a user resize is in progress, so it can skip optional work                      |
+| [`resize-rate-overlay`](packages/resize-rate-overlay/README.md)                                       | Works (a diagnostic)  | A click-through label showing how often the window actually changes size                             |
+| [`drag-edge-heuristic`](packages/drag-edge-heuristic/README.md)                                       | A guess, can be wrong | Guesses the dragged edges on macOS from the pointer                                                  |
+| [`resize-pacing-not-working`](packages-not-working/resize-pacing-not-working/README.md)               | **Does not work**     | Option B: paces resizes to the page's frames                                                         |
+| [`render-before-reveal-not-working`](packages-not-working/render-before-reveal-not-working/README.md) | **Does not work**     | Option C: lays the page out before the window takes the size                                         |
 
 | Script        | Purpose                                                                     |
 | ------------- | --------------------------------------------------------------------------- |
@@ -36,3 +36,25 @@ and `docs/` the records.
 | `pnpm build`  | Build every workspace package (the demo into `apps/demo/dist*`)             |
 | `pnpm check`  | `typecheck` (TypeScript 7) + `lint` (oxlint) + `format:check`, all packages |
 | `pnpm format` | Format with oxfmt                                                           |
+
+## Packages and publishing
+
+Each package builds with `tsc` to ESM and declarations in `dist/`
+(`pnpm build` builds them all, in dependency order, then the demo). Inside the
+workspace, every entry point also has a `development` condition that points
+at `src/*.ts`: TypeScript (`customConditions`), the demo's Vite dev server and
+its main and preload watch builds resolve the sources, so edits to a package
+apply without building it; `pnpm build` and `pnpm start` use `dist/`.
+
+`publishConfig.exports` replaces the exports on publish without the
+`development` condition, and `workspace:^` becomes a version range. Nothing
+has been published. Before the first publish:
+
+- Choose a license and add `license` (and a `LICENSE` file).
+- Add `repository`, and make the package READMEs' links to `docs/` absolute:
+  they are relative to this repository and break on npm.
+- Create the `@electron-resize-sync` scope on npm, or rename the packages.
+- Decide whether to publish the packages in `packages-not-working/`.
+
+Then `pnpm -r publish` (the `prepack` script builds each package).
+`pnpm pack` in a package shows what would be published.

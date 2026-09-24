@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter @electron-resize-sync/demo dev",
-    "start": "pnpm --filter @electron-resize-sync/demo start",
+    "start": "pnpm build && pnpm --filter @electron-resize-sync/demo start",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck && tsc -p experiments/tsconfig.json",
     "lint": "oxlint --deny-warnings",
@@ -14,7 +14,7 @@
     "check": "pnpm typecheck && pnpm lint && pnpm format:check"
   },
   "devDependencies": {
-    "@electron-resize-sync/resize-deadline": "workspace:*",
+    "@electron-resize-sync/resize-deadline": "workspace:^",
     "@types/node": "^24.13.6",
     "@types/pngjs": "^6.0.5",
     "electron": "^44.4.5",

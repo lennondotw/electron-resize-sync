@@ -1,7 +1,7 @@
 # @electron-resize-sync/resize-pacing-not-working
 
 **Status: does not work.** It does not keep the page in step with the window
-frame. Kept for comparison. Use [`resize-deadline`](../resize-deadline/README.md)
+frame. Kept for comparison. Use [`resize-deadline`](../../packages/resize-deadline/README.md)
 instead.
 
 Option B in the [resize sync plan](../../docs/plans/2026-09-24/resize-sync.md):
@@ -20,7 +20,7 @@ the screen before the page has rendered it:
 
 Re-applying a cancelled resize also needs the dragged edges, which macOS does
 not report. They are guessed from the pointer by
-[`drag-edge-heuristic`](../drag-edge-heuristic/README.md), and the guess can
+[`drag-edge-heuristic`](../../packages/drag-edge-heuristic/README.md), and the guess can
 be wrong.
 
 ## Use

@@ -1,7 +1,7 @@
 {
-  "name": "@electron-resize-sync/resize-activity",
+  "name": "@electron-resize-sync/render-before-reveal-not-working",
   "version": "0.1.0",
-  "description": "WORKS. Tells the renderer while a user resize is in progress, so it can skip optional work.",
+  "description": "DOES NOT WORK: content trails the frame when shrinking. Lays the page out at the next size before the window takes it (option C).",
   "keywords": [
     "electron",
     "macos",
@@ -61,6 +61,9 @@
     "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json",
     "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@electron-resize-sync/drag-edge-heuristic": "workspace:^"
   },
   "devDependencies": {
     "@types/node": "^24.13.6",

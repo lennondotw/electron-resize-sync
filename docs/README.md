@@ -46,7 +46,8 @@ docs/
   worklog/YYYY-MM-DD.md
   templates/
 experiments/<topic>/                         scripts that produce the data
-packages/<name>/                             one package per workaround (not-working ones say so in the name)
+packages/<name>/                             one package per working workaround or helper
+packages-not-working/<name>/                 options that do not work, kept for comparison (named *-not-working)
 apps/demo/                                   the app the experiments run
 ```
 

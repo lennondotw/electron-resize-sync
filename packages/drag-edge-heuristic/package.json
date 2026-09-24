@@ -1,14 +1,39 @@
 {
   "name": "@electron-resize-sync/drag-edge-heuristic",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "description": "A GUESS, NOT A MEASUREMENT. Guesses which window edges a user resize drags on macOS, from the pointer.",
+  "keywords": [
+    "electron",
+    "macos",
+    "resize"
+  ],
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
-    "./main": "./src/main.ts"
+    "./main": {
+      "development": "./src/main.ts",
+      "types": "./dist/main.d.ts",
+      "default": "./dist/main.js"
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      "./main": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.js"
+      }
+    },
+    "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "prepack": "pnpm build"
   },
   "devDependencies": {
     "@types/node": "^24.13.6",
@@ -17,5 +42,8 @@
   },
   "peerDependencies": {
     "electron": ">=44.4.5"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

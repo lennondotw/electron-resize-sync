@@ -1,15 +1,49 @@
 {
   "name": "@electron-resize-sync/resize-deadline",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "description": "WORKS. Makes a window resize wait for the page's frame at the new size (option D): app-side switches plus a patch of Electron.",
+  "keywords": [
+    "electron",
+    "macos",
+    "resize"
+  ],
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "electron-v44.4.5-resize-deadline.patch"
+  ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
-    "./main": "./src/main.ts",
-    "./patch": "./src/patch.ts"
+    "./main": {
+      "development": "./src/main.ts",
+      "types": "./dist/main.d.ts",
+      "default": "./dist/main.js"
+    },
+    "./patch": {
+      "development": "./src/patch.ts",
+      "types": "./dist/patch.d.ts",
+      "default": "./dist/patch.js"
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      "./main": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.js"
+      },
+      "./patch": {
+        "types": "./dist/patch.d.ts",
+        "default": "./dist/patch.js"
+      }
+    },
+    "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "prepack": "pnpm build"
   },
   "devDependencies": {
     "@types/node": "^24.13.6",
@@ -18,5 +52,8 @@
   },
   "peerDependencies": {
     "electron": ">=44.4.5"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

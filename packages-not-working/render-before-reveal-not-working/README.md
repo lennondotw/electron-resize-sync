@@ -3,7 +3,7 @@
 **Status: does not work.** When the window shrinks, the page shrinks first
 and the window follows later, so the background shows in between; it is also
 the slowest option. Kept for comparison. Use
-[`resize-deadline`](../resize-deadline/README.md) instead.
+[`resize-deadline`](../../packages/resize-deadline/README.md) instead.
 
 Option C in the [resize sync plan](../../docs/plans/2026-09-24/resize-sync.md):
 the page lives in a `WebContentsView` larger than any window, so resizing the
@@ -22,7 +22,7 @@ that size once the page has rendered it.
 
 Re-applying a cancelled resize also needs the dragged edges, which macOS does
 not report. They are guessed from the pointer by
-[`drag-edge-heuristic`](../drag-edge-heuristic/README.md), and the guess can
+[`drag-edge-heuristic`](../../packages/drag-edge-heuristic/README.md), and the guess can
 be wrong.
 
 ## Use

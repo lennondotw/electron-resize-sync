@@ -14,7 +14,7 @@
       "path": "./packages/drag-edge-heuristic/tsconfig.json"
     },
     {
-      "path": "./packages/render-before-reveal-not-working/tsconfig.json"
+      "path": "./packages-not-working/render-before-reveal-not-working/tsconfig.json"
     },
     {
       "path": "./packages/resize-activity/tsconfig.json"
@@ -23,7 +23,7 @@
       "path": "./packages/resize-deadline/tsconfig.json"
     },
     {
-      "path": "./packages/resize-pacing-not-working/tsconfig.json"
+      "path": "./packages-not-working/resize-pacing-not-working/tsconfig.json"
     },
     {
       "path": "./packages/resize-rate-overlay/tsconfig.json"
