@@ -92,7 +92,7 @@ export async function launchSession({
     // rAF stops while the window is covered, so keep it on top and visible.
     await evaluate(
       main,
-      `(() => { const win = require("electron").BaseWindow.getAllWindows()[0];
+      `(() => { const win = require("electron").BaseWindow.getAllWindows().find((w) => w.isFocusable());
         win.setAlwaysOnTop(true); win.showInactive(); })()`,
     );
     await sleep(1000);
@@ -122,7 +122,10 @@ export async function launchSession({
 export async function collectEnvironment(session: Session) {
   const [versions, display, git] = await Promise.all([
     session.main<Record<string, string>>(
-      `(() => { const { app, screen } = require("electron"); const d = screen.getPrimaryDisplay();
+      `(() => { const { app, BaseWindow, screen } = require("electron");
+        // The display the app's window is on, which experiments may choose.
+        const win = BaseWindow.getAllWindows().find((w) => w.isFocusable());
+        const d = win ? screen.getDisplayMatching(win.getBounds()) : screen.getPrimaryDisplay();
         // Switches as the browser process sees them, whether passed on the
         // command line or appended by the app.
         const switches = ["deadline-to-synchronize-surfaces", "enable-features", "disable-features"]
@@ -180,9 +183,13 @@ async function waitForTarget(url: string, type?: string) {
     try {
       const targets = (await (await fetch(url)).json()) as {
         type: string;
+        url: string;
         webSocketDebuggerUrl: string;
       }[];
-      const target = targets.find((candidate) => !type || candidate.type === type);
+      // The app's page, not the resize rate overlay's inline data: page.
+      const target = targets.find(
+        (candidate) => !type || (candidate.type === type && !candidate.url.startsWith("data:")),
+      );
       if (target) return target.webSocketDebuggerUrl;
     } catch {
       // The debugger is not listening yet.

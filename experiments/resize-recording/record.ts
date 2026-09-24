@@ -1,4 +1,4 @@
-// Records the staged backdrop area of the primary display at 60 fps, without
+// Records the staged backdrop area of the staged display at 60 fps, without
 // the pointer, for later frame-by-frame analysis. See README.md.
 import { spawn } from "node:child_process";
 import { readFile } from "node:fs/promises";
@@ -14,8 +14,10 @@ const { values: args } = parseArgs({
 if (!args.geometry || !args.out)
   throw new Error("Usage: record.ts --geometry <file> --out <video.mp4> [--seconds N]");
 
-const { crop } = JSON.parse(await readFile(args.geometry, "utf8")) as {
+const { crop, captureScreen = 0 } = JSON.parse(await readFile(args.geometry, "utf8")) as {
   crop: { x: number; y: number; width: number; height: number };
+  /** AVFoundation's "Capture screen N" for the staged display. */
+  captureScreen?: number;
 };
 const ffmpeg = spawn(
   "ffmpeg",
@@ -33,7 +35,7 @@ const ffmpeg = spawn(
     "-pixel_format",
     "bgr0",
     "-i",
-    "Capture screen 0",
+    `Capture screen ${captureScreen}`,
     "-t",
     args.seconds,
     "-vf",

@@ -147,6 +147,18 @@ try {
   await file.close();
 }
 
+// Its own identity, so the system and automation tools that find apps by
+// bundle identifier do not mistake it for (or launch) the stock Electron.
+const plist = path.join(distDir, "Electron.app/Contents/Info.plist");
+const identity = {
+  CFBundleIdentifier: "com.github.Electron.deadline-patch",
+  CFBundleName: "Electron Deadline Patch",
+  CFBundleDisplayName: "Electron Deadline Patch",
+};
+for (const [key, value] of Object.entries(identity)) {
+  await exec("plutil", ["-replace", key, "-string", value, plist]);
+}
+
 // Patching invalidates the signature; re-sign the copy ad hoc so it launches.
 await exec("codesign", ["--force", "--deep", "--sign", "-", path.join(distDir, "Electron.app")]);
 console.log(`Patched Electron ${version} at ${distDir}`);

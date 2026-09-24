@@ -22,6 +22,8 @@ const { values: args } = parseArgs({
     "electron-arg": { type: "string", multiple: true, default: [] },
     /** Width of the computer-use coordinate frame, to express drag paths in it. */
     "frame-width": { type: "string" },
+    /** Part of the display's name to stage on, e.g. "Built-in"; the primary display by default. */
+    display: { type: "string" },
     out: { type: "string" },
   },
 });
@@ -49,14 +51,27 @@ const session = await launchSession({
 });
 
 const geometry = await session.main<{
-  display: { x: number; y: number; width: number; height: number; scaleFactor: number };
+  display: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    scaleFactor: number;
+    label: string;
+  };
+  captureScreen: number;
   window: { x: number; y: number; width: number; height: number };
   backdrop: { x: number; y: number; width: number; height: number };
 }>(`(async () => {
   const { BaseWindow, BrowserWindow, screen } = require("electron");
-  // A BaseWindow in render-before-reveal mode, a BrowserWindow otherwise.
-  const [win] = BaseWindow.getAllWindows();
-  const display = screen.getPrimaryDisplay();
+  // A BaseWindow in render-before-reveal mode, a BrowserWindow otherwise; the
+  // resize rate overlay is the other, unfocusable window.
+  const win = BaseWindow.getAllWindows().find((w) => w.isFocusable());
+  const displays = screen.getAllDisplays();
+  const display = ${JSON.stringify(args.display ?? null)} === null
+    ? screen.getPrimaryDisplay()
+    : displays.find((d) => d.label.includes(${JSON.stringify(args.display ?? "")}));
+  if (!display) throw new Error("No display named " + ${JSON.stringify(args.display ?? "")});
   const window = {
     x: Math.round(display.bounds.x + (display.bounds.width - ${WINDOW.width}) / 2),
     y: Math.round(display.bounds.y + (display.bounds.height - ${WINDOW.height}) / 2),
@@ -77,13 +92,19 @@ const geometry = await session.main<{
   win.setBounds(window);
   win.showInactive();
   await new Promise((r) => setTimeout(r, 500));
-  return { display: { ...display.bounds, scaleFactor: display.scaleFactor }, window: win.getBounds(), backdrop: back.getBounds() };
+  return {
+    display: { ...display.bounds, scaleFactor: display.scaleFactor, label: display.label },
+    // AVFoundation lists screens in the same order as Electron's displays.
+    captureScreen: displays.findIndex((d) => d.id === display.id),
+    window: win.getBounds(),
+    backdrop: back.getBounds(),
+  };
 })()`);
 
-const { display, window, backdrop } = geometry;
+const { display, captureScreen, window, backdrop } = geometry;
 const environment = await collectEnvironment(session);
 const scale = display.scaleFactor;
-/** Recording crop in pixels of the primary display capture. */
+/** Recording crop in pixels of the staged display's capture. */
 const crop = {
   x: Math.round((backdrop.x - display.x) * scale),
   y: Math.round((backdrop.y - display.y) * scale),
@@ -146,7 +167,7 @@ for (const [edge, { at, dir }] of Object.entries(handles)) {
 const outPath = args.out ?? path.join(runDir, "geometry.json");
 await writeFile(
   outPath,
-  `${JSON.stringify({ args, environment, display, window, backdrop, crop, drag: DRAG, drags }, null, 2)}\n`,
+  `${JSON.stringify({ args, environment, display, captureScreen, window, backdrop, crop, drag: DRAG, drags }, null, 2)}\n`,
 );
 console.log(`Staged. Geometry in ${outPath}. Interrupt to stop.`);
 
