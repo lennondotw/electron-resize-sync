@@ -21,7 +21,7 @@ Measure, primary: in a screen recording of real drags, the frame-by-frame
 offset between the window frame and content anchored to each edge; the target
 is a constant offset. Secondary, scripted: for each size the window takes on,
 the time until the renderer finishes its first frame at that size ("unpainted
-duration", see [resize pacing](../../experiments/2026-09-24/resize-pacing/README.md));
+duration", see [resize pacing](../../../experiments/2026-09-24/resize-pacing/README.md));
 the target is that the window never presents a size before that frame exists.
 The secondary measure cannot see the screen and showed internal
 inconsistencies, so it does not decide on its own.
@@ -46,13 +46,13 @@ Verified in source; see [the research record](../../research/2026-09-24/chromium
 
 ## Options
 
-| Option                              | How                                                                                                                                                                  | Meets the goal?                                                                                                                                   | Status                                                                                               |
-| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| A. Renderer only                    | React to `resize` in the page                                                                                                                                        | No: the window has already changed when the page hears about it. Matching `html` to `#root` only hides the leak.                                  | Rejected                                                                                             |
-| B. Pace commits                     | Main process cancels `will-resize`, keeps the latest bounds, applies them with `setBounds` after the renderer acks the previous size                                 | No: commit rate follows the renderer, but each size still lands before it is rendered                                                             | Implemented (`resize sync` switch), [measured](../../experiments/2026-09-24/resize-pacing/README.md) |
-| B′. Pace commits and yield          | As B, and the renderer skips its busy work while a committed size is unrendered                                                                                      | Shortens the unpainted time; does not remove it. Changes the workload during resize.                                                              | Not started                                                                                          |
-| C. Render before reveal             | Put the page in a `WebContentsView` sized independently of the window. Growing: enlarge the view (overflow is clipped), wait for its frame, then enlarge the window. | Growing: yes in principle. Shrinking: either the window shrinks first (stale layout clipped) or the view does (background exposed) for one frame. | Not started                                                                                          |
-| D. Atomic window and content commit | Hold the window's Core Animation transaction until the renderer's frame at the new size is ready, as Chromium on macOS reportedly can during live resize             | Yes in principle, both directions                                                                                                                 | Unverified: whether Electron 44 enables it, its timeout, and whether it can be driven                |
+| Option                              | How                                                                                                                                                                  | Meets the goal?                                                                                                                                   | Status                                                                                                  |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| A. Renderer only                    | React to `resize` in the page                                                                                                                                        | No: the window has already changed when the page hears about it. Matching `html` to `#root` only hides the leak.                                  | Rejected                                                                                                |
+| B. Pace commits                     | Main process cancels `will-resize`, keeps the latest bounds, applies them with `setBounds` after the renderer acks the previous size                                 | No: commit rate follows the renderer, but each size still lands before it is rendered                                                             | Implemented (`resize sync` switch), [measured](../../../experiments/2026-09-24/resize-pacing/README.md) |
+| B′. Pace commits and yield          | As B, and the renderer skips its busy work while a committed size is unrendered                                                                                      | Shortens the unpainted time; does not remove it. Changes the workload during resize.                                                              | Not started                                                                                             |
+| C. Render before reveal             | Put the page in a `WebContentsView` sized independently of the window. Growing: enlarge the view (overflow is clipped), wait for its frame, then enlarge the window. | Growing: yes in principle. Shrinking: either the window shrinks first (stale layout clipped) or the view does (background exposed) for one frame. | Not started                                                                                             |
+| D. Atomic window and content commit | Hold the window's Core Animation transaction until the renderer's frame at the new size is ready, as Chromium on macOS reportedly can during live resize             | Yes in principle, both directions                                                                                                                 | Unverified: whether Electron 44 enables it, its timeout, and whether it can be driven                   |
 
 ## Decision
 
@@ -63,7 +63,7 @@ to be tried, D in most depth. Option B stays behind a switch as a baseline.
 
 - Measurement bridge and HUD readout: `edf186e`.
 - Pacing (option B): `b378089`; ack carries the rendered size: `8a3483f`.
-- [Resize pacing experiment](../../experiments/2026-09-24/resize-pacing/README.md):
+- [Resize pacing experiment](../../../experiments/2026-09-24/resize-pacing/README.md):
   pacing cuts applied sizes to about the renderer's frame rate but does not
   bring the unpainted duration to zero.
 - Pacing anchors the edge opposite the drag (`1853363`); Electron's
@@ -71,10 +71,10 @@ to be tried, D in most depth. Option B stays behind a switch as a baseline.
 - [Source reading](../../research/2026-09-24/chromium-resize-sync.md) of
   Chromium 152 and Electron 44.4.5: why the content trails, and candidate
   implementations of D.
-- [Resize recording](../../experiments/2026-09-24/resize-recording/README.md): the
+- [Resize recording](../../../experiments/2026-09-24/resize-recording/README.md): the
   screen-recorded measure (`dac568f`). With no switch, with pacing, and with
   three Chromium switches, 60–95 % of drag frames are out of step.
-- [Deadline patch](../../experiments/2026-09-24/resize-deadline-patch/README.md)
+- [Deadline patch](../../../experiments/2026-09-24/resize-deadline-patch/README.md)
   (`13720c7`): forcing the default surface deadline on resize,
   `--deadline-to-synchronize-surfaces=30` and
   `--disable-features=RemoteCoreAnimationAPI` together keep every drag in
@@ -86,7 +86,7 @@ to be tried, D in most depth. Option B stays behind a switch as a baseline.
   resize (`yield on resize`) cuts it to 34 ms. The slow steps seen first
   (100–166 ms) came from GPU load of the dithering masks, found with a trace.
 
-- [Resize matrix on the built-in display](../../experiments/2026-09-24/resize-matrix-builtin/README.md)
+- [Resize matrix on the built-in display](../../../experiments/2026-09-24/resize-matrix-builtin/README.md)
   (`6ceea54`): option D with the switches set by the app is in step with and
   without busy work, and costs nothing measurable with nothing to render.
   Option C (render before reveal, `9f7010f`) fails when shrinking and is the

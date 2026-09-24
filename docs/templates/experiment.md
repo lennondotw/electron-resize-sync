@@ -3,7 +3,7 @@
 Date: YYYY-MM-DD\
 Status: draft\
 Data: [`data.json`](data.json)\
-Script: [`experiments/<topic>`](../../../../experiments/<topic>/README.md)
+Script: [`run.ts`](run.ts), or a tool in [`experiments/tools/<tool>`](../../tools/<tool>/README.md)
 
 ## Question and acceptance criteria
 

@@ -6,7 +6,7 @@ import { mkdir, mkdtemp } from "node:fs/promises";
 import { createServer } from "node:net";
 import path from "node:path";
 
-const repoRoot = path.resolve(import.meta.dirname, "../..");
+const repoRoot = path.resolve(import.meta.dirname, "../../..");
 /** The app under test; run `pnpm build` first. */
 const demoDir = path.join(repoRoot, "apps", "demo");
 

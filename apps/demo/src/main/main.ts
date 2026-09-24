@@ -24,7 +24,7 @@ const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
 const revealMode = Boolean(process.env["ELECTRON_RESIZE_SYNC_REVEAL"]);
 
 // Option D's switches, set by the app. They take effect only with an Electron
-// that waits for the page on resize (see experiments/deadline-patch).
+// that waits for the page on resize (see experiments/tools/deadline-patch).
 const deadlineFrames = process.env["ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES"];
 if (deadlineFrames) enableResizeDeadline({ frames: Number(deadlineFrames) });
 
@@ -66,7 +66,7 @@ function createWindow() {
   } else {
     const browserWindow = new BrowserWindow({ ...options, webPreferences });
     // Paced resizing (option B; does not work), off until the HUD enables it.
-    // Simulated drags (experiments/resize-pacing) emit will-resize with the
+    // Simulated drags (experiments/2026-09-24/resize-pacing) emit will-resize with the
     // edge they drag; real drags on macOS do not report it.
     paceResizes(browserWindow, browserWindow.webContents, {
       ...(process.env["ELECTRON_RESIZE_SYNC_TRUST_REPORTED_EDGE"] && { trustReportedEdge: true }),

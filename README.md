@@ -32,8 +32,8 @@ enableResizeDeadline({ frames: 30 }); // before app.whenReady()
 Measured by screen-recording drags through AppKit's live resize (the pointer
 input was synthetic; a person's drag was only judged by eye): 0 out-of-step
 frames in every direction, with 30 ms of busy work per frame and without
-([deadline patch](docs/experiments/2026-09-24/resize-deadline-patch/README.md),
-[built-in display](docs/experiments/2026-09-24/resize-matrix-builtin/README.md)).
+([deadline patch](experiments/2026-09-24/resize-deadline-patch/README.md),
+[built-in display](experiments/2026-09-24/resize-matrix-builtin/README.md)).
 The price is that the window resizes at most at the page's frame rate; with
 little to render it resizes as often as stock Electron.
 
@@ -53,12 +53,12 @@ patch is specific to Electron 44.4.5 on arm64 and refuses other builds.
 
 ## What was tried
 
-| Option                                              | Result                                                                   | Record                                                                                                                                                |
-| --------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chromium switches alone                             | Out of step in 60–95 % of drag frames                                    | [resize recording](docs/experiments/2026-09-24/resize-recording/README.md)                                                                            |
-| B: pace resizes to the page's frames                | Still out of step; with busy work skipped, errors fall from 180 to 40 px | [resize pacing](docs/experiments/2026-09-24/resize-pacing/README.md), [built-in display](docs/experiments/2026-09-24/resize-matrix-builtin/README.md) |
-| C: render before reveal                             | In step when growing, up to 140 px behind when shrinking, and slowest    | [built-in display](docs/experiments/2026-09-24/resize-matrix-builtin/README.md)                                                                       |
-| **D: wait for the page's frame (patched Electron)** | **In step in every direction**                                           | [deadline patch](docs/experiments/2026-09-24/resize-deadline-patch/README.md)                                                                         |
+| Option                                              | Result                                                                   | Record                                                                                                                                      |
+| --------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chromium switches alone                             | Out of step in 60–95 % of drag frames                                    | [resize recording](experiments/2026-09-24/resize-recording/README.md)                                                                       |
+| B: pace resizes to the page's frames                | Still out of step; with busy work skipped, errors fall from 180 to 40 px | [resize pacing](experiments/2026-09-24/resize-pacing/README.md), [built-in display](experiments/2026-09-24/resize-matrix-builtin/README.md) |
+| C: render before reveal                             | In step when growing, up to 140 px behind when shrinking, and slowest    | [built-in display](experiments/2026-09-24/resize-matrix-builtin/README.md)                                                                  |
+| **D: wait for the page's frame (patched Electron)** | **In step in every direction**                                           | [deadline patch](experiments/2026-09-24/resize-deadline-patch/README.md)                                                                    |
 
 The [plan](docs/plans/2026-09-24/resize-sync.md) tracks the options and
 decisions; [docs](docs/README.md) indexes every record, each with its
@@ -91,7 +91,7 @@ point the demo at it:
 
 ```bash
 pnpm build
-node experiments/deadline-patch/patch.ts
+node experiments/tools/deadline-patch/patch.ts
 ELECTRON_OVERRIDE_DIST_PATH=$PWD/tmp/deadline-patch/dist ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30 pnpm dev
 ```
 

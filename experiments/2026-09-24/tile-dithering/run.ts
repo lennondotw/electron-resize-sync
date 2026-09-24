@@ -4,7 +4,7 @@ import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { PNG } from "pngjs";
-import { collectEnvironment, launchSession, runDirectory } from "../harness/session.ts";
+import { collectEnvironment, launchSession, runDirectory } from "../../tools/harness/session.ts";
 
 const { values: args } = parseArgs({ options: { out: { type: "string" } } });
 

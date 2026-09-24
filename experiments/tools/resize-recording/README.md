@@ -5,7 +5,7 @@ content stays fixed relative to the window frame. The screen is recorded while
 the window is dragged, and each video frame is analysed for the position of
 every window edge and of a marker the page draws at the middle of each edge.
 
-This is the primary measure for the [resize synchronisation plan](../../docs/plans/2026-09-24/resize-sync.md).
+This is the primary measure for the [resize synchronisation plan](../../../docs/plans/2026-09-24/resize-sync.md).
 
 ## Requirements
 
@@ -22,7 +22,7 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
 1. Stage the app (keeps running until interrupted):
 
    ```bash
-   node experiments/resize-recording/stage.ts --busy 30 --sync off \
+   node experiments/tools/resize-recording/stage.ts --busy 30 --sync off \
      --frame-width <width of the drag tool's coordinate frame> --out tmp/rec/geometry.json
    ```
 
@@ -34,7 +34,7 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
 2. Start a recording long enough to cover the drags:
 
    ```bash
-   node experiments/resize-recording/record.ts --geometry tmp/rec/geometry.json --seconds 45 --out tmp/rec/run.mp4
+   node experiments/tools/resize-recording/record.ts --geometry tmp/rec/geometry.json --seconds 45 --out tmp/rec/run.mp4
    ```
 
 3. While it records, perform the drags listed under `drags` in the geometry
@@ -48,7 +48,7 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
 4. Analyse:
 
    ```bash
-   node experiments/resize-recording/analyze.ts --geometry tmp/rec/geometry.json --video tmp/rec/run.mp4 --out tmp/rec/run.json
+   node experiments/tools/resize-recording/analyze.ts --geometry tmp/rec/geometry.json --video tmp/rec/run.mp4 --out tmp/rec/run.json
    ```
 
 5. Optional: with `--env ELECTRON_RESIZE_SYNC_OVERLAY=1`, the resize rate
@@ -56,11 +56,11 @@ This is the primary measure for the [resize synchronisation plan](../../docs/pla
    per frame, whether its label keeps its offset from the window's top-right
    corner.
 
-6. Optional: timing from the main process. Run `node experiments/resize-recording/probe.ts install`
+6. Optional: timing from the main process. Run `node experiments/tools/resize-recording/probe.ts install`
    before a drag and `probe.ts dump` after it. It prints the resize interval
    and how long the main thread was blocked.
 
-7. Optional: a Chromium trace of a drag. Run `node experiments/resize-recording/trace.ts start`
+7. Optional: a Chromium trace of a drag. Run `node experiments/tools/resize-recording/trace.ts start`
    before the drag and `trace.ts stop tmp/trace/<run>.json` after it, then
    `trace.ts summarize tmp/trace/<run>.json --out <summary.json>` for the
    longest events per thread.

@@ -10,11 +10,11 @@ each user resize is cancelled, and the latest proposed size is applied with
 That paces the window to the page's frame rate, but every size still reaches
 the screen before the page has rendered it:
 
-- [Resize pacing](../../docs/experiments/2026-09-24/resize-pacing/README.md):
+- [Resize pacing](../../experiments/2026-09-24/resize-pacing/README.md):
   the unpainted time is not zero.
-- [Resize recording](../../docs/experiments/2026-09-24/resize-recording/README.md):
+- [Resize recording](../../experiments/2026-09-24/resize-recording/README.md):
   60–95 % of drag frames out of step, with or without pacing.
-- [Built-in display matrix](../../docs/experiments/2026-09-24/resize-matrix-builtin/README.md)
+- [Built-in display matrix](../../experiments/2026-09-24/resize-matrix-builtin/README.md)
   (`m-bprime`, with the busy work skipped): the error falls from 180 px to
   40 px but does not go away.
 

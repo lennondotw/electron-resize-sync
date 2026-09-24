@@ -4,8 +4,8 @@
 [resize sync plan](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/plans/2026-09-24/resize-sync.md): the window's
 new size and the page's frame at that size reach the screen together, in
 every direction, with and without busy work
-([deadline patch record](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/experiments/2026-09-24/resize-deadline-patch/README.md),
-[built-in display matrix](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/experiments/2026-09-24/resize-matrix-builtin/README.md)).
+([deadline patch record](https://github.com/lennondotw/electron-resize-sync/blob/main/experiments/2026-09-24/resize-deadline-patch/README.md),
+[built-in display matrix](https://github.com/lennondotw/electron-resize-sync/blob/main/experiments/2026-09-24/resize-matrix-builtin/README.md)).
 
 The cost: each size step waits for the page's frame, so the window resizes
 at most at the page's frame rate, and the browser main thread waits up to one

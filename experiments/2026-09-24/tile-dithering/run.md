@@ -8,7 +8,7 @@ where neighbouring tiles round to the same level.
 
 ```bash
 pnpm build
-node experiments/tile-dithering/run.ts
+node experiments/2026-09-24/tile-dithering/run.ts
 ```
 
 ## Procedure

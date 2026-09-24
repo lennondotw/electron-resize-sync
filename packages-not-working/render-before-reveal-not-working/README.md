@@ -11,7 +11,7 @@ window never resizes the page's surface. Each user resize is cancelled; the
 page first lays its root element out at the next size, and the window takes
 that size once the page has rendered it.
 
-[Built-in display matrix](../../docs/experiments/2026-09-24/resize-matrix-builtin/README.md)
+[Built-in display matrix](../../experiments/2026-09-24/resize-matrix-builtin/README.md)
 (`m-c`):
 
 - Growing: nearly in step (2 px on the moving edge).

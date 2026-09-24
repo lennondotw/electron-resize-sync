@@ -4,7 +4,12 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { collectEnvironment, launchSession, runDirectory, sleep } from "../harness/session.ts";
+import {
+  collectEnvironment,
+  launchSession,
+  runDirectory,
+  sleep,
+} from "../../tools/harness/session.ts";
 
 const ALL_EDGES = [
   "right",

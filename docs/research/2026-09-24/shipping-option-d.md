@@ -6,7 +6,7 @@ Evidence: source at Chromium 152.0.7977.130 and Electron v44.4.5 ([S]), local pr
 
 ## Question and scope
 
-The [deadline patch experiment](../../experiments/2026-09-24/resize-deadline-patch/README.md)
+The [deadline patch experiment](../../../experiments/2026-09-24/resize-deadline-patch/README.md)
 showed that option D keeps the content in step with the window frame when
 three things hold:
 
@@ -35,7 +35,7 @@ scope.
   `--disable-features=…,RemoteCoreAnimationAPI,…`. [R]
 - On screen, option D with the switches set this way kept content in step in
   every drag on the built-in display
-  ([resize matrix](../../experiments/2026-09-24/resize-matrix-builtin/README.md), `m-d`, `m-off-d`). [R]
+  ([resize matrix](../../../experiments/2026-09-24/resize-matrix-builtin/README.md), `m-d`, `m-off-d`). [R]
 
 **Only the deadline on resize needs Electron.** [S]
 
@@ -81,7 +81,7 @@ cross-process navigation goes through it too.
    - It is small enough to upstream as an opt-in; it fits
      electron/electron#36280. [Inf]
 2. **Binary patch at build time.** Run `patchElectronFramework` from
-   `packages/resize-deadline` (as `experiments/deadline-patch/patch.ts` does)
+   `packages/resize-deadline` (as `experiments/tools/deadline-patch/patch.ts` does)
    on the packaged app's framework and sign it with the app's identity.
    - It needs the release's symbols and byte checks for every Electron
      version.

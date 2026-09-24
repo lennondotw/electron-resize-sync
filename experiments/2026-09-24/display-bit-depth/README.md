@@ -3,7 +3,7 @@
 Date: 2026-09-24\
 Status: executed on one external display\
 Data: [`data.json`](data.json)\
-Script: [`experiments/display-bit-depth`](../../../../experiments/display-bit-depth/README.md)
+Script: [`experiments/2026-09-24/display-bit-depth`](run.md)
 
 ## Question and acceptance criteria
 
@@ -21,7 +21,7 @@ Repository `0dbf83b`.
 
 ```bash
 pnpm build
-node experiments/display-bit-depth/run.ts --out docs/experiments/2026-09-24/display-bit-depth/data.json
+node experiments/2026-09-24/display-bit-depth/run.ts --out experiments/2026-09-24/display-bit-depth/data.json
 ```
 
 ## Results

@@ -7,7 +7,7 @@ decides whether higher-precision rendering could reduce banding.
 
 ```bash
 pnpm build
-node experiments/display-bit-depth/run.ts
+node experiments/2026-09-24/display-bit-depth/run.ts
 ```
 
 Needs Xcode (the script compiles `screen.swift` with `xcrun --toolchain XcodeDefault swiftc`).

@@ -4,26 +4,26 @@ Builds a copy of the installed Electron in which resizing a web contents view
 waits for the renderer's frame at the new size (surface synchronisation with
 the default deadline), instead of Chromium's hard-coded deadline of 0. This is
 the experimental form of option D in the
-[resize synchronisation plan](../../docs/plans/2026-09-24/resize-sync.md); see
-the [source reading](../../docs/research/2026-09-24/chromium-resize-sync.md)
+[resize synchronisation plan](../../../docs/plans/2026-09-24/resize-sync.md); see
+the [source reading](../../../docs/research/2026-09-24/chromium-resize-sync.md)
 for why this is the switch that matters.
 
 The patching itself is `patchElectronFramework` in
-[`packages/resize-deadline`](../../packages/resize-deadline/README.md); this
+[`packages/resize-deadline`](../../../packages/resize-deadline/README.md); this
 script prepares the copy around it. The copy lives in
 `tmp/deadline-patch/dist`. `node_modules` is never modified.
 
 ## Run
 
 ```bash
-node experiments/deadline-patch/patch.ts
+node experiments/tools/deadline-patch/patch.ts
 ```
 
 It needs `gh` (to download the symbols), Xcode command-line tools (`dwarfdump`,
 `otool`, `codesign`), and `unzip`. Then launch any script with the patched copy:
 
 ```bash
-ELECTRON_OVERRIDE_DIST_PATH=$PWD/tmp/deadline-patch/dist node experiments/resize-recording/stage.ts …
+ELECTRON_OVERRIDE_DIST_PATH=$PWD/tmp/deadline-patch/dist node experiments/tools/resize-recording/stage.ts …
 ```
 
 The `electron` npm package resolves its binary from `ELECTRON_OVERRIDE_DIST_PATH`.
@@ -72,9 +72,9 @@ The script:
   Any other build fails the check rather than being patched blindly.
 - **Experiment only, not for distribution:** the ad hoc signature is local.
   A product needs the same change as a source patch to Electron:
-  [`electron-v44.4.5-resize-deadline.patch`](../../packages/resize-deadline/electron-v44.4.5-resize-deadline.patch)
+  [`electron-v44.4.5-resize-deadline.patch`](../../../packages/resize-deadline/electron-v44.4.5-resize-deadline.patch)
   adds `webPreferences.resizeDeadlineFrames` (written and checked to apply,
-  not built). See [shipping option D](../../docs/research/2026-09-24/shipping-option-d.md).
+  not built). See [shipping option D](../../../docs/research/2026-09-24/shipping-option-d.md).
 - **Deadline:** the default deadline is `--deadline-to-synchronize-surfaces`
   frames (4 unless set). A renderer slower than that still misses it. The app
   can set the switch itself: `ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` makes

@@ -9,7 +9,7 @@ import { promisify } from "node:util";
 import { patchElectronFramework } from "@electron-resize-sync/resize-deadline/patch";
 
 const exec = promisify(execFile);
-const repoRoot = path.resolve(import.meta.dirname, "../..");
+const repoRoot = path.resolve(import.meta.dirname, "../../..");
 const workDir = path.join(repoRoot, "tmp", "deadline-patch");
 const distDir = path.join(workDir, "dist");
 const appPath = path.join(distDir, "Electron.app");

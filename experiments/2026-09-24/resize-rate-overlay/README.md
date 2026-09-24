@@ -3,7 +3,7 @@
 Date: 2026-09-24\
 Status: executed; one recording with synthetic drags; the overlay was in step at every size change\
 Data: [`data.json`](data.json)\
-Scripts: [`experiments/resize-recording`](../../../../experiments/resize-recording/README.md) (`overlay.ts`, `analyze.ts`)
+Scripts: [`experiments/tools/resize-recording`](../../tools/resize-recording/README.md) (`overlay.ts`, `analyze.ts`)
 
 ## Question and acceptance criteria
 
@@ -37,17 +37,17 @@ From the data file's `environment`:
 ## Procedure
 
 ```bash
-node experiments/deadline-patch/patch.ts
+node experiments/tools/deadline-patch/patch.ts
 ELECTRON_OVERRIDE_DIST_PATH=$PWD/tmp/deadline-patch/dist \
-  node experiments/resize-recording/stage.ts --display Built-in --frame-width 1372 \
+  node experiments/tools/resize-recording/stage.ts --display Built-in --frame-width 1372 \
     --busy 30 --dither off \
     --env ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30 --env ELECTRON_RESIZE_SYNC_OVERLAY=1 \
     --out tmp/rec/geometry-overlay-lag.json
-node experiments/resize-recording/record.ts --geometry tmp/rec/geometry-overlay-lag.json \
+node experiments/tools/resize-recording/record.ts --geometry tmp/rec/geometry-overlay-lag.json \
   --seconds 150 --out tmp/rec/overlay-lag.mp4
-node experiments/resize-recording/overlay.ts --geometry tmp/rec/geometry-overlay-lag.json \
+node experiments/tools/resize-recording/overlay.ts --geometry tmp/rec/geometry-overlay-lag.json \
   --video tmp/rec/overlay-lag.mp4 --out tmp/rec/overlay-lag-summary.json
-node experiments/resize-recording/analyze.ts --geometry tmp/rec/geometry-overlay-lag.json \
+node experiments/tools/resize-recording/analyze.ts --geometry tmp/rec/geometry-overlay-lag.json \
   --video tmp/rec/overlay-lag.mp4 --out tmp/rec/overlay-lag-analysis.json
 ```
 

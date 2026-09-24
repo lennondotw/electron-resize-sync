@@ -3,11 +3,11 @@
 Date: 2026-09-24\
 Status: executed; real AppKit drags on one display; the content stays in step in every drag with the patch, a 30-frame deadline and RemoteCoreAnimationAPI off\
 Data: [`data.json`](data.json)\
-Scripts: [`experiments/deadline-patch`](../../../../experiments/deadline-patch/README.md), [`experiments/resize-recording`](../../../../experiments/resize-recording/README.md)
+Scripts: [`experiments/tools/deadline-patch`](../../tools/deadline-patch/README.md), [`experiments/tools/resize-recording`](../../tools/resize-recording/README.md)
 
 ## Question and acceptance criteria
 
-The [source reading](../../../research/2026-09-24/chromium-resize-sync.md)
+The [source reading](../../../docs/research/2026-09-24/chromium-resize-sync.md)
 traced the out-of-step content to one decision: when the web contents view
 resizes, Chromium embeds the renderer's new surface with a deadline of 0, so
 the window's new frame is drawn with the renderer's previous content. Does
@@ -26,7 +26,7 @@ Fewer window size updates per second are acceptable.
 | Hardware   | Mac15,8, Apple M3 Max                                                                          |
 | Display    | VX2781-4K-PRO: 3008×1692 pt, scale 2, 120 Hz, 24-bit                                           |
 | Runtime    | Electron 44.4.5, Chromium 152.0.7977.130, arm64                                                |
-| Electron   | Patched copy from `experiments/deadline-patch` (`13720c7`); the unpatched copy for `c1`        |
+| Electron   | Patched copy from `experiments/tools/deadline-patch` (`13720c7`); the unpatched copy for `c1`  |
 | App        | Busy 30 ms unless noted, playing, dithering on; window at rest 800×600 pt                      |
 | Repository | `13720c7`; `analyze.ts` then gained size-update counts (`5f45a63`) and was rerun on the videos |
 | Capture    | ffmpeg AVFoundation, 60 fps, no pointer; drags by a computer-use tool, 10 pt per move          |
@@ -37,9 +37,9 @@ Each run's `environment` in the data file records the same values, captured by
 ## Procedure
 
 ```bash
-node experiments/deadline-patch/patch.ts
+node experiments/tools/deadline-patch/patch.ts
 ELECTRON_OVERRIDE_DIST_PATH=$PWD/tmp/deadline-patch/dist \
-  node experiments/resize-recording/stage.ts --busy 30 --sync off \
+  node experiments/tools/resize-recording/stage.ts --busy 30 --sync off \
     --electron-arg=--deadline-to-synchronize-surfaces=30 \
     --electron-arg=--disable-features=RemoteCoreAnimationAPI --frame-width 1456 --out tmp/rec/geometry.json
 ```
@@ -107,7 +107,7 @@ the data file).
 ### Cost: resize interval and main-thread blocking
 
 Measured separately with a main-process probe (now
-[`probe.ts`](../../../../experiments/resize-recording/probe.ts)) during one
+[`probe.ts`](../../tools/resize-recording/probe.ts)) during one
 right-edge drag per run; data in
 [`cost.json`](cost.json).
 

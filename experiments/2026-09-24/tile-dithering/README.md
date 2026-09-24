@@ -3,7 +3,7 @@
 Date: 2026-09-24\
 Status: executed; passes on Chromium's composited output\
 Data: [`data.json`](data.json)\
-Script: [`experiments/tile-dithering`](../../../../experiments/tile-dithering/README.md)
+Script: [`experiments/2026-09-24/tile-dithering`](run.md)
 
 ## Question and acceptance criteria
 
@@ -25,7 +25,7 @@ no uncommitted changes under `src` or `experiments`.
 
 ```bash
 pnpm build
-node experiments/tile-dithering/run.ts --out docs/experiments/2026-09-24/tile-dithering/data.json
+node experiments/2026-09-24/tile-dithering/run.ts --out experiments/2026-09-24/tile-dithering/data.json
 ```
 
 Paused at time 0 with no busy work, so every run renders the same wave phase.

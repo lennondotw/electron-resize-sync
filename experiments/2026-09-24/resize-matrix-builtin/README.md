@@ -3,7 +3,7 @@
 Date: 2026-09-24\
 Status: executed; synthetic background drags of the right, bottom and bottom-right edges; option D in step in every drag, with busy work and without\
 Data: [`data.json`](data.json)\
-Scripts: [`experiments/resize-recording`](../../../../experiments/resize-recording/README.md)
+Scripts: [`experiments/tools/resize-recording`](../../tools/resize-recording/README.md)
 
 ## Question and acceptance criteria
 
@@ -13,7 +13,7 @@ built-in display:
 
 - Option D with its two switches set by the app
   (`ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30`, see
-  [shipping option D](../../../research/2026-09-24/shipping-option-d.md)).
+  [shipping option D](../../../docs/research/2026-09-24/shipping-option-d.md)).
 - Option C, the render-before-reveal window (`9f7010f`), measured for the
   first time.
 - Option B′, paced resizing with the busy work skipped during a resize.
@@ -43,7 +43,7 @@ From each run's `environment` in the data file:
 Every run is a fresh isolated session, staged on the built-in display:
 
 ```bash
-node experiments/resize-recording/stage.ts --display Built-in --frame-width 1372 \
+node experiments/tools/resize-recording/stage.ts --display Built-in --frame-width 1372 \
   --dither off <run settings> --out tmp/rec/geometry-<run>.json
 ```
 

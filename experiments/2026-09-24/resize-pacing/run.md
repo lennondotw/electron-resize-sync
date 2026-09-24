@@ -10,7 +10,7 @@ both directions.
 
 ```bash
 pnpm build
-node experiments/resize-pacing/run.ts
+node experiments/2026-09-24/resize-pacing/run.ts
 ```
 
 Options (defaults in brackets): `--busy` [`0,30,65`], `--edges`
