@@ -21,8 +21,8 @@ const socket = new WebSocket(target!.webSocketDebuggerUrl);
 await new Promise((resolve) => socket.addEventListener("open", resolve, { once: true }));
 
 const install = `(() => {
-  const { BrowserWindow } = require("electron");
-  const win = BrowserWindow.getAllWindows().find((w) => w.isFocusable());
+  const { BaseWindow } = require("electron");
+  const win = BaseWindow.getAllWindows().find((w) => w.isFocusable());
   const probe = (globalThis.__resizeProbe = { resizes: [], lags: [] });
   win.on("resize", () => probe.resizes.push(performance.now()));
   // A 1 ms timer: any extra delay is time the main thread could not run JS.

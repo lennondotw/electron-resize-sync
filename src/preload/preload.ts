@@ -5,8 +5,13 @@ import {
   RESIZE_ACTIVE_CHANNEL,
   RESIZE_COMMIT_CHANNEL,
   RESIZE_SYNC_CHANNEL,
+  REVEAL_ACK_CHANNEL,
+  REVEAL_ARGUMENT,
+  REVEAL_LAYOUT_CHANNEL,
+  REVEAL_REQUEST_CHANNEL,
   type ResizeBridge,
   type ResizeCommit,
+  type RevealLayout,
 } from "../shared/resizeBridge.ts";
 
 const resizeBridge: ResizeBridge = {
@@ -27,6 +32,18 @@ const resizeBridge: ResizeBridge = {
     return () => ipcRenderer.off(RESIZE_ACTIVE_CHANNEL, handler);
   },
   markers: process.argv.includes(MARKERS_ARGUMENT),
+  reveal: process.argv.includes(REVEAL_ARGUMENT),
+  onLayout(listener) {
+    const handler = (_event: IpcRendererEvent, layout: RevealLayout) => listener(layout);
+    ipcRenderer.on(REVEAL_LAYOUT_CHANNEL, handler);
+    return () => ipcRenderer.off(REVEAL_LAYOUT_CHANNEL, handler);
+  },
+  requestLayout() {
+    ipcRenderer.send(REVEAL_REQUEST_CHANNEL);
+  },
+  ackLayout(id) {
+    ipcRenderer.send(REVEAL_ACK_CHANNEL, id);
+  },
 };
 
 contextBridge.exposeInMainWorld("resizeBridge", resizeBridge);

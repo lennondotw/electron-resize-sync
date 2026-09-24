@@ -13,6 +13,8 @@ const { values: args } = parseArgs({
     sync: { type: "string", default: "off" },
     /** Skip the busy work while a resize is in progress. */
     yield: { type: "string", default: "off" },
+    /** Whether the tiles animate; the frame loop and busy work run either way. */
+    playing: { type: "string", default: "on" },
     /** Per-tile dithering (masked layers) on or off. */
     dither: { type: "string", default: "on" },
     env: { type: "string", multiple: true, default: [] },
@@ -37,7 +39,7 @@ const session = await launchSession({
   runDir,
   settings: {
     busyMs: Number(args.busy),
-    playing: true,
+    playing: args.playing === "on",
     dither: args.dither === "on",
     resizeSync: args.sync === "on",
     yieldOnResize: args.yield === "on",
@@ -51,8 +53,9 @@ const geometry = await session.main<{
   window: { x: number; y: number; width: number; height: number };
   backdrop: { x: number; y: number; width: number; height: number };
 }>(`(async () => {
-  const { BrowserWindow, screen } = require("electron");
-  const [win] = BrowserWindow.getAllWindows();
+  const { BaseWindow, BrowserWindow, screen } = require("electron");
+  // A BaseWindow in render-before-reveal mode, a BrowserWindow otherwise.
+  const [win] = BaseWindow.getAllWindows();
   const display = screen.getPrimaryDisplay();
   const window = {
     x: Math.round(display.bounds.x + (display.bounds.width - ${WINDOW.width}) / 2),

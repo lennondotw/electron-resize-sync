@@ -89,7 +89,11 @@ function isContentSize(value: unknown): value is ContentSize {
  * corner fixed whichever edge is dragged, so applying them as-is makes a
  * window dragged down grow upwards. Only their size is trusted here.
  */
-function anchorOppositeEdges(current: Rectangle, proposed: Rectangle, edge: string): Rectangle {
+export function anchorOppositeEdges(
+  current: Rectangle,
+  proposed: Rectangle,
+  edge: string,
+): Rectangle {
   const { width, height } = proposed;
   return {
     x: edge.includes("left") ? current.x + current.width - width : current.x,

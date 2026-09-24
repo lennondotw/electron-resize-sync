@@ -92,7 +92,7 @@ export async function launchSession({
     // rAF stops while the window is covered, so keep it on top and visible.
     await evaluate(
       main,
-      `(() => { const win = require("electron").BrowserWindow.getAllWindows()[0];
+      `(() => { const win = require("electron").BaseWindow.getAllWindows()[0];
         win.setAlwaysOnTop(true); win.showInactive(); })()`,
     );
     await sleep(1000);

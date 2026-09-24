@@ -1,15 +1,26 @@
 import path from "node:path";
-import { app, BrowserWindow, nativeTheme } from "electron";
+import {
+  app,
+  BaseWindow,
+  BrowserWindow,
+  nativeTheme,
+  type BaseWindowConstructorOptions,
+} from "electron";
 import {
   MARKERS_ARGUMENT,
   RESIZE_ACTIVE_CHANNEL,
   RESIZE_COMMIT_CHANNEL,
+  REVEAL_ARGUMENT,
   type ResizeCommit,
 } from "../shared/resizeBridge.ts";
 import { TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
 import { paceResizes } from "./resizePacer.ts";
+import { createRevealWindow } from "./revealWindow.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
+// Option C (render before reveal) needs a different window structure, so it is
+// chosen at launch rather than with a HUD switch.
+const revealMode = Boolean(process.env["ELECTRON_RESIZE_SYNC_REVEAL"]);
 
 // Lets experiments run against a fresh profile without touching the user's settings.
 const userDataDir = process.env["ELECTRON_RESIZE_SYNC_USER_DATA"];
@@ -22,7 +33,7 @@ function canvasColor() {
 }
 
 function createWindow() {
-  const win = new BrowserWindow({
+  const options: BaseWindowConstructorOptions = {
     width: 760,
     height: 480,
     minWidth: 480,
@@ -34,18 +45,34 @@ function createWindow() {
       titleBarStyle: "hidden",
       trafficLightPosition: TRAFFIC_LIGHTS_POSITION,
     }),
-    webPreferences: {
-      preload: path.join(import.meta.dirname, "preload.cjs"),
-      additionalArguments: process.env["ELECTRON_RESIZE_SYNC_MARKERS"] ? [MARKERS_ARGUMENT] : [],
-    },
-  });
+  };
+  const webPreferences = {
+    preload: path.join(import.meta.dirname, "preload.cjs"),
+    additionalArguments: [
+      ...(process.env["ELECTRON_RESIZE_SYNC_MARKERS"] ? [MARKERS_ARGUMENT] : []),
+      ...(revealMode ? [REVEAL_ARGUMENT] : []),
+    ],
+  };
+  let win: BaseWindow;
+  let webContents: Electron.WebContents;
+  if (revealMode) {
+    const reveal = createRevealWindow(options, webPreferences);
+    reveal.view.setBackgroundColor(canvasColor());
+    ({ win } = reveal);
+    ({ webContents } = reveal.view);
+  } else {
+    const browserWindow = new BrowserWindow({ ...options, webPreferences });
+    paceResizes(browserWindow);
+    win = browserWindow;
+    ({ webContents } = browserWindow);
+  }
 
   // Tell the renderer when each new size lands, so it can measure how long it
   // takes to paint a frame at that size.
   win.on("resize", () => {
     const [width = 0, height = 0] = win.getContentSize();
     const commit: ResizeCommit = { width, height, at: performance.timeOrigin + performance.now() };
-    win.webContents.send(RESIZE_COMMIT_CHANNEL, commit);
+    webContents.send(RESIZE_COMMIT_CHANNEL, commit);
   });
   // Tell the renderer while a user resize is in progress, so it can defer
   // expensive work (will-resize fires for each step, resized once at the end).
@@ -53,30 +80,28 @@ function createWindow() {
   win.on("will-resize", () => {
     if (resizing) return;
     resizing = true;
-    win.webContents.send(RESIZE_ACTIVE_CHANNEL, true);
+    webContents.send(RESIZE_ACTIVE_CHANNEL, true);
   });
   win.on("resized", () => {
     resizing = false;
-    win.webContents.send(RESIZE_ACTIVE_CHANNEL, false);
+    webContents.send(RESIZE_ACTIVE_CHANNEL, false);
   });
-
-  paceResizes(win);
 
   const syncBackground = () => win.setBackgroundColor(canvasColor());
   nativeTheme.on("updated", syncBackground);
   win.on("closed", () => nativeTheme.off("updated", syncBackground));
 
   if (devServerUrl) {
-    void win.loadURL(devServerUrl);
+    void webContents.loadURL(devServerUrl);
   } else {
-    void win.loadFile(path.join(import.meta.dirname, "../dist/index.html"));
+    void webContents.loadFile(path.join(import.meta.dirname, "../dist/index.html"));
   }
 }
 
 void app.whenReady().then(() => {
   createWindow();
   app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BaseWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
