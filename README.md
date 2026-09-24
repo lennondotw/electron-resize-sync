@@ -78,22 +78,20 @@ A pnpm workspace:
   measure, per frame, whether the content stays in step with the frame.
 - `docs/`: plans, research and experiment records.
 
-| Script        | Purpose                                                                     |
-| ------------- | --------------------------------------------------------------------------- |
-| `pnpm dev`    | Demo: Vite dev server + main-process watch build + Electron restarts        |
-| `pnpm start`  | Build everything, then launch the demo                                      |
-| `pnpm build`  | Build every package (in dependency order), then the demo                    |
-| `pnpm check`  | `typecheck` (TypeScript 7) + `lint` (oxlint) + `format:check`, all packages |
-| `pnpm format` | Format with oxfmt                                                           |
+| Script             | Purpose                                                                     |
+| ------------------ | --------------------------------------------------------------------------- |
+| `pnpm dev`         | Demo: Vite dev server + main-process watch build + Electron restarts        |
+| `pnpm dev:patched` | The same, with option D: the patched Electron copy and its switches         |
+| `pnpm start`       | Build everything, then launch the demo                                      |
+| `pnpm build`       | Build every package (in dependency order), then the demo                    |
+| `pnpm check`       | `typecheck` (TypeScript 7) + `lint` (oxlint) + `format:check`, all packages |
+| `pnpm format`      | Format with oxfmt                                                           |
 
-The demo uses stock Electron. To try option D, build the patched copy and
-point the demo at it:
-
-```bash
-pnpm build
-node experiments/tools/deadline-patch/patch.ts
-ELECTRON_OVERRIDE_DIST_PATH=$PWD/tmp/deadline-patch/dist ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30 pnpm dev
-```
+`pnpm dev` runs the demo on stock Electron, where the problem shows.
+`pnpm dev:patched` runs it with option D: on a copy of Electron patched by
+[`deadline-patch`](experiments/tools/deadline-patch/README.md) (built under
+`tmp/` on first use, which downloads the release's symbols, about 129 MB), with
+the two switches set.
 
 ### Package builds
 

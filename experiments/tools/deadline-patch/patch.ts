@@ -3,7 +3,7 @@
 // @electron-resize-sync/resize-deadline. The copy lives under tmp/;
 // node_modules is never modified. See README.md.
 import { execFile } from "node:child_process";
-import { access, mkdir, readFile, rm } from "node:fs/promises";
+import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { patchElectronFramework } from "@electron-resize-sync/resize-deadline/patch";
@@ -63,5 +63,10 @@ for (const [key, value] of Object.entries(identity)) {
 
 // Patching invalidates the signature; re-sign the copy ad hoc so it launches.
 await exec("codesign", ["--force", "--deep", "--sign", "-", appPath]);
+// Marks a finished copy, so tools can tell it is complete and which Electron it patched.
+await writeFile(
+  path.join(distDir, "patched.json"),
+  `${JSON.stringify({ electron: version, patchedAt: new Date().toISOString() }, null, 2)}\n`,
+);
 console.log(`Patched Electron ${version} at ${distDir}`);
 console.log(`Launch it with ELECTRON_OVERRIDE_DIST_PATH=${distDir}`);

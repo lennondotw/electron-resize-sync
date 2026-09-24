@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter @electron-resize-sync/demo dev",
+    "dev:patched": "pnpm --filter @electron-resize-sync/demo dev:patched",
     "start": "pnpm build && pnpm --filter @electron-resize-sync/demo start",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck && tsc -p experiments/tsconfig.json",
