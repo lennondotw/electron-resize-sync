@@ -13,7 +13,7 @@ import {
   REVEAL_REQUEST_CHANNEL,
   type RevealLayout,
 } from "../shared/resize-bridge.ts";
-import { anchorOppositeEdges } from "./resize-pacer.ts";
+import { trackDraggedEdges } from "./drag-edge-heuristic.ts";
 
 /**
  * Room around the window, in points, into which the page can lay out #root
@@ -110,10 +110,12 @@ export function createRevealWindow(
     commitNext();
   };
 
+  // Which edges are dragged is a guess; see trackDraggedEdges.
+  const place = trackDraggedEdges(win);
   win.on("will-resize", (event, newBounds, { edge }) => {
     event.preventDefault();
     dragging = true;
-    pending = anchorOppositeEdges(win.getBounds(), newBounds, edge);
+    pending = place(win.getBounds(), newBounds, edge);
     commitNext();
   });
   win.on("resized", () => {

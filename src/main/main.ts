@@ -74,7 +74,11 @@ function createWindow() {
     ({ webContents } = reveal.view);
   } else {
     const browserWindow = new BrowserWindow({ ...options, webPreferences });
-    paceResizes(browserWindow);
+    // Simulated drags (experiments/resize-pacing) emit will-resize with the
+    // edge they drag; real drags on macOS do not report it.
+    paceResizes(browserWindow, {
+      ...(process.env["ELECTRON_RESIZE_SYNC_TRUST_REPORTED_EDGE"] && { trustReportedEdge: true }),
+    });
     win = browserWindow;
     ({ webContents } = browserWindow);
   }

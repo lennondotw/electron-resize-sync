@@ -54,3 +54,8 @@ count/median/p90/max. `environment` records the machine and build.
   the content lays out at a stale size instead.
 - Acks without a matching size (for example sizes the renderer skipped) are not
   counted.
+
+Since the pacer guesses the dragged edge from the pointer on macOS (see
+`src/main/drag-edge-heuristic.ts`), the script sets
+`ELECTRON_RESIZE_SYNC_TRUST_REPORTED_EDGE=1` so the pacer uses the edge its
+simulated `will-resize` reports.

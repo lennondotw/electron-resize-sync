@@ -147,6 +147,9 @@ for (const busyMs of busyBudgets) {
     const session = await launchSession({
       runDir,
       settings: { busyMs, playing: true, dither: true, resizeSync },
+      // The simulated drags report their edge in will-resize; without this
+      // the pacer would guess it from the pointer, which is not on the edge.
+      env: { ELECTRON_RESIZE_SYNC_TRUST_REPORTED_EDGE: "1" },
     });
     try {
       environment ??= await collectEnvironment(session);

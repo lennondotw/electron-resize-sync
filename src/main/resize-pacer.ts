@@ -1,4 +1,5 @@
 import { ipcMain, type BrowserWindow, type Rectangle } from "electron";
+import { trackDraggedEdges } from "./drag-edge-heuristic.ts";
 import {
   RESIZE_ACK_CHANNEL,
   RESIZE_SYNC_CHANNEL,
@@ -14,7 +15,7 @@ const ACK_TIMEOUT_MS = 500;
  * applied with `setBounds` only when the renderer reports it has rendered
  * the previous size.
  */
-export function paceResizes(win: BrowserWindow) {
+export function paceResizes(win: BrowserWindow, options: { trustReportedEdge?: boolean } = {}) {
   let enabled = false;
   let pending: Rectangle | undefined;
   /** Content size the renderer must report before the next commit, if any. */
@@ -44,10 +45,12 @@ export function paceResizes(win: BrowserWindow) {
     commitNext();
   };
 
+  // Which edges are dragged is a guess; see trackDraggedEdges.
+  const place = trackDraggedEdges(win, options);
   win.on("will-resize", (event, newBounds, { edge }) => {
     if (!enabled) return;
     event.preventDefault();
-    pending = anchorOppositeEdges(win.getBounds(), newBounds, edge);
+    pending = place(win.getBounds(), newBounds, edge);
     commitNext();
   });
 
@@ -81,24 +84,4 @@ function isContentSize(value: unknown): value is ContentSize {
   if (typeof value !== "object" || value === null) return false;
   const { width, height } = value as Record<string, unknown>;
   return typeof width === "number" && typeof height === "number";
-}
-
-/**
- * Places the proposed size so the edges opposite the dragged one stay put.
- * On macOS, Electron's `will-resize` bounds keep the window's bottom-left
- * corner fixed whichever edge is dragged, so applying them as-is makes a
- * window dragged down grow upwards. Only their size is trusted here.
- */
-export function anchorOppositeEdges(
-  current: Rectangle,
-  proposed: Rectangle,
-  edge: string,
-): Rectangle {
-  const { width, height } = proposed;
-  return {
-    x: edge.includes("left") ? current.x + current.width - width : current.x,
-    y: edge.includes("top") ? current.y + current.height - height : current.y,
-    width,
-    height,
-  };
 }
