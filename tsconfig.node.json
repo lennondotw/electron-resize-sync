@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "lib": ["es2024"],
-    "types": ["node"],
-    "allowImportingTsExtensions": true
-  },
-  "include": ["src/main", "src/preload", "src/shared", "scripts", "experiments", "*.config.ts"]
-}

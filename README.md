@@ -16,10 +16,13 @@ in sync with requestAnimationFrame rendering.
 
 ## Scripts
 
-| Script        | Purpose                                                        |
-| ------------- | -------------------------------------------------------------- |
-| `pnpm dev`    | Vite dev server + main-process watch build + Electron restarts |
-| `pnpm start`  | Production build, then launch Electron on it                   |
-| `pnpm build`  | Build renderer (`dist/`) and main process (`dist-electron/`)   |
-| `pnpm check`  | `typecheck` (TypeScript 7) + `lint` (oxlint) + `format:check`  |
-| `pnpm format` | Format with oxfmt                                              |
+A pnpm workspace. The demo app lives in `apps/demo`; `experiments/` holds the
+measurement scripts and `docs/` the records.
+
+| Script        | Purpose                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| `pnpm dev`    | Demo: Vite dev server + main-process watch build + Electron restarts        |
+| `pnpm start`  | Demo: production build, then launch Electron on it                          |
+| `pnpm build`  | Build every workspace package (the demo into `apps/demo/dist*`)             |
+| `pnpm check`  | `typecheck` (TypeScript 7) + `lint` (oxlint) + `format:check`, all packages |
+| `pnpm format` | Format with oxfmt                                                           |

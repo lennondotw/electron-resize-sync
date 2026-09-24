@@ -3,37 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "dist-electron/main.js",
   "scripts": {
-    "dev": "node scripts/dev.ts",
-    "build": "vite build && vite build -c vite.main.config.ts && vite build -c vite.preload.config.ts",
-    "start": "pnpm build && electron .",
-    "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
+    "dev": "pnpm --filter @electron-resize-sync/demo dev",
+    "start": "pnpm --filter @electron-resize-sync/demo start",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck && tsc -p experiments/tsconfig.json",
     "lint": "oxlint --deny-warnings",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check"
   },
-  "dependencies": {
-    "@base-ui/react": "^1.8.0",
-    "es-toolkit": "^1.52.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
-  },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.6",
     "@types/pngjs": "^6.0.5",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.1",
     "electron": "^44.4.5",
     "oxfmt": "^0.70.0",
     "oxlint": "^1.85.0",
     "pngjs": "^7.0.0",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
-    "vite": "^8.3.0"
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=24"

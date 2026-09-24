@@ -7,6 +7,8 @@ import { createServer } from "node:net";
 import path from "node:path";
 
 const repoRoot = path.resolve(import.meta.dirname, "../..");
+/** The app under test; run `pnpm build` first. */
+const demoDir = path.join(repoRoot, "apps", "demo");
 
 export interface HudSettings {
   busyMs: number;
@@ -54,7 +56,7 @@ export async function launchSession({
     electronBin,
     [`--inspect=${inspectPort}`, ".", `--remote-debugging-port=${cdpPort}`, ...args],
     {
-      cwd: repoRoot,
+      cwd: demoDir,
       env: { ...process.env, ...env, ELECTRON_RESIZE_SYNC_USER_DATA: userDataDir },
       stdio: "ignore",
     },
@@ -133,7 +135,7 @@ export async function collectEnvironment(session: Session) {
           .map((name) => "--" + name + "=" + app.commandLine.getSwitchValue(name));
         return { electron: process.versions.electron, chrome: process.versions.chrome,
           node: process.versions.node, arch: process.arch, platform: process.platform,
-          electronExecutable: require("node:path").relative(process.cwd(), process.execPath), switches: switches.join(" "),
+          electronExecutable: require("node:path").relative(${JSON.stringify(repoRoot)}, process.execPath), switches: switches.join(" "),
           displayLabel: d.label, displayScaleFactor: String(d.scaleFactor),
           displayRefreshRate: String(d.displayFrequency),
           displayColorDepth: String(d.colorDepth), displaySize: d.size.width + "x" + d.size.height }; })()`,
