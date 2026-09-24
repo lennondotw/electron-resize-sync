@@ -36,7 +36,8 @@ Known ways it goes wrong:
 - A pointer that the system moves or hides during the drag.
 
 Checked only by emitting `will-resize` with a stubbed pointer on each edge and
-corner (8 of 8), not with real drags of every edge.
+corner (8 of 8), not with real drags of every edge
+([record](https://github.com/lennondotw/electron-resize-sync/blob/main/experiments/2026-09-24/drag-edge-heuristic/README.md)).
 
 On other platforms (Windows) Electron reports the edge from the system; with
 `trustReportedEdge` (the default there) that report is used instead.

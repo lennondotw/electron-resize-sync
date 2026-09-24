@@ -3,10 +3,10 @@
 // usage: trace.ts start               (before the drag)
 //        trace.ts stop <trace.json>   (after the drag; writes the raw trace)
 //        trace.ts summarize <trace.json> [--out <summary.json>] [--top N]
-import { execFile } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { parseArgs, promisify } from "node:util";
+import { parseArgs } from "node:util";
+import { evaluateInMain } from "../harness/inspect.ts";
 
 const { positionals, values: args } = parseArgs({
   allowPositionals: true,
@@ -29,30 +29,6 @@ const CATEGORIES = [
 ];
 /** Events at least this long are summarised. */
 const LONG_US = 20_000;
-
-async function evaluateInMain(expression: string) {
-  // The staged app is the Electron process started with --inspect by stage.ts.
-  const { stdout } = await promisify(execFile)("ps", ["-Ao", "command"]);
-  const port = /MacOS\/Electron --inspect=(\d+)/.exec(stdout)?.[1];
-  if (!port) throw new Error("No staged Electron process with --inspect found");
-  const [target] = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()) as {
-    webSocketDebuggerUrl: string;
-  }[];
-  const socket = new WebSocket(target!.webSocketDebuggerUrl);
-  await new Promise((resolve) => socket.addEventListener("open", resolve, { once: true }));
-  socket.send(
-    JSON.stringify({
-      id: 1,
-      method: "Runtime.evaluate",
-      params: { expression, includeCommandLineAPI: true, returnByValue: true, awaitPromise: true },
-    }),
-  );
-  const reply = await new Promise<string>((resolve) =>
-    socket.addEventListener("message", (message) => resolve(String(message.data)), { once: true }),
-  );
-  socket.close();
-  return (JSON.parse(reply) as { result?: { result?: { value?: unknown } } }).result?.result?.value;
-}
 
 interface TraceEvent {
   ph: string;

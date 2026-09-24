@@ -2,23 +2,10 @@
 // during a drag, and how long the main thread is blocked meanwhile.
 // usage: probe.ts install   (before the drag)
 //        probe.ts dump      (after the drag; prints JSON and resets)
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
+import { evaluateInMain } from "../harness/inspect.ts";
 
-const exec = promisify(execFile);
 const [command] = process.argv.slice(2);
 if (command !== "install" && command !== "dump") throw new Error("Usage: probe.ts install|dump");
-
-// The staged app is the Electron process started with --inspect by stage.ts.
-const { stdout } = await exec("ps", ["-Ao", "command"]);
-const port = /MacOS\/Electron --inspect=(\d+)/.exec(stdout)?.[1];
-if (!port) throw new Error("No staged Electron process with --inspect found");
-
-const [target] = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()) as {
-  webSocketDebuggerUrl: string;
-}[];
-const socket = new WebSocket(target!.webSocketDebuggerUrl);
-await new Promise((resolve) => socket.addEventListener("open", resolve, { once: true }));
 
 const install = `(() => {
   const { BaseWindow } = require("electron");
@@ -53,21 +40,4 @@ const dump = `(() => {
   return result;
 })()`;
 
-socket.send(
-  JSON.stringify({
-    id: 1,
-    method: "Runtime.evaluate",
-    params: {
-      expression: command === "install" ? install : dump,
-      includeCommandLineAPI: true,
-      returnByValue: true,
-    },
-  }),
-);
-const reply = await new Promise<string>((resolve) =>
-  socket.addEventListener("message", (message) => resolve(String(message.data)), { once: true }),
-);
-socket.close();
-const value = (JSON.parse(reply) as { result?: { result?: { value?: unknown } } }).result?.result
-  ?.value;
-console.log(JSON.stringify(value));
+console.log(JSON.stringify(await evaluateInMain(command === "install" ? install : dump)));

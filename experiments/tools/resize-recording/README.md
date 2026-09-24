@@ -44,6 +44,8 @@ This is the primary measure for the [resize synchronisation plan](../../../docs/
    window's own points. Such a tool sends events to one window and maps its
    points as the window moves, so only the right, bottom and bottom-right
    drags, which keep the window's origin in place, can be expressed.
+   Between drags that do not return the window exactly, restore it with
+   `node experiments/tools/resize-recording/window.ts reset --geometry tmp/rec/geometry.json`.
 
 4. Analyse:
 

@@ -19,6 +19,7 @@ Plans, research and worklogs stay in [`docs/`](../docs/README.md).
 
 | Date       | Experiment                                                          | Question                                                                           |
 | ---------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 2026-09-24 | [drag-edge-heuristic](2026-09-24/drag-edge-heuristic/README.md)     | Does the pointer-based guess of the dragged edges get each edge and corner right?  |
 | 2026-09-24 | [resize-matrix-builtin](2026-09-24/resize-matrix-builtin/README.md) | Which options keep the content in step on the built-in display, busy and idle?     |
 | 2026-09-24 | [resize-rate-overlay](2026-09-24/resize-rate-overlay/README.md)     | Does the resize rate overlay keep up with the window?                              |
 | 2026-09-24 | [resize-deadline-patch](2026-09-24/resize-deadline-patch/README.md) | Does resizing with the default surface deadline (option D) keep content in step?   |
@@ -29,11 +30,12 @@ Plans, research and worklogs stay in [`docs/`](../docs/README.md).
 
 ## Tools
 
-| Tool                                                 | Used for                                                                  |
-| ---------------------------------------------------- | ------------------------------------------------------------------------- |
-| [harness](tools/harness/session.ts)                  | Launching the demo in an isolated session and recording the environment   |
-| [resize-recording](tools/resize-recording/README.md) | Staging, screen-recording and analysing real resize drags, frame by frame |
-| [deadline-patch](tools/deadline-patch/README.md)     | Building the patched Electron copy for option D                           |
+| Tool                                                 | Used for                                                                         |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [harness](tools/harness/session.ts)                  | Launching the demo in an isolated session and recording the environment          |
+| [resize-recording](tools/resize-recording/README.md) | Staging, screen-recording and analysing real resize drags, frame by frame        |
+| [harness/inspect](tools/harness/inspect.ts)          | Evaluating code in a staged app's main process (used by probe, trace and window) |
+| [deadline-patch](tools/deadline-patch/README.md)     | Building the patched Electron copy for option D                                  |
 
 ## Isolation
 

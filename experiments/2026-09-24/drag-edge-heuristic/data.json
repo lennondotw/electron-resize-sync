@@ -1,0 +1,156 @@
+{
+  "experiment": "drag-edge-heuristic",
+  "environment": {
+    "capturedAt": "2026-09-24T09:39:04.807Z",
+    "os": {
+      "productVersion": "27.0",
+      "buildVersion": "26A428"
+    },
+    "hardware": {
+      "model": "Mac15,8",
+      "cpu": "Apple M3 Max"
+    },
+    "runtime": {
+      "electron": "44.4.5",
+      "chrome": "152.0.7977.130",
+      "node": "24.21.0",
+      "arch": "arm64",
+      "platform": "darwin",
+      "electronExecutable": "node_modules/.pnpm/electron@44.4.5/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+      "switches": "",
+      "displayLabel": "LG ULTRAGEAR+",
+      "displayScaleFactor": "2",
+      "displayRefreshRate": "144.0507049560547",
+      "displayColorDepth": "24",
+      "displaySize": "3008x1692"
+    },
+    "page": {
+      "devicePixelRatio": 2,
+      "screenColorDepth": 24,
+      "colorGamutP3": true,
+      "dynamicRangeHigh": false
+    },
+    "repository": {
+      "commit": "0c37f3115ce8884ade9972af43f6cbb153950f5a",
+      "dirtyPaths": [
+        "M experiments/tools/resize-recording/probe.ts",
+        " M experiments/tools/resize-recording/trace.ts",
+        "?? experiments/2026-09-24/drag-edge-heuristic/",
+        "?? experiments/tools/harness/inspect.ts",
+        "?? experiments/tools/resize-recording/window.ts"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "name": "right",
+      "pointer": {
+        "x": 1883,
+        "y": 782
+      },
+      "expected": "right",
+      "got": "right",
+      "correct": true,
+      "documentedFailure": false
+    },
+    {
+      "name": "left",
+      "pointer": {
+        "x": 1125,
+        "y": 782
+      },
+      "expected": "left",
+      "got": "left",
+      "correct": true,
+      "documentedFailure": false
+    },
+    {
+      "name": "bottom",
+      "pointer": {
+        "x": 1504,
+        "y": 1021
+      },
+      "expected": "bottom",
+      "got": "bottom",
+      "correct": true,
+      "documentedFailure": false
+    },
+    {
+      "name": "top",
+      "pointer": {
+        "x": 1504,
+        "y": 543
+      },
+      "expected": "top",
+      "got": "top",
+      "correct": true,
+      "documentedFailure": false
+    },
+    {
+      "name": "top-left",
+      "pointer": {
+        "x": 1125,
+        "y": 543
+      },
+      "expected": "left+top",
+      "got": "left+top",
+      "correct": true,
+      "documentedFailure": false
+    },
+    {
+      "name": "top-right",
+      "pointer": {
+        "x": 1883,
+        "y": 543
+      },
+      "expected": "right+top",
+      "got": "right+top",
+      "correct": true,
+      "documentedFailure": false
+    },
+    {
+      "name": "bottom-left",
+      "pointer": {
+        "x": 1125,
+        "y": 1021
+      },
+      "expected": "left+bottom",
+      "got": "left+bottom",
+      "correct": true,
+      "documentedFailure": false
+    },
+    {
+      "name": "bottom-right",
+      "pointer": {
+        "x": 1883,
+        "y": 1021
+      },
+      "expected": "right+bottom",
+      "got": "right+bottom",
+      "correct": true,
+      "documentedFailure": false
+    },
+    {
+      "name": "left, pointer past the centre line",
+      "pointer": {
+        "x": 1505,
+        "y": 782
+      },
+      "expected": "left",
+      "got": "right",
+      "correct": false,
+      "documentedFailure": true
+    },
+    {
+      "name": "left, pointer elsewhere (keyboard)",
+      "pointer": {
+        "x": 2083,
+        "y": 782
+      },
+      "expected": "left",
+      "got": "right",
+      "correct": false,
+      "documentedFailure": true
+    }
+  ]
+}
