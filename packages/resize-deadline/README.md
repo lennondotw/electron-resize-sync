@@ -23,7 +23,10 @@ refuses any build it does not have an entry for. Today that is:
 
 `knownBuilds()` returns this list. Other versions need an entry added first
 (see [Adding a build](#adding-a-build)); Windows and Linux are not supported —
-the resize problem there has not been confirmed or solved.
+the resize problem there has not been confirmed or solved. A resize there
+also embeds the page with a deadline of 0, so the switches alone do nothing;
+the equivalent patch would target `RenderWidgetHostViewAura`
+([Aura resize deadline](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/research/2026-09-24/aura-resize-deadline.md)).
 
 Patch at package time, in an electron-builder `afterPack` hook:
 
@@ -117,7 +120,9 @@ adds `webPreferences.resizeDeadlineFrames` to Electron. It applies cleanly to
 v44.4.5 but has not been built or run; see
 [shipping resize deadline](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/research/2026-09-24/shipping-resize-deadline.md).
 A source-built Electron works on any platform Chromium's deadline API supports,
-without the binary patch.
+without the binary patch: `SetForceSpecifiedDeadline` is implemented on
+Windows and Linux (Aura) too, though whether a wait looks right there is
+untested.
 
 ## Limits
 

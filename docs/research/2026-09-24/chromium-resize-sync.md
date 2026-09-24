@@ -160,6 +160,8 @@ UseSpecifiedDeadline(0))`. [S]
   [delegated_frame_host.cc L347-376](https://github.com/chromium/chromium/blob/152.0.7977.130/content/browser/renderer_host/delegated_frame_host.cc#L347-L376)
   The source comment says: "Until we can block resize on surface synchronization
   on these platforms, we will not block UI on the top-level renderer."
+  Windows and Linux (Aura) follow in
+  [Aura resize deadline](aura-resize-deadline.md).
 - `BrowserCompositorMac::GetResizeDeadlinePolicy()` returns `UseDefaultDeadline()`
   only if `ShouldUseDefaultDeadlineOnResize()` is true. Otherwise it returns
   `UseSpecifiedDeadline(0)`. [S]

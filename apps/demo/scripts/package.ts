@@ -1,11 +1,12 @@
 // Packages the demo as a portable zip for a platform, in a baseline and a
-// "patched" (resize deadline switches baked in) variant, so the resize problem and
-// whether the switch helps can be compared on Windows and Linux.
+// "patched" (resize deadline switches baked in) variant, to see whether the
+// resize problem exists on Windows and Linux.
 //
 // On Windows and Linux there is no framework binary patch (that is macOS
-// only); the patched variant only sets --deadline-to-synchronize-surfaces,
-// which is the sole cross-platform lever. Whether it changes anything there is
-// exactly what these builds are for.
+// only); the patched variant only sets --deadline-to-synchronize-surfaces.
+// A resize there embeds the page with a deadline of 0 and never uses that
+// switch, so the variant is expected to resize like baseline (see
+// docs/research/2026-09-24/aura-resize-deadline.md).
 //
 // usage: package.ts --platform win32|linux|darwin --arch x64|arm64
 import { spawn } from "node:child_process";

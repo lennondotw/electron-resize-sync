@@ -1,6 +1,10 @@
-// `pnpm dev` with resize deadline: the demo on the patched Electron copy, with the
-// switches the patch needs. Builds the copy first when it is missing or was
-// made from another Electron version (see experiments/tools/deadline-patch).
+// `pnpm dev` with resize deadline. On macOS: the demo on the patched Electron
+// copy, with the switches the patch needs; the copy is built first when it is
+// missing or was made from another Electron version (see
+// experiments/tools/deadline-patch). Elsewhere there is no framework patch, so
+// this runs stock Electron with the switch forced on, like the "patched"
+// Windows and Linux packages; a resize there does not use it (see
+// docs/research/2026-09-24/aura-resize-deadline.md).
 import { spawn } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -28,6 +32,17 @@ function run(command: string, args: string[], env: NodeJS.ProcessEnv = process.e
   });
 }
 
+const frames = process.env["ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES"] ?? "30";
+
+if (process.platform !== "darwin") {
+  await run(process.execPath, [path.join(import.meta.dirname, "dev.ts")], {
+    ...process.env,
+    RESIZE_DEADLINE_FORCED: "1",
+    ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES: frames,
+  });
+  process.exit(0);
+}
+
 if (patchedVersion !== electronVersion) {
   console.log(
     patchedVersion === undefined
@@ -42,5 +57,5 @@ if (patchedVersion !== electronVersion) {
 await run(process.execPath, [path.join(import.meta.dirname, "dev.ts")], {
   ...process.env,
   ELECTRON_OVERRIDE_DIST_PATH: distDir,
-  ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES: process.env["ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES"] ?? "30",
+  ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES: frames,
 });

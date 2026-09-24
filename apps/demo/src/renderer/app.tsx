@@ -166,8 +166,8 @@ function EdgeMarkers() {
 /**
  * Resize deadline is in effect only with both the framework patch and the deadline
  * switch. "switch only" is a forced build whose framework is not patched (the
- * Windows and Linux packages): the switch is set, but whether it helps there
- * is what those builds test.
+ * Windows and Linux packages): the switch is set, but a resize there does not
+ * use it (docs/research/2026-09-24/aura-resize-deadline.md).
  */
 function formatDeadline(deadline: DeadlineState | undefined) {
   if (!deadline) return "–";

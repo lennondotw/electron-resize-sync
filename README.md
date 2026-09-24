@@ -91,14 +91,18 @@ A pnpm workspace:
 `pnpm dev:patched` runs it with resize deadline: on a copy of Electron patched by
 [`deadline-patch`](experiments/tools/deadline-patch/README.md) (built under
 `tmp/` on first use, which downloads the release's symbols, about 129 MB), with
-the two switches set.
+the two switches set. On Windows and Linux, where there is no framework
+patch, it runs stock Electron with `--deadline-to-synchronize-surfaces` forced
+on, like the patched test builds below (which a resize there does not use).
 
 ## Windows and Linux test builds
 
 The binary patch is macOS only. Whether the resize problem exists on Windows
-and Linux, and whether the `--deadline-to-synchronize-surfaces` switch (the
-one cross-platform lever) changes anything there, is untested — these builds
-are to find out.
+and Linux is untested — these builds are to find out. The
+`--deadline-to-synchronize-surfaces` switch alone is not expected to change
+anything there: a resize on Windows and Linux embeds the page with a deadline
+of 0, as on macOS, and never uses the default deadline the switch sets
+([Aura resize deadline](docs/research/2026-09-24/aura-resize-deadline.md)).
 
 ```bash
 pnpm --filter @electron-resize-sync/demo package:linux  # or package:win
@@ -108,7 +112,7 @@ Each writes two portable zips under `tmp/packages/`: a **baseline** (stock,
 no switches) and a **patched** (the switch baked in) variant. Unzip and run
 the executable on the target OS, resize the window, and compare. The patched
 variant here only sets the switch; it does not binary-patch the framework, so
-it may behave the same as baseline.
+it is expected to behave the same as baseline.
 
 ### Package builds
 
