@@ -66,7 +66,7 @@ export function App() {
             <dt className="text-zinc-500">tiles</dt>
             <dd>{columns * rows}</dd>
             <dt className="text-zinc-500">resize deadline</dt>
-            <dd title={window.resizeBridge?.deadline?.reason}>
+            <dd title={describeDeadline(window.resizeBridge?.deadline)}>
               {formatDeadline(window.resizeBridge?.deadline)}
             </dd>
           </dl>
@@ -171,13 +171,25 @@ function EdgeMarkers() {
  */
 function formatDeadline(deadline: DeadlineState | undefined) {
   if (!deadline) return "–";
-  const { patched, frames, remoteCoreAnimationDisabled } = deadline;
-  if (patched && frames) {
-    const race = navigator.platform.startsWith("Mac") && !remoteCoreAnimationDisabled;
-    return `on, ${frames} frames${race ? ", RCA on" : ""}`;
+  const { patched, frames } = deadline;
+  // Short enough for one line of the HUD; describeDeadline has the detail.
+  if (patched && frames) return `on, ${frames} frames`;
+  if (frames) return "switch only";
+  return patched ? "patched only" : "off";
+}
+
+/** The HUD row's tooltip: the switch values and why the patch is off, if it is. */
+function describeDeadline(deadline: DeadlineState | undefined) {
+  if (!deadline) return undefined;
+  const { patched, reason, frames, remoteCoreAnimationDisabled } = deadline;
+  const parts = [
+    patched ? "framework patched" : `framework not patched${reason ? ` (${reason})` : ""}`,
+    frames ? `--deadline-to-synchronize-surfaces=${frames}` : "no deadline switch",
+  ];
+  if (navigator.platform.startsWith("Mac")) {
+    parts.push(`RemoteCoreAnimationAPI ${remoteCoreAnimationDisabled ? "disabled" : "enabled"}`);
   }
-  if (frames) return `switch only, ${frames} frames`;
-  return patched ? "patched, switch off" : "off";
+  return parts.join("; ");
 }
 
 function formatLatency(ms: number | null) {
