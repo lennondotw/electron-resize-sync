@@ -1,3 +1,7 @@
+// DOES NOT WORK: when the window shrinks, the page shrinks first and the
+// window follows later, so the canvas shows in between; it is also the
+// slowest option. See this package's README.
+import { trackDraggedEdges } from "@electron-resize-sync/drag-edge-heuristic/main";
 import {
   BaseWindow,
   ipcMain,
@@ -9,11 +13,11 @@ import {
 } from "electron";
 import {
   REVEAL_ACK_CHANNEL,
+  REVEAL_ARGUMENT,
   REVEAL_LAYOUT_CHANNEL,
   REVEAL_REQUEST_CHANNEL,
   type RevealLayout,
-} from "../shared/resize-bridge.ts";
-import { trackDraggedEdges } from "./drag-edge-heuristic.ts";
+} from "./shared.ts";
 
 /**
  * Room around the window, in points, into which the page can lay out #root
@@ -35,9 +39,16 @@ const ACK_TIMEOUT_MS = 500;
 export function createRevealWindow(
   options: BaseWindowConstructorOptions,
   webPreferences: WebPreferences,
+  { trustReportedEdge }: { trustReportedEdge?: boolean } = {},
 ) {
   const win = new BaseWindow(options);
-  const view = new WebContentsView({ webPreferences });
+  // Tells the preload (isRevealWindow) that the page must follow the layout.
+  const view = new WebContentsView({
+    webPreferences: {
+      ...webPreferences,
+      additionalArguments: [...(webPreferences.additionalArguments ?? []), REVEAL_ARGUMENT],
+    },
+  });
   win.contentView.addChildView(view);
   const { webContents } = view;
 
@@ -111,7 +122,7 @@ export function createRevealWindow(
   };
 
   // Which edges are dragged is a guess; see trackDraggedEdges.
-  const place = trackDraggedEdges(win);
+  const place = trackDraggedEdges(win, { trustReportedEdge });
   win.on("will-resize", (event, newBounds, { edge }) => {
     event.preventDefault();
     dragging = true;

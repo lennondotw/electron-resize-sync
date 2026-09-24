@@ -1,13 +1,9 @@
 import { BrowserWindow, type BaseWindow } from "electron";
-import { TITLEBAR_HEIGHT } from "../shared/titlebar.ts";
 
 /** The label fills the overlay's height; its width fits the longest text. */
 const SIZE = { width: 168, height: 22 };
-/**
- * Centred in the title bar, like the window buttons, and as far from the
- * right edge as from the top.
- */
-const INSET = (TITLEBAR_HEIGHT - SIZE.height) / 2;
+/** Distance from the top and right edges without a title bar height. */
+const DEFAULT_INSET = 8;
 /** How many recent size changes the rate is computed from. */
 const WINDOW_SIZE = 8;
 /** After this long without a size change, the rate is shown as idle. */
@@ -28,7 +24,19 @@ const PAGE = `<!doctype html><html><head><style>
  * from the window's own resize events, so it does not depend on the (busy)
  * renderer, and it is a separate window so it never takes mouse events.
  */
-export function showResizeRateOverlay(win: BaseWindow) {
+export function showResizeRateOverlay(
+  win: BaseWindow,
+  {
+    titleBarHeight,
+  }: {
+    /**
+     * Height of a custom title bar in points: the label is then centred in it,
+     * like the window buttons, and as far from the right edge as from the top.
+     */
+    titleBarHeight?: number;
+  } = {},
+) {
+  const inset = titleBarHeight === undefined ? DEFAULT_INSET : (titleBarHeight - SIZE.height) / 2;
   const overlay = new BrowserWindow({
     ...SIZE,
     parent: win,
@@ -54,8 +62,8 @@ export function showResizeRateOverlay(win: BaseWindow) {
   const place = () => {
     const bounds = win.getContentBounds();
     overlay.setPosition(
-      Math.round(bounds.x + bounds.width - SIZE.width - INSET),
-      Math.round(bounds.y + INSET),
+      Math.round(bounds.x + bounds.width - SIZE.width - inset),
+      Math.round(bounds.y + inset),
     );
   };
 

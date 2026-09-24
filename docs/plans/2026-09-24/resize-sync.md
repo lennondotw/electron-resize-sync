@@ -97,7 +97,7 @@ to be tried, D in most depth. Option B stays behind a switch as a baseline.
 1. Try a continuous drag by hand with the patched build and everything off,
    to judge smoothness directly.
 2. Decide how to ship D: build Electron with the
-   [source patch](../../../experiments/deadline-patch/electron-v44.4.5-resize-deadline.patch),
+   [source patch](../../../packages/resize-deadline/electron-v44.4.5-resize-deadline.patch),
    or run the binary patch at build time and re-sign the app.
 3. Record top and left drags on the built-in display, which the background
    drag tool cannot express.

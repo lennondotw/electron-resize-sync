@@ -1,12 +1,9 @@
-// Whether a user resize is in progress, as reported by the main process.
-// Read synchronously from the frame loop, so it is a plain variable rather
-// than React state.
-let resizing = false;
+import { trackResizeActivity } from "@electron-resize-sync/resize-activity/renderer";
 
-window.resizeBridge?.onResizeActive((active) => {
-  resizing = active;
-});
-
-export function isResizing() {
-  return resizing;
-}
+/**
+ * Whether a user resize is in progress, as reported by the main process. A
+ * plain read, so the frame loop can call it every frame.
+ */
+export const isResizing = window.resizeBridge
+  ? trackResizeActivity(window.resizeBridge)
+  : () => false;

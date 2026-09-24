@@ -6,33 +6,27 @@ import {
   nativeTheme,
   type BaseWindowConstructorOptions,
 } from "electron";
+import { createRevealWindow } from "@electron-resize-sync/render-before-reveal-not-working/main";
+import { reportResizeActivity } from "@electron-resize-sync/resize-activity/main";
+import { enableResizeDeadline } from "@electron-resize-sync/resize-deadline/main";
+import { paceResizes } from "@electron-resize-sync/resize-pacing-not-working/main";
+import { showResizeRateOverlay } from "@electron-resize-sync/resize-rate-overlay/main";
 import {
   MARKERS_ARGUMENT,
-  RESIZE_ACTIVE_CHANNEL,
   RESIZE_COMMIT_CHANNEL,
-  REVEAL_ARGUMENT,
   type ResizeCommit,
 } from "../shared/resize-bridge.ts";
-import { TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
-import { paceResizes } from "./resize-pacer.ts";
-import { showResizeRateOverlay } from "./resize-rate-overlay.ts";
-import { createRevealWindow } from "./reveal-window.ts";
+import { TITLEBAR_HEIGHT, TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
-// Option C (render before reveal) needs a different window structure, so it is
-// chosen at launch rather than with a HUD switch.
+// Option C (render before reveal; does not work) needs a different window
+// structure, so it is chosen at launch rather than with a HUD switch.
 const revealMode = Boolean(process.env["ELECTRON_RESIZE_SYNC_REVEAL"]);
 
-// Option D's switches, set by the app instead of on the command line. They take
-// effect only with an Electron that waits for the page on resize (see
-// experiments/deadline-patch): a long enough surface deadline, and the browser
-// process presenting GPU output itself, which removes a race between the two
-// processes' Core Animation commits.
+// Option D's switches, set by the app. They take effect only with an Electron
+// that waits for the page on resize (see experiments/deadline-patch).
 const deadlineFrames = process.env["ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES"];
-if (deadlineFrames) {
-  app.commandLine.appendSwitch("deadline-to-synchronize-surfaces", deadlineFrames);
-  app.commandLine.appendSwitch("disable-features", "RemoteCoreAnimationAPI");
-}
+if (deadlineFrames) enableResizeDeadline({ frames: Number(deadlineFrames) });
 
 // Lets experiments run against a fresh profile without touching the user's settings.
 const userDataDir = process.env["ELECTRON_RESIZE_SYNC_USER_DATA"];
@@ -60,10 +54,7 @@ function createWindow() {
   };
   const webPreferences = {
     preload: path.join(import.meta.dirname, "preload.cjs"),
-    additionalArguments: [
-      ...(process.env["ELECTRON_RESIZE_SYNC_MARKERS"] ? [MARKERS_ARGUMENT] : []),
-      ...(revealMode ? [REVEAL_ARGUMENT] : []),
-    ],
+    additionalArguments: process.env["ELECTRON_RESIZE_SYNC_MARKERS"] ? [MARKERS_ARGUMENT] : [],
   };
   let win: BaseWindow;
   let webContents: Electron.WebContents;
@@ -74,9 +65,10 @@ function createWindow() {
     ({ webContents } = reveal.view);
   } else {
     const browserWindow = new BrowserWindow({ ...options, webPreferences });
+    // Paced resizing (option B; does not work), off until the HUD enables it.
     // Simulated drags (experiments/resize-pacing) emit will-resize with the
     // edge they drag; real drags on macOS do not report it.
-    paceResizes(browserWindow, {
+    paceResizes(browserWindow, browserWindow.webContents, {
       ...(process.env["ELECTRON_RESIZE_SYNC_TRUST_REPORTED_EDGE"] && { trustReportedEdge: true }),
     });
     win = browserWindow;
@@ -90,21 +82,13 @@ function createWindow() {
     const commit: ResizeCommit = { width, height, at: performance.timeOrigin + performance.now() };
     webContents.send(RESIZE_COMMIT_CHANNEL, commit);
   });
-  // Tell the renderer while a user resize is in progress, so it can defer
-  // expensive work (will-resize fires for each step, resized once at the end).
-  let resizing = false;
-  win.on("will-resize", () => {
-    if (resizing) return;
-    resizing = true;
-    webContents.send(RESIZE_ACTIVE_CHANNEL, true);
-  });
-  win.on("resized", () => {
-    resizing = false;
-    webContents.send(RESIZE_ACTIVE_CHANNEL, false);
-  });
+  // Tells the renderer while a user resize is in progress, so it can skip
+  // its busy work (the HUD's "yield on resize").
+  reportResizeActivity(win, webContents);
 
   // On by default; experiments turn it off so it does not add main-thread work.
-  if (process.env["ELECTRON_RESIZE_SYNC_OVERLAY"] !== "0") showResizeRateOverlay(win);
+  if (process.env["ELECTRON_RESIZE_SYNC_OVERLAY"] !== "0")
+    showResizeRateOverlay(win, { titleBarHeight: TITLEBAR_HEIGHT });
 
   const syncBackground = () => win.setBackgroundColor(canvasColor());
   nativeTheme.on("updated", syncBackground);

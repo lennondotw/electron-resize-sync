@@ -46,6 +46,8 @@ docs/
   worklog/YYYY-MM-DD.md
   templates/
 experiments/<topic>/                         scripts that produce the data
+packages/<name>/                             one package per workaround (not-working ones say so in the name)
+apps/demo/                                   the app the experiments run
 ```
 
 Category first, then date. Worklogs use one file per day and link that day's

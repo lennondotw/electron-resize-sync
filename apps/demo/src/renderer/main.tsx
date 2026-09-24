@@ -2,11 +2,11 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app.tsx";
 import "./index.css";
-import { followRevealLayout } from "./reveal-layout.ts";
+import { followRevealLayout } from "@electron-resize-sync/render-before-reveal-not-working/renderer";
 
 const container = document.getElementById("root");
 if (!container) throw new Error("#root is missing from index.html");
-followRevealLayout(container);
+if (window.resizeBridge) followRevealLayout(container, window.resizeBridge);
 
 createRoot(container).render(
   <StrictMode>

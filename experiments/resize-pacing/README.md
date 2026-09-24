@@ -56,6 +56,6 @@ count/median/p90/max. `environment` records the machine and build.
   counted.
 
 Since the pacer guesses the dragged edge from the pointer on macOS (see
-`src/main/drag-edge-heuristic.ts`), the script sets
+`packages/drag-edge-heuristic`), the script sets
 `ELECTRON_RESIZE_SYNC_TRUST_REPORTED_EDGE=1` so the pacer uses the edge its
 simulated `will-resize` reports.

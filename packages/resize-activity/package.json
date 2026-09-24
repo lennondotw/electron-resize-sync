@@ -1,0 +1,24 @@
+{
+  "name": "@electron-resize-sync/resize-activity",
+  "version": "0.0.0",
+  "private": true,
+  "description": "WORKS. Tells the renderer while a user resize is in progress, so it can skip optional work.",
+  "type": "module",
+  "exports": {
+    "./main": "./src/main.ts",
+    "./preload": "./src/preload.ts",
+    "./renderer": "./src/renderer.ts",
+    "./shared": "./src/shared.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.6",
+    "electron": "^44.4.5",
+    "typescript": "^7.0.2"
+  },
+  "peerDependencies": {
+    "electron": ">=44.4.5"
+  }
+}

@@ -1,10 +1,16 @@
-// In a render-before-reveal window (option C, src/main/reveal-window.ts) the
-// page is larger than the window, and the main process says where #root goes.
-// Each layout is acknowledged once a frame showing it has been rendered, so
-// the window can take the matching bounds.
-export function followRevealLayout(root: HTMLElement) {
-  const bridge = window.resizeBridge;
-  if (!bridge?.reveal) return;
+// DOES NOT WORK as a fix (see this package's README); kept for comparison.
+import type { RevealBridge } from "./shared.ts";
+
+export type { RevealBridge, RevealLayout } from "./shared.ts";
+
+/**
+ * In a render-before-reveal window the page is larger than the window, and
+ * the main process says where `root` goes. Each layout is acknowledged once a
+ * frame showing it has been rendered, so the window can take the matching
+ * bounds. Does nothing outside such a window.
+ */
+export function followRevealLayout(root: HTMLElement, bridge: RevealBridge) {
+  if (!bridge.reveal) return;
 
   // A message posted from a rAF callback is handled right after that frame's
   // rendering update. Waiting for the second frame after the change means the

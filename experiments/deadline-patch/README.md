@@ -8,7 +8,10 @@ the experimental form of option D in the
 the [source reading](../../docs/research/2026-09-24/chromium-resize-sync.md)
 for why this is the switch that matters.
 
-The copy lives in `tmp/deadline-patch/dist`. `node_modules` is never modified.
+The patching itself is `patchElectronFramework` in
+[`packages/resize-deadline`](../../packages/resize-deadline/README.md); this
+script prepares the copy around it. The copy lives in
+`tmp/deadline-patch/dist`. `node_modules` is never modified.
 
 ## Run
 
@@ -53,12 +56,15 @@ The script:
 1. Downloads `electron-v<version>-darwin-arm64-symbols.zip` (about 129 MB,
    official breakpad symbols) from the Electron release, once.
 2. Copies `node_modules/electron/dist/Electron.app` with `ditto`.
-3. Checks that the symbols match the framework's UUID and that `__TEXT` maps
-   addresses to file offsets.
-4. Finds each function's address in the `FUNC` records. Before writing
-   anything, it compares the instructions at that address with the expected
-   original bytes, and stops if they differ.
-5. Writes the replacements and re-signs the copy ad hoc.
+3. Patches it with `patchElectronFramework`, which checks that the symbols
+   match the framework's UUID and that `__TEXT` maps addresses to file
+   offsets, finds each function's address in the `FUNC` records, compares the
+   instructions there with the expected original bytes (stopping if any
+   differ), and only then writes the replacements.
+4. Gives the copy its own bundle identifier
+   (`com.github.Electron.deadline-patch`), so automation tools do not mistake
+   it for the stock Electron. This is for the experiments only.
+5. Re-signs the copy ad hoc.
 
 ## Limits
 
@@ -66,11 +72,11 @@ The script:
   Any other build fails the check rather than being patched blindly.
 - **Experiment only, not for distribution:** the ad hoc signature is local.
   A product needs the same change as a source patch to Electron:
-  [`electron-v44.4.5-resize-deadline.patch`](electron-v44.4.5-resize-deadline.patch)
+  [`electron-v44.4.5-resize-deadline.patch`](../../packages/resize-deadline/electron-v44.4.5-resize-deadline.patch)
   adds `webPreferences.resizeDeadlineFrames` (written and checked to apply,
   not built). See [shipping option D](../../docs/research/2026-09-24/shipping-option-d.md).
 - **Deadline:** the default deadline is `--deadline-to-synchronize-surfaces`
   frames (4 unless set). A renderer slower than that still misses it. The app
   can set the switch itself: `ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` makes
-  `src/main/main.ts` append it, together with
+  `apps/demo/src/main/main.ts` append it (through `enableResizeDeadline`), together with
   `--disable-features=RemoteCoreAnimationAPI`.

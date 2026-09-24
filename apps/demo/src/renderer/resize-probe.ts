@@ -1,5 +1,6 @@
+import { ackRenderedSizes } from "@electron-resize-sync/resize-pacing-not-working/renderer";
 import { useSyncExternalStore } from "react";
-import type { ContentSize, ResizeBridge } from "../shared/resize-bridge.ts";
+import type { ResizeBridge } from "../shared/resize-bridge.ts";
 
 declare global {
   interface Window {
@@ -35,50 +36,21 @@ window.resizeBridge?.onCommit(({ width, height, at }) => {
   commitTimes.set(sizeKey(width, height), at);
 });
 
-// Runs alongside the app's frame loop and watches for the first frame at each
-// new size. A message posted from a rAF callback is handled right after that
-// frame's rendering update, which is when the frame is done and the main
-// thread is idle.
-let seenSize = sizeKey(window.innerWidth, window.innerHeight);
-const afterPaint = new MessageChannel();
-
-function onFrame() {
-  const size = sizeKey(window.innerWidth, window.innerHeight);
-  if (size !== seenSize) {
-    seenSize = size;
-    const rendered: RenderedSize = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      commitAt: commitTimes.get(size) ?? null,
-    };
-    afterPaint.port2.postMessage(rendered);
-  }
-  requestAnimationFrame(onFrame);
+// Every first frame at a new size is acknowledged for paced resizing, which
+// lets the main process apply the next paced size, and timed here.
+if (window.resizeBridge) {
+  ackRenderedSizes(window.resizeBridge, ({ width, height }) => {
+    const commitAt = commitTimes.get(sizeKey(width, height));
+    if (commitAt === undefined) return;
+    const last = performance.timeOrigin + performance.now() - commitAt;
+    latency = { last, max: Math.max(latency.max ?? 0, last) };
+    notify();
+  });
 }
-requestAnimationFrame(onFrame);
-
-interface RenderedSize extends ContentSize {
-  /** When the main process reported this size, if it did. */
-  commitAt: number | null;
-}
-
-afterPaint.port1.addEventListener("message", ({ data }: MessageEvent<RenderedSize>) => {
-  const { width, height, commitAt } = data;
-  // Lets the main process apply the next pending size, if resizes are paced.
-  window.resizeBridge?.ack({ width, height });
-  if (commitAt === null) return;
-  const last = performance.timeOrigin + performance.now() - commitAt;
-  latency = { last, max: Math.max(latency.max ?? 0, last) };
-  notify();
-});
-afterPaint.port1.start();
 
 // rAF pauses while the page is hidden, so a size first seen after it becomes
 // visible again says nothing about paint latency.
-document.addEventListener("visibilitychange", () => {
-  commitTimes.clear();
-  seenSize = sizeKey(window.innerWidth, window.innerHeight);
-});
+document.addEventListener("visibilitychange", () => commitTimes.clear());
 
 function sizeKey(width: number, height: number) {
   return `${width}×${height}`;

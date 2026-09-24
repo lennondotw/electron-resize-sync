@@ -30,7 +30,7 @@ scope.
   [gpu_process_host.cc L984-985](https://github.com/chromium/chromium/blob/152.0.7977.130/content/browser/gpu/gpu_process_host.cc#L984-L985),
   [switches.cc L69-81](https://github.com/chromium/chromium/blob/152.0.7977.130/components/viz/common/switches.cc#L69-L81)
 - `app.commandLine.appendSwitch` before `ready` edits that same command line.
-  With `ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` (see `src/main/main.ts`),
+  With `ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` (see `apps/demo/src/main/main.ts`, now through `enableResizeDeadline` in `packages/resize-deadline`),
   the GPU and renderer processes were launched with
   `--disable-features=…,RemoteCoreAnimationAPI,…`. [R]
 - On screen, option D with the switches set this way kept content in step in
@@ -69,7 +69,7 @@ cross-process navigation goes through it too.
 ## Conclusion and alternatives
 
 1. **Electron source patch (recommended).**
-   [`electron-v44.4.5-resize-deadline.patch`](../../../experiments/deadline-patch/electron-v44.4.5-resize-deadline.patch)
+   [`electron-v44.4.5-resize-deadline.patch`](../../../packages/resize-deadline/electron-v44.4.5-resize-deadline.patch)
    adds `webPreferences.resizeDeadlineFrames`. When it is set,
    `HandleNewRenderFrame` calls `SetForceSpecifiedDeadline` on the main
    frame's view.
@@ -80,7 +80,8 @@ cross-process navigation goes through it too.
      compiled or run; building Electron was out of reach here. [R]
    - It is small enough to upstream as an opt-in; it fits
      electron/electron#36280. [Inf]
-2. **Binary patch at build time.** Run `experiments/deadline-patch/patch.ts`
+2. **Binary patch at build time.** Run `patchElectronFramework` from
+   `packages/resize-deadline` (as `experiments/deadline-patch/patch.ts` does)
    on the packaged app's framework and sign it with the app's identity.
    - It needs the release's symbols and byte checks for every Electron
      version.

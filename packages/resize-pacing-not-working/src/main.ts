@@ -1,21 +1,28 @@
-import { ipcMain, type BrowserWindow, type Rectangle } from "electron";
-import { trackDraggedEdges } from "./drag-edge-heuristic.ts";
-import {
-  RESIZE_ACK_CHANNEL,
-  RESIZE_SYNC_CHANNEL,
-  type ContentSize,
-} from "../shared/resize-bridge.ts";
+// DOES NOT WORK: pacing does not keep the page in step with the window
+// frame. Each size still reaches the screen before the page has rendered it.
+// See this package's README.
+import { trackDraggedEdges } from "@electron-resize-sync/drag-edge-heuristic/main";
+import { ipcMain, type BaseWindow, type Rectangle, type WebContents } from "electron";
+import { RESIZE_ACK_CHANNEL, RESIZE_SYNC_CHANNEL, type ContentSize } from "./shared.ts";
 
 /** Stop waiting for an ack after this long, e.g. when the renderer is hidden or hung. */
 const ACK_TIMEOUT_MS = 500;
 
 /**
- * Paces user resizes of `win` to the renderer's frames. While enabled, each
- * resize the system proposes is cancelled and remembered; the latest one is
- * applied with `setBounds` only when the renderer reports it has rendered
- * the previous size.
+ * Paces user resizes of `win` to the renderer's frames. While enabled (the
+ * page calls `setSync(true)`), each resize the system proposes is cancelled
+ * and remembered; the latest one is applied with `setBounds` only when the
+ * page in `webContents` reports it has rendered the previous size.
+ *
+ * Re-applying a cancelled resize needs the dragged edges, which macOS does
+ * not report: they are guessed from the pointer, and the guess can be wrong
+ * (see @electron-resize-sync/drag-edge-heuristic).
  */
-export function paceResizes(win: BrowserWindow, options: { trustReportedEdge?: boolean } = {}) {
+export function paceResizes(
+  win: BaseWindow,
+  webContents: WebContents,
+  options: { trustReportedEdge?: boolean } = {},
+) {
   let enabled = false;
   let pending: Rectangle | undefined;
   /** Content size the renderer must report before the next commit, if any. */
@@ -55,12 +62,12 @@ export function paceResizes(win: BrowserWindow, options: { trustReportedEdge?: b
   });
 
   const onAck = (event: Electron.IpcMainEvent, size: unknown) => {
-    if (event.sender !== win.webContents || inFlight === undefined) return;
+    if (event.sender !== webContents || inFlight === undefined) return;
     // An ack for an older size must not release the commit still in flight.
     if (isContentSize(size) && sizeKey(size.width, size.height) === inFlight) release();
   };
   const onSetSync = (event: Electron.IpcMainEvent, value: unknown) => {
-    if (event.sender !== win.webContents) return;
+    if (event.sender !== webContents) return;
     enabled = value === true;
     if (!enabled) {
       pending = undefined;

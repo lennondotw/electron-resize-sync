@@ -1,0 +1,21 @@
+{
+  "name": "@electron-resize-sync/resize-rate-overlay",
+  "version": "0.0.0",
+  "private": true,
+  "description": "WORKS (diagnostic). A click-through label that shows how often a window actually changes size.",
+  "type": "module",
+  "exports": {
+    "./main": "./src/main.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.6",
+    "electron": "^44.4.5",
+    "typescript": "^7.0.2"
+  },
+  "peerDependencies": {
+    "electron": ">=44.4.5"
+  }
+}
