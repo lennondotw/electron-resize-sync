@@ -1,5 +1,5 @@
 // Packages the demo as a portable zip for a platform, in a baseline and a
-// "patched" (option D switches baked in) variant, so the resize problem and
+// "patched" (resize deadline switches baked in) variant, so the resize problem and
 // whether the switch helps can be compared on Windows and Linux.
 //
 // On Windows and Linux there is no framework binary patch (that is macOS

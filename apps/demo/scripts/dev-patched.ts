@@ -1,4 +1,4 @@
-// `pnpm dev` with option D: the demo on the patched Electron copy, with the
+// `pnpm dev` with resize deadline: the demo on the patched Electron copy, with the
 // switches the patch needs. Builds the copy first when it is missing or was
 // made from another Electron version (see experiments/tools/deadline-patch).
 import { spawn } from "node:child_process";

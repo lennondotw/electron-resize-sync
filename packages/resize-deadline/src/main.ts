@@ -11,7 +11,7 @@ export function getResizeDeadlineStatus(): FrameworkStatus {
 }
 
 /**
- * Turns on option D when the running Electron can do it: a resize waits for
+ * Turns on resize deadline when the running Electron can do it: a resize waits for
  * the page's frame at the new size, so the window and its content change
  * together.
  *

@@ -17,16 +17,16 @@ Plans, research and worklogs stay in [`docs/`](../docs/README.md).
 
 ## Records
 
-| Date       | Experiment                                                          | Question                                                                           |
-| ---------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| 2026-09-24 | [drag-edge-heuristic](2026-09-24/drag-edge-heuristic/README.md)     | Does the pointer-based guess of the dragged edges get each edge and corner right?  |
-| 2026-09-24 | [resize-matrix-builtin](2026-09-24/resize-matrix-builtin/README.md) | Which options keep the content in step on the built-in display, busy and idle?     |
-| 2026-09-24 | [resize-rate-overlay](2026-09-24/resize-rate-overlay/README.md)     | Does the resize rate overlay keep up with the window?                              |
-| 2026-09-24 | [resize-deadline-patch](2026-09-24/resize-deadline-patch/README.md) | Does resizing with the default surface deadline (option D) keep content in step?   |
-| 2026-09-24 | [resize-recording](2026-09-24/resize-recording/README.md)           | Does the content stay fixed relative to the window frame during a real drag?       |
-| 2026-09-24 | [resize-pacing](2026-09-24/resize-pacing/README.md)                 | How long does a new window size stay unpainted, per edge, with and without pacing? |
-| 2026-09-24 | [tile-dithering](2026-09-24/tile-dithering/README.md)               | Do dithered tiles average to fractional 8-bit values?                              |
-| 2026-09-24 | [display-bit-depth](2026-09-24/display-bit-depth/README.md)         | Is the display path 8-bit or deeper?                                               |
+| Date       | Experiment                                                          | Question                                                                                |
+| ---------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| 2026-09-24 | [drag-edge-heuristic](2026-09-24/drag-edge-heuristic/README.md)     | Does the pointer-based guess of the dragged edges get each edge and corner right?       |
+| 2026-09-24 | [resize-matrix-builtin](2026-09-24/resize-matrix-builtin/README.md) | Which options keep the content in step on the built-in display, busy and idle?          |
+| 2026-09-24 | [resize-rate-overlay](2026-09-24/resize-rate-overlay/README.md)     | Does the resize rate overlay keep up with the window?                                   |
+| 2026-09-24 | [resize-deadline-patch](2026-09-24/resize-deadline-patch/README.md) | Does resizing with the default surface deadline (resize deadline) keep content in step? |
+| 2026-09-24 | [resize-recording](2026-09-24/resize-recording/README.md)           | Does the content stay fixed relative to the window frame during a real drag?            |
+| 2026-09-24 | [resize-pacing](2026-09-24/resize-pacing/README.md)                 | How long does a new window size stay unpainted, per edge, with and without pacing?      |
+| 2026-09-24 | [tile-dithering](2026-09-24/tile-dithering/README.md)               | Do dithered tiles average to fractional 8-bit values?                                   |
+| 2026-09-24 | [display-bit-depth](2026-09-24/display-bit-depth/README.md)         | Is the display path 8-bit or deeper?                                                    |
 
 ## Tools
 
@@ -35,7 +35,7 @@ Plans, research and worklogs stay in [`docs/`](../docs/README.md).
 | [harness](tools/harness/session.ts)                  | Launching the demo in an isolated session and recording the environment          |
 | [resize-recording](tools/resize-recording/README.md) | Staging, screen-recording and analysing real resize drags, frame by frame        |
 | [harness/inspect](tools/harness/inspect.ts)          | Evaluating code in a staged app's main process (used by probe, trace and window) |
-| [deadline-patch](tools/deadline-patch/README.md)     | Building the patched Electron copy for option D                                  |
+| [deadline-patch](tools/deadline-patch/README.md)     | Building the patched Electron copy for resize deadline                           |
 
 ## Isolation
 

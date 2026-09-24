@@ -1,0 +1,289 @@
+{
+  "experiment": "tile-dithering",
+  "tileInsetPx": 4,
+  "environment": {
+    "capturedAt": "2026-09-24T11:58:54.945Z",
+    "os": {
+      "productVersion": "27.0",
+      "buildVersion": "26A428"
+    },
+    "hardware": {
+      "model": "Mac15,8",
+      "cpu": "Apple M3 Max"
+    },
+    "runtime": {
+      "electron": "44.4.5",
+      "chrome": "152.0.7977.130",
+      "node": "24.21.0",
+      "arch": "arm64",
+      "platform": "darwin",
+      "electronExecutable": "node_modules/.pnpm/electron@44.4.5/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+      "switches": "",
+      "displayLabel": "LG ULTRAGEAR+",
+      "displayScaleFactor": "2",
+      "displayRefreshRate": "144.0507049560547",
+      "displayColorDepth": "24",
+      "displaySize": "3008x1692"
+    },
+    "page": {
+      "devicePixelRatio": 2,
+      "screenColorDepth": 24,
+      "colorGamutP3": true,
+      "dynamicRangeHigh": false
+    },
+    "repository": {
+      "commit": "3be0580387b40ba436937b1fb0c3631047f7fc4e",
+      "dirtyPaths": [
+        "M experiments/2026-09-24/tile-dithering/run.ts",
+        " M experiments/tools/harness/session.ts",
+        " M experiments/tools/resize-recording/stage.ts"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "colorScheme": "light",
+      "dither": "off",
+      "channel": "green",
+      "tiles": [
+        {
+          "mean": 238,
+          "distinct": 1
+        },
+        {
+          "mean": 239,
+          "distinct": 1
+        },
+        {
+          "mean": 239,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 240,
+          "distinct": 1
+        },
+        {
+          "mean": 239,
+          "distinct": 1
+        },
+        {
+          "mean": 239,
+          "distinct": 1
+        },
+        {
+          "mean": 238,
+          "distinct": 1
+        },
+        {
+          "mean": 238,
+          "distinct": 1
+        },
+        {
+          "mean": 237,
+          "distinct": 1
+        }
+      ],
+      "steps": [1, 0, 1, 0, 0, 0, 0, -1, 0, -1, 0, -1],
+      "flatSteps": 7
+    },
+    {
+      "colorScheme": "light",
+      "dither": "spatial",
+      "channel": "green",
+      "tiles": [
+        {
+          "mean": 238.14,
+          "distinct": 2
+        },
+        {
+          "mean": 238.72,
+          "distinct": 2
+        },
+        {
+          "mean": 239.19,
+          "distinct": 2
+        },
+        {
+          "mean": 239.53,
+          "distinct": 2
+        },
+        {
+          "mean": 239.74,
+          "distinct": 2
+        },
+        {
+          "mean": 239.81,
+          "distinct": 2
+        },
+        {
+          "mean": 239.76,
+          "distinct": 2
+        },
+        {
+          "mean": 239.57,
+          "distinct": 2
+        },
+        {
+          "mean": 239.26,
+          "distinct": 2
+        },
+        {
+          "mean": 238.82,
+          "distinct": 2
+        },
+        {
+          "mean": 238.26,
+          "distinct": 2
+        },
+        {
+          "mean": 237.59,
+          "distinct": 2
+        },
+        {
+          "mean": 236.82,
+          "distinct": 2
+        }
+      ],
+      "steps": [0.58, 0.47, 0.34, 0.21, 0.07, -0.05, -0.19, -0.31, -0.44, -0.56, -0.67, -0.77],
+      "flatSteps": 0
+    },
+    {
+      "colorScheme": "dark",
+      "dither": "off",
+      "channel": "green",
+      "tiles": [
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 43,
+          "distinct": 1
+        },
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 44,
+          "distinct": 1
+        },
+        {
+          "mean": 45,
+          "distinct": 1
+        }
+      ],
+      "steps": [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+      "flatSteps": 9
+    },
+    {
+      "colorScheme": "dark",
+      "dither": "spatial",
+      "channel": "green",
+      "tiles": [
+        {
+          "mean": 44.06,
+          "distinct": 2
+        },
+        {
+          "mean": 43.68,
+          "distinct": 2
+        },
+        {
+          "mean": 43.37,
+          "distinct": 2
+        },
+        {
+          "mean": 43.15,
+          "distinct": 2
+        },
+        {
+          "mean": 43.01,
+          "distinct": 2
+        },
+        {
+          "mean": 42.96,
+          "distinct": 2
+        },
+        {
+          "mean": 43,
+          "distinct": 2
+        },
+        {
+          "mean": 43.12,
+          "distinct": 2
+        },
+        {
+          "mean": 43.33,
+          "distinct": 2
+        },
+        {
+          "mean": 43.62,
+          "distinct": 2
+        },
+        {
+          "mean": 43.99,
+          "distinct": 2
+        },
+        {
+          "mean": 44.43,
+          "distinct": 2
+        },
+        {
+          "mean": 44.94,
+          "distinct": 2
+        }
+      ],
+      "steps": [-0.38, -0.31, -0.22, -0.14, -0.05, 0.04, 0.12, 0.21, 0.29, 0.37, 0.44, 0.51],
+      "flatSteps": 1
+    }
+  ]
+}

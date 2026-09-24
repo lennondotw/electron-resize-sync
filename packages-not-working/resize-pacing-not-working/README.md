@@ -4,7 +4,7 @@
 frame. Kept for comparison. Use [`resize-deadline`](../../packages/resize-deadline/README.md)
 instead.
 
-Option B in the [resize sync plan](../../docs/plans/2026-09-24/resize-sync.md):
+Resize pacing in the [resize sync plan](../../docs/plans/2026-09-24/resize-sync.md):
 each user resize is cancelled, and the latest proposed size is applied with
 `setBounds` only once the page reports it has rendered the previous size.
 That paces the window to the page's frame rate, but every size still reaches

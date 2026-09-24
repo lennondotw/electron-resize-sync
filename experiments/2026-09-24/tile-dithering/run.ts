@@ -18,16 +18,26 @@ interface Rect {
   bottom: number;
 }
 
-// Tiles in the bottom row that the #root corner label does not cover.
+// Tiles in the bottom row that the #root corner label does not cover. The
+// tiles are one WebGL canvas, so their rects are worked out from its size with
+// the grid constants in apps/demo/src/renderer/tile-wave.tsx (keep in sync).
 const tileRectsScript = `(() => {
-  const grid = document.querySelector(".grid");
-  const columns = getComputedStyle(grid).gridTemplateColumns.split(" ").length;
+  const TILE_TARGET = 44, TILE_GAP = 6, GRID_PADDING = 8;
+  const fit = (length) =>
+    Math.max(1, Math.round((length - 2 * GRID_PADDING + TILE_GAP) / (TILE_TARGET + TILE_GAP)));
+  const canvas = document.querySelector("canvas").getBoundingClientRect();
+  const columns = fit(canvas.width);
+  const rows = fit(canvas.height);
+  const tileWidth = (canvas.width - 2 * GRID_PADDING - (columns - 1) * TILE_GAP) / columns;
+  const tileHeight = (canvas.height - 2 * GRID_PADDING - (rows - 1) * TILE_GAP) / rows;
   const label = [...document.querySelectorAll("span")].find((e) => e.textContent.includes("#root"))
     .getBoundingClientRect();
-  const rects = [...grid.children].slice(-columns).map((tile) => tile.getBoundingClientRect());
-  return rects
-    .filter((r) => r.right < label.left || r.bottom < label.top)
-    .map(({ left, top, right, bottom }) => ({ left, top, right, bottom }));
+  const top = canvas.top + GRID_PADDING + (rows - 1) * (tileHeight + TILE_GAP);
+  const rects = Array.from({ length: columns }, (_, column) => {
+    const left = canvas.left + GRID_PADDING + column * (tileWidth + TILE_GAP);
+    return { left, top, right: left + tileWidth, bottom: top + tileHeight };
+  });
+  return rects.filter((r) => r.right < label.left || r.bottom < label.top);
 })()`;
 
 function sampleTiles(png: PNG, rects: Rect[], pixelRatio: number) {
@@ -50,7 +60,7 @@ const cases = [];
 let environment;
 
 for (const colorScheme of ["light", "dark"] as const) {
-  for (const dither of [false, true]) {
+  for (const dither of ["off", "spatial"] as const) {
     // Paused at time 0 after launch, so every run renders the same wave phase.
     const session = await launchSession({
       runDir,
@@ -69,7 +79,7 @@ for (const colorScheme of ["light", "dark"] as const) {
       const flatSteps = steps.filter((step) => Math.abs(step) < 0.05).length;
       cases.push({ colorScheme, dither, channel: "green", tiles, steps, flatSteps });
       console.log(
-        `${colorScheme} dither ${dither ? "on " : "off"} distinct/tile`,
+        `${colorScheme} dither ${dither.padEnd(7)} distinct/tile`,
         tiles.map((t) => t.distinct).join(","),
         `flat steps ${flatSteps}/${steps.length}`,
       );

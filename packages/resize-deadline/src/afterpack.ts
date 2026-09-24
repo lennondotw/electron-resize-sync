@@ -43,7 +43,7 @@ export async function afterPack(context: AfterPackContext) {
     return result;
   } catch (error) {
     // A build electron-builder produced that this package does not know is not
-    // a reason to fail packaging; the app just runs without option D.
+    // a reason to fail packaging; the app just runs without resize deadline.
     console.warn(`[resize-deadline] not patched: ${error}. See the package README.`);
     return { arches: [] as Arch[] };
   }

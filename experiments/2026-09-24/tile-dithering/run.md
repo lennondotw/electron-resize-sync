@@ -1,6 +1,6 @@
 # Tile dithering
 
-Checks that per-tile blue-noise dithering makes each tile's rendered pixels
+Checks that blue-noise dithering makes each tile's rendered pixels
 average to the fractional 8-bit value it should have, removing the plateaus
 where neighbouring tiles round to the same level.
 
@@ -13,14 +13,16 @@ node experiments/2026-09-24/tile-dithering/run.ts
 
 ## Procedure
 
-For light and dark, with dithering off and on, in a fresh session:
+For light and dark, with dithering `off` and `spatial`, in a fresh session:
 
 1. Launch paused with no busy work. A paused launch holds the wave at time 0,
    so every run renders the same tile colours.
 2. Capture the page with `Page.captureScreenshot`.
-3. For each bottom-row tile not covered by the `#root` label, read the green
-   channel of the pixels at least 4 CSS px inside the tile, and record their
-   mean and number of distinct values.
+3. For each bottom-row tile not covered by the `#root` label (rects worked
+   out from the canvas size with the grid constants in
+   `apps/demo/src/renderer/tile-wave.tsx`), read the green channel of the
+   pixels at least 4 CSS px inside it, and record their mean and number of
+   distinct values.
 4. Record the mean difference between neighbouring tiles; a difference under
    0.05 counts as a flat step.
 

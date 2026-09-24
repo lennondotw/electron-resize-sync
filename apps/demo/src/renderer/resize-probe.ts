@@ -37,8 +37,10 @@ window.resizeBridge?.onCommit(({ width, height, at }) => {
 });
 
 // Every first frame at a new size is acknowledged for paced resizing, which
-// lets the main process apply the next paced size, and timed here.
+// lets the main process apply the next paced size, and timed here. Pacing
+// itself is on only for launches with ELECTRON_RESIZE_SYNC_PACING.
 if (window.resizeBridge) {
+  if (window.resizeBridge.pacing) window.resizeBridge.setSync(true);
   ackRenderedSizes(window.resizeBridge, ({ width, height }) => {
     const commitAt = commitTimes.get(sizeKey(width, height));
     if (commitAt === undefined) return;

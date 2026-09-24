@@ -1,6 +1,6 @@
 # @electron-resize-sync/resize-deadline
 
-**Status: works.** Option D: the window's new size and the page's frame at
+**Status: works.** Resize deadline: the window's new size and the page's frame at
 that size reach the screen together, in every direction, with and without busy
 work
 ([deadline patch record](https://github.com/lennondotw/electron-resize-sync/blob/main/experiments/2026-09-24/resize-deadline-patch/README.md),
@@ -115,7 +115,7 @@ build.
 [`electron-v44.4.5-resize-deadline.patch`](electron-v44.4.5-resize-deadline.patch)
 adds `webPreferences.resizeDeadlineFrames` to Electron. It applies cleanly to
 v44.4.5 but has not been built or run; see
-[shipping option D](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/research/2026-09-24/shipping-option-d.md).
+[shipping resize deadline](https://github.com/lennondotw/electron-resize-sync/blob/main/docs/research/2026-09-24/shipping-resize-deadline.md).
 A source-built Electron works on any platform Chromium's deadline API supports,
 without the binary patch.
 

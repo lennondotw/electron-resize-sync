@@ -8,22 +8,28 @@ import {
 } from "electron";
 import { createRevealWindow } from "@electron-resize-sync/render-before-reveal-not-working/main";
 import { reportResizeActivity } from "@electron-resize-sync/resize-activity/main";
-import { enableResizeDeadline } from "@electron-resize-sync/resize-deadline/main";
+import {
+  enableResizeDeadline,
+  getResizeDeadlineStatus,
+} from "@electron-resize-sync/resize-deadline/main";
 import { paceResizes } from "@electron-resize-sync/resize-pacing-not-working/main";
 import { showResizeRateOverlay } from "@electron-resize-sync/resize-rate-overlay/main";
 import {
+  DEADLINE_ARGUMENT,
   MARKERS_ARGUMENT,
+  PACING_ARGUMENT,
   RESIZE_COMMIT_CHANNEL,
+  type DeadlineState,
   type ResizeCommit,
 } from "../shared/resize-bridge.ts";
 import { TITLEBAR_HEIGHT, TRAFFIC_LIGHTS_POSITION } from "../shared/titlebar.ts";
 
 const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
-// Option C (render before reveal; does not work) needs a different window
+// Render before reveal (does not work) needs a different window
 // structure, so it is chosen at launch rather than with a HUD switch.
 const revealMode = Boolean(process.env["ELECTRON_RESIZE_SYNC_REVEAL"]);
 
-// Option D's switches, set by the app. On a patched Electron they make resizes
+// Resize deadline's switches, set by the app. On a patched Electron they make resizes
 // wait for the page (see experiments/tools/deadline-patch); enableResizeDeadline
 // no-ops on an unpatched one unless forced. RESIZE_DEADLINE_FORCED bakes them
 // into a package (for Windows/Linux, where there is no framework patch to
@@ -62,7 +68,11 @@ function createWindow() {
   };
   const webPreferences = {
     preload: path.join(import.meta.dirname, "preload.cjs"),
-    additionalArguments: process.env["ELECTRON_RESIZE_SYNC_MARKERS"] ? [MARKERS_ARGUMENT] : [],
+    additionalArguments: [
+      ...(process.env["ELECTRON_RESIZE_SYNC_MARKERS"] ? [MARKERS_ARGUMENT] : []),
+      ...(process.env["ELECTRON_RESIZE_SYNC_PACING"] ? [PACING_ARGUMENT] : []),
+      DEADLINE_ARGUMENT + encodeURIComponent(JSON.stringify(readDeadlineState())),
+    ],
   };
   let win: BaseWindow;
   let webContents: Electron.WebContents;
@@ -73,7 +83,8 @@ function createWindow() {
     ({ webContents } = reveal.view);
   } else {
     const browserWindow = new BrowserWindow({ ...options, webPreferences });
-    // Paced resizing (option B; does not work), off until the HUD enables it.
+    // Resize pacing (does not work), off unless ELECTRON_RESIZE_SYNC_PACING
+    // is set, in which case the page turns it on.
     // Simulated drags (experiments/2026-09-24/resize-pacing) emit will-resize with the
     // edge they drag; real drags on macOS do not report it.
     paceResizes(browserWindow, browserWindow.webContents, {
@@ -107,6 +118,22 @@ function createWindow() {
   } else {
     void webContents.loadFile(path.join(import.meta.dirname, "../dist/index.html"));
   }
+}
+
+/** Resize deadline as this process runs it: the framework patch and the switches actually set. */
+function readDeadlineState(): DeadlineState {
+  const status = getResizeDeadlineStatus();
+  const { commandLine } = app;
+  const name = "deadline-to-synchronize-surfaces";
+  return {
+    patched: status.patched,
+    ...(status.reason !== undefined && { reason: status.reason }),
+    ...(commandLine.hasSwitch(name) && { frames: commandLine.getSwitchValue(name) }),
+    remoteCoreAnimationDisabled: commandLine
+      .getSwitchValue("disable-features")
+      .split(",")
+      .includes("RemoteCoreAnimationAPI"),
+  };
 }
 
 void app.whenReady().then(() => {

@@ -1,9 +1,18 @@
 import { Slider } from "@base-ui/react/slider";
 import { Switch } from "@base-ui/react/switch";
 import { useEffect, useRef, useState } from "react";
-import { loadHudSettings, saveHudSettings, type HudSettings } from "./hud-settings.ts";
+import { Radio } from "@base-ui/react/radio";
+import { RadioGroup } from "@base-ui/react/radio-group";
+import {
+  DITHER_MODES,
+  loadHudSettings,
+  saveHudSettings,
+  type DitherMode,
+  type HudSettings,
+} from "./hud-settings.ts";
 import { useResizeLatency } from "./resize-probe.ts";
 import { fitTiles, TileWave } from "./tile-wave.tsx";
+import type { DeadlineState } from "../shared/resize-bridge.ts";
 import { TitleBar } from "./title-bar.tsx";
 import { useElementSize } from "./use-element-size.ts";
 import { isResizing } from "./resize-activity.ts";
@@ -11,11 +20,10 @@ import { useJankyFrameLoop } from "./use-janky-frame-loop.ts";
 
 export function App() {
   const [settings, setSettings] = useState(loadHudSettings);
-  const { busyMs, playing, dither, resizeSync, yieldOnResize } = settings;
+  const { busyMs, playing, dither, yieldOnResize } = settings;
   const updateSettings = (patch: Partial<HudSettings>) =>
     setSettings((current) => ({ ...current, ...patch }));
   useEffect(() => saveHudSettings(settings), [settings]);
-  useEffect(() => window.resizeBridge?.setSync(resizeSync), [resizeSync]);
 
   const stats = useJankyFrameLoop(busyMs, yieldOnResize ? isResizing : undefined);
   const resizeLatency = useResizeLatency();
@@ -25,6 +33,7 @@ export function App() {
   const rootRef = useRef<HTMLDivElement>(null);
   const rootSize = useElementSize(rootRef);
 
+  // For the HUD; the tiles work out their own grid from the canvas size.
   const columns = fitTiles(rootSize.width);
   const rows = fitTiles(rootSize.height);
 
@@ -32,20 +41,13 @@ export function App() {
     <div ref={rootRef} className="relative flex h-full w-full flex-col overflow-hidden">
       {/* The animated background fills #root, including the title bar area. */}
       <div className="absolute inset-0">
-        <TileWave
-          width={rootSize.width}
-          height={rootSize.height}
-          columns={columns}
-          rows={rows}
-          time={playing ? stats.time : pausedAt}
-          dither={dither}
-        />
+        <TileWave time={playing ? stats.time : pausedAt} frame={stats.frame} dither={dither} />
       </div>
 
       <TitleBar title="Electron Resize Sync" />
 
       <main className="relative min-h-0 flex-1">
-        <section className="absolute top-4 left-4 flex w-72 flex-col gap-3 rounded-xl bg-white/85 p-4 font-mono text-xs text-zinc-800 shadow-lg ring-1 ring-black/5 dark:bg-zinc-950/85 dark:text-zinc-200 dark:ring-white/10">
+        <section className="absolute top-0 left-4 flex w-72 flex-col gap-3 rounded-xl bg-white/85 p-4 font-mono text-xs text-zinc-800 shadow-lg ring-1 ring-black/5 dark:bg-zinc-950/85 dark:text-zinc-200 dark:ring-white/10">
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 tabular-nums">
             <dt className="text-zinc-500">fps</dt>
             <dd>{stats.fps.toFixed(1)}</dd>
@@ -63,6 +65,10 @@ export function App() {
             <dd>{formatLatency(resizeLatency.max)}</dd>
             <dt className="text-zinc-500">tiles</dt>
             <dd>{columns * rows}</dd>
+            <dt className="text-zinc-500">resize deadline</dt>
+            <dd title={window.resizeBridge?.deadline?.reason}>
+              {formatDeadline(window.resizeBridge?.deadline)}
+            </dd>
           </dl>
           <Slider.Root
             className="grid grid-cols-[1fr_auto] gap-y-1"
@@ -90,20 +96,31 @@ export function App() {
             }}
           />
           <HudSwitch
-            label="resize sync"
-            checked={resizeSync}
-            onCheckedChange={(next) => updateSettings({ resizeSync: next })}
-          />
-          <HudSwitch
             label="yield on resize"
             checked={yieldOnResize}
             onCheckedChange={(next) => updateSettings({ yieldOnResize: next })}
           />
-          <HudSwitch
-            label="dithering"
-            checked={dither}
-            onCheckedChange={(next) => updateSettings({ dither: next })}
-          />
+          <div className="flex items-center justify-between">
+            <span id="dither-label" className="text-zinc-500">
+              dithering
+            </span>
+            <RadioGroup
+              aria-labelledby="dither-label"
+              value={dither}
+              onValueChange={(next) => updateSettings({ dither: next as DitherMode })}
+              className="flex rounded-md bg-zinc-200 p-0.5 dark:bg-zinc-800"
+            >
+              {DITHER_MODES.map((mode) => (
+                <Radio.Root
+                  key={mode}
+                  value={mode}
+                  className="rounded px-1.5 py-0.5 text-zinc-500 focus-visible:outline-2 focus-visible:outline-zinc-900 data-checked:bg-white data-checked:text-zinc-900 data-checked:shadow-sm dark:focus-visible:outline-zinc-100 dark:data-checked:bg-zinc-600 dark:data-checked:text-zinc-50"
+                >
+                  {mode}
+                </Radio.Root>
+              ))}
+            </RadioGroup>
+          </div>
         </section>
       </main>
 
@@ -144,6 +161,23 @@ function EdgeMarkers() {
       className={`pointer-events-none absolute size-2.5 bg-[#00ff00] ${position}`}
     />
   ));
+}
+
+/**
+ * Resize deadline is in effect only with both the framework patch and the deadline
+ * switch. "switch only" is a forced build whose framework is not patched (the
+ * Windows and Linux packages): the switch is set, but whether it helps there
+ * is what those builds test.
+ */
+function formatDeadline(deadline: DeadlineState | undefined) {
+  if (!deadline) return "–";
+  const { patched, frames, remoteCoreAnimationDisabled } = deadline;
+  if (patched && frames) {
+    const race = navigator.platform.startsWith("Mac") && !remoteCoreAnimationDisabled;
+    return `on, ${frames} frames${race ? ", RCA on" : ""}`;
+  }
+  if (frames) return `switch only, ${frames} frames`;
+  return patched ? "patched, switch off" : "off";
 }
 
 function formatLatency(ms: number | null) {

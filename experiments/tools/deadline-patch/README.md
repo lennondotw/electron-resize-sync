@@ -3,7 +3,7 @@
 Builds a copy of the installed Electron in which resizing a web contents view
 waits for the renderer's frame at the new size (surface synchronisation with
 the default deadline), instead of Chromium's hard-coded deadline of 0. This is
-the experimental form of option D in the
+the experimental form of resize deadline in the
 [resize synchronisation plan](../../../docs/plans/2026-09-24/resize-sync.md); see
 the [source reading](../../../docs/research/2026-09-24/chromium-resize-sync.md)
 for why this is the switch that matters.
@@ -80,7 +80,7 @@ that release's breakpad symbols and prints an entry for
   ships a source-patched Electron:
   [`electron-v44.4.5-resize-deadline.patch`](../../../packages/resize-deadline/electron-v44.4.5-resize-deadline.patch)
   adds `webPreferences.resizeDeadlineFrames` (written and checked to apply,
-  not built). See [shipping option D](../../../docs/research/2026-09-24/shipping-option-d.md).
+  not built). See [shipping resize deadline](../../../docs/research/2026-09-24/shipping-resize-deadline.md).
 - **Deadline:** the default deadline is `--deadline-to-synchronize-surfaces`
   frames (4 unless set). A renderer slower than that still misses it. The app
   can set the switch itself: `ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` makes

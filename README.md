@@ -53,12 +53,12 @@ patch is specific to Electron 44.4.5 on arm64 and refuses other builds.
 
 ## What was tried
 
-| Option                                              | Result                                                                   | Record                                                                                                                                      |
-| --------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chromium switches alone                             | Out of step in 60–95 % of drag frames                                    | [resize recording](experiments/2026-09-24/resize-recording/README.md)                                                                       |
-| B: pace resizes to the page's frames                | Still out of step; with busy work skipped, errors fall from 180 to 40 px | [resize pacing](experiments/2026-09-24/resize-pacing/README.md), [built-in display](experiments/2026-09-24/resize-matrix-builtin/README.md) |
-| C: render before reveal                             | In step when growing, up to 140 px behind when shrinking, and slowest    | [built-in display](experiments/2026-09-24/resize-matrix-builtin/README.md)                                                                  |
-| **D: wait for the page's frame (patched Electron)** | **In step in every direction**                                           | [deadline patch](experiments/2026-09-24/resize-deadline-patch/README.md)                                                                    |
+| Approach                                         | Result                                                                   | Record                                                                                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Switches only: Chromium switches alone           | Out of step in 60–95 % of drag frames                                    | [resize recording](experiments/2026-09-24/resize-recording/README.md)                                                                       |
+| Resize pacing: pace resizes to the page's frames | Still out of step; with busy work skipped, errors fall from 180 to 40 px | [resize pacing](experiments/2026-09-24/resize-pacing/README.md), [built-in display](experiments/2026-09-24/resize-matrix-builtin/README.md) |
+| Render before reveal                             | In step when growing, up to 140 px behind when shrinking, and slowest    | [built-in display](experiments/2026-09-24/resize-matrix-builtin/README.md)                                                                  |
+| **Resize deadline: wait for the page's frame**   | **In step in every direction**                                           | [deadline patch](experiments/2026-09-24/resize-deadline-patch/README.md)                                                                    |
 
 The [plan](docs/plans/2026-09-24/resize-sync.md) tracks the options and
 decisions; [docs](docs/README.md) indexes every record, each with its
@@ -81,14 +81,14 @@ A pnpm workspace:
 | Script             | Purpose                                                                     |
 | ------------------ | --------------------------------------------------------------------------- |
 | `pnpm dev`         | Demo: Vite dev server + main-process watch build + Electron restarts        |
-| `pnpm dev:patched` | The same, with option D: the patched Electron copy and its switches         |
+| `pnpm dev:patched` | The same, with resize deadline: the patched Electron copy and switches      |
 | `pnpm start`       | Build everything, then launch the demo                                      |
 | `pnpm build`       | Build every package (in dependency order), then the demo                    |
 | `pnpm check`       | `typecheck` (TypeScript 7) + `lint` (oxlint) + `format:check`, all packages |
 | `pnpm format`      | Format with oxfmt                                                           |
 
 `pnpm dev` runs the demo on stock Electron, where the problem shows.
-`pnpm dev:patched` runs it with option D: on a copy of Electron patched by
+`pnpm dev:patched` runs it with resize deadline: on a copy of Electron patched by
 [`deadline-patch`](experiments/tools/deadline-patch/README.md) (built under
 `tmp/` on first use, which downloads the release's symbols, about 129 MB), with
 the two switches set.

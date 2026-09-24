@@ -29,7 +29,7 @@ const MARGIN = 400;
 const ACK_TIMEOUT_MS = 500;
 
 /**
- * Option C, "render before reveal". The page lives in a WebContentsView that
+ * Render before reveal. The page lives in a WebContentsView that
  * is larger than any window, so resizing the window never resizes the page's
  * surface. Each user resize is cancelled; the page first lays #root out at the
  * window's next content rectangle, and only once that layout has been

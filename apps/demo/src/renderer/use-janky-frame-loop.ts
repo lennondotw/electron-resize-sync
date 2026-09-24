@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 export interface FrameStats {
   /** rAF timestamp of the latest frame, for time-based animation. */
   time: number;
+  /** Frames since the loop started, for per-frame effects such as temporal dithering. */
+  frame: number;
   /** Exponential moving average of frames per second. */
   fps: number;
   /** Time between the last two rAF callbacks. */
@@ -19,11 +21,12 @@ export function useJankyFrameLoop(
   /** While this returns true, frames skip the busy work. */
   skipBusyWork?: () => boolean,
 ): FrameStats {
-  const [stats, setStats] = useState<FrameStats>({ time: 0, fps: 0, frameMs: 0 });
+  const [stats, setStats] = useState<FrameStats>({ time: 0, frame: 0, fps: 0, frameMs: 0 });
 
   useEffect(() => {
     let handle = 0;
     let fps = 0;
+    let frame = 0;
     // rAF timestamps mark the start of the frame and can precede
     // performance.now() taken here, so measure only between two callbacks.
     let last: number | undefined;
@@ -38,7 +41,8 @@ export function useJankyFrameLoop(
       let sink = 0;
       while (performance.now() < until) sink += Math.sqrt(sink + 1);
 
-      setStats({ time: now, fps, frameMs });
+      frame += 1;
+      setStats({ time: now, frame, fps, frameMs });
       handle = requestAnimationFrame(tick);
     };
 

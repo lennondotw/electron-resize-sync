@@ -49,7 +49,7 @@ Electron permalinks at `https://github.com/electron/electron/blob/v44.4.5/…`.
    Electron/Chromium patch: default (or longer) deadline on resize for the window's
    main RWHV, plus `--deadline-to-synchronize-surfaces=N`, optionally with
    `--disable-features=RemoteCoreAnimationAPI`. Without rebuilding, the best
-   available option is "render before reveal" (plan option C), which is atomic for
+   available option is render before reveal, which is atomic for
    growing only.
 
 ---
@@ -360,7 +360,7 @@ Key constraints:
 
 ### Candidates, ranked by feasibility times effectiveness
 
-**A. Patch Electron: default or longer deadline on resize for the window's main RWHV (best).**
+**Deadline patch. Patch Electron: default or longer deadline on resize for the window's main RWHV (best).**
 
 - How:
   - On the primary `RenderWidgetHostView` of a window's web contents (for example
@@ -385,7 +385,7 @@ Key constraints:
   This is the pre-M147 Chrome behaviour and today's PWA behaviour. [S] for the
   code path, [Inf] for the end-to-end result.
 
-- Pair with plan option B (pace one size at a time) or drop the IPC-throttle
+- Pair with resize pacing (pace one size at a time) or drop the IPC-throttle
   patch, so that each new size actually reaches the renderer immediately (see 2).
 - Optionally add `--disable-features=RemoteCoreAnimationAPI` to close the V1
   GPU/browser race (1.4).
@@ -401,7 +401,7 @@ Key constraints:
 - Could be upstreamed to Electron as an opt-in (a `BrowserWindow` option). It fits
   the open #36280. [Inf]
 
-**B. Oversized WebContentsView ("render before reveal", plan option C): no patch, JS only (best without rebuilding).**
+**Render before reveal. Oversized WebContentsView: no patch, JS only (best without rebuilding).**
 
 - How:
   - Use `BaseWindow` plus `WebContentsView`. Keep the view larger than the window
@@ -424,7 +424,7 @@ Key constraints:
   - Screen-edge clipping.
   - The ack is "submitted", not "presented".
 
-**C. Native addon: own pre-commit handler that waits for a renderer signal (hacky, possible).**
+**Native pre-commit wait. Native addon: own pre-commit handler that waits for a renderer signal (hacky, possible).**
 
 - How:
   - During live resize (`windowWillStartLiveResize` via a swizzled delegate, or a
@@ -449,21 +449,22 @@ Key constraints:
   - Fragile across macOS and Chromium versions; unsuitable for MAS.
 - Feasibility: medium. Correctness: medium to low.
 
-**D. Native addon calling content API through raw vtable offsets or ivar pokes (not recommended).**
+**Native content-API calls. Native addon calling content API through raw vtable offsets or ivar pokes (not recommended).**
 
 - For example, flip `use_default_deadline_on_resize_` by computing offsets from a
   `RenderWidgetHostViewCocoa`.
 - No exported symbols, so offsets must be hard-coded per build.
 - Undefined behaviour, and crash-prone.
 
-**E. Hold the NSWindow frame in the addon (swizzle `setFrame:display:` or `windowWillResize:toSize:`).**
+**Native frame hold. Hold the NSWindow frame in the addon (swizzle `setFrame:display:` or `windowWillResize:toSize:`).**
 
 - This duplicates what `will-resize` plus `preventDefault` plus `setBounds` already
-  gives (plan option B). It changes only _when_ the frame is applied, not whether
+  gives (resize pacing). It changes only _when_ the frame is applied, not whether
   the renderer's frame is inside the same commit.
-- Adds nothing over B or C unless it is combined with C's wait.
+- Adds nothing over render before reveal or the native pre-commit wait
+  unless it is combined with the latter's wait.
 
-**F. Cosmetic.** Match the window background to the page and anchor content away
+**Cosmetic.** Match the window background to the page and anchor content away
 from the dragged edges. This hides the problem; it does not meet the goal.
 
 ---

@@ -28,7 +28,7 @@ From the data file's `environment`:
 | Hardware   | Mac15,8, Apple M3 Max                                                                             |
 | Display    | Built-in Retina Display, 1800×1169 pt, scale 2, 120 Hz, 30-bit; not the primary display           |
 | Runtime    | Electron 44.4.5, Chromium 152.0.7977.130, arm64                                                   |
-| Electron   | Patched copy (`tmp/deadline-patch/dist`, option D)                                                |
+| Electron   | Patched copy (`tmp/deadline-patch/dist`, resize deadline)                                         |
 | Switches   | Set by the app: `--deadline-to-synchronize-surfaces=30 --disable-features=RemoteCoreAnimationAPI` |
 | App        | Busy 30 ms, playing, dithering off, yield on resize off, resize sync off, overlay on              |
 | Repository | `e55d000`, with the tool changes later committed in `60cbecc`                                     |
@@ -85,7 +85,7 @@ minimum height (420 pt), and the corner drags then changed only the width.
 - **Outward right-edge drags barely resized.** Each of the six changed the
   width by 1 pt and back: AppKit coalesced the fast path.
 
-**The content stayed in step with option D.** 0 out-of-step frames in six of
+**The content stayed in step with resize deadline.** 0 out-of-step frames in six of
 seven drags; the top-edge drag had 4 of 23 frames with the right marker up to
 3 px behind.
 
@@ -105,13 +105,13 @@ the overlay. It was not the window:
   frame as the window edge at every size change. The expected one-frame lag
   did not appear.
   - A plausible reason, not verified: the overlay's `setPosition` runs
-    synchronously inside the `resize` event, while option D holds the main
+    synchronously inside the `resize` event, while resize deadline holds the main
     window's commit until the renderer's frame is ready, so both reach the
     same screen refresh.
 - **Not seen:** a lag shorter than one capture frame (16.7 ms), since the
   display runs at 120 Hz and the capture at 60 fps.
 - **Only one run, with synthetic input:** no human drag, and no run without
-  option D.
+  resize deadline.
 
 ## Next step
 

@@ -2,7 +2,7 @@
 
 Date: 2026-09-24\
 Status: executed; passes on Chromium's composited output\
-Data: [`data.json`](data.json)\
+Data: [`data.json`](data.json), [`data-webgl.json`](data-webgl.json) (rerun)\
 Script: [`experiments/2026-09-24/tile-dithering`](run.md)
 
 ## Question and acceptance criteria
@@ -53,6 +53,32 @@ Limits: this is Chromium's composited output as returned by
 display profile; the pixels that reach the panel are not measured. Only the
 green channel is sampled. Whether the result looks smoother is a visual
 judgement that was not recorded.
+
+## Rerun: WebGL shader dithering
+
+The tiles were later redrawn as one WebGL canvas that dithers in the fragment
+shader (per device pixel, per channel, against the same 64×64 blue-noise
+map), with HUD modes `off`, `spatial` and `temporal`. The script was ported
+to work out tile rects from the canvas size and rerun on `off` and `spatial`,
+on top of `3be0580` with the shader change uncommitted:
+
+```bash
+node experiments/2026-09-24/tile-dithering/run.ts --out experiments/2026-09-24/tile-dithering/data-webgl.json
+```
+
+| Scheme | Dithering | Distinct values per tile | Flat neighbour steps |
+| ------ | --------- | ------------------------ | -------------------- |
+| light  | off       | 1 for all 13             | 7 of 12              |
+| light  | spatial   | 2 for all 13             | 0 of 12              |
+| dark   | off       | 1 for all 13             | 9 of 12              |
+| dark   | spatial   | 2 for all 13             | 1 of 12              |
+
+`off` matches the DOM version tile for tile, so the canvas reproduces the same
+geometry and colours. The one flat step with `spatial` (dark) is +0.04 at the
+wave's trough, where two neighbours sit either side of the minimum and their
+exact values differ by about that much; it is under the 0.05 cut-off, not a
+plateau (the DOM version's step there was +0.07). `temporal` is not covered:
+a single capture shows one frame, not the average over frames.
 
 ## Next step
 

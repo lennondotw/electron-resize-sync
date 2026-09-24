@@ -1,4 +1,4 @@
-# Resize with the default surface deadline (option D)
+# Resize with the default surface deadline (resize deadline)
 
 Date: 2026-09-24\
 Status: executed; real AppKit drags on one display; the content stays in step in every drag with the patch, a 30-frame deadline and RemoteCoreAnimationAPI off\

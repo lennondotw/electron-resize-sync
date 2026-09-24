@@ -15,9 +15,9 @@ measured directly on screen.
   rest offset (±1 px) and stays visible.
 - **Checked for:**
   - the default behaviour;
-  - paced resizing (`resize sync`, option B);
+  - resize pacing (the `resize sync` switch at the time);
   - three Chromium switches that the [source reading](../../../docs/research/2026-09-24/chromium-resize-sync.md)
-    predicted would not help (part of option D).
+    predicted would not help (part of resize deadline).
 
 ## Environment
 
@@ -120,7 +120,7 @@ left and top-right edges.
 
 ## Next step
 
-Option D proper: make the resize path wait for the renderer's frame by forcing
+Resize deadline proper: make the resize path wait for the renderer's frame by forcing
 `RenderWidgetHostViewMac::ShouldUseDefaultDeadlineOnResize()` to return true
 (a patched Electron, or a binary patch of the framework for the experiment),
 with a longer `--deadline-to-synchronize-surfaces`. Measure it with this script.

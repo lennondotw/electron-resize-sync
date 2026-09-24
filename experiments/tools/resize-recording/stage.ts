@@ -15,7 +15,7 @@ const { values: args } = parseArgs({
     yield: { type: "string", default: "off" },
     /** Whether the tiles animate; the frame loop and busy work run either way. */
     playing: { type: "string", default: "on" },
-    /** Per-tile dithering (masked layers) on or off. */
+    /** Tile dithering: off, spatial (on) or temporal. */
     dither: { type: "string", default: "on" },
     env: { type: "string", multiple: true, default: [] },
     /** Passed to Electron as-is, e.g. --electron-arg=--disable-features=X. */
@@ -42,7 +42,7 @@ const session = await launchSession({
   settings: {
     busyMs: Number(args.busy),
     playing: args.playing === "on",
-    dither: args.dither === "on",
+    dither: args.dither === "on" ? "spatial" : (args.dither as "off" | "spatial" | "temporal"),
     resizeSync: args.sync === "on",
     yieldOnResize: args.yield === "on",
   },

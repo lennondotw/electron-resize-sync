@@ -1,24 +1,25 @@
 # Resize options side by side on the built-in display
 
 Date: 2026-09-24\
-Status: executed; synthetic background drags of the right, bottom and bottom-right edges; option D in step in every drag, with busy work and without\
+Status: executed; synthetic background drags of the right, bottom and bottom-right edges; resize deadline in step in every drag, with busy work and without\
 Data: [`data.json`](data.json)\
 Scripts: [`experiments/tools/resize-recording`](../../tools/resize-recording/README.md)
 
 ## Question and acceptance criteria
 
 The earlier series ran on an external 120 Hz display, with the switches of
-option D on the command line. This series compares the options on the
-built-in display:
+resize deadline on the command line. This series compares the approaches on
+the built-in display:
 
-- Option D with its two switches set by the app
+- Resize deadline with its two switches set by the app
   (`ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30`, see
-  [shipping option D](../../../docs/research/2026-09-24/shipping-option-d.md)).
-- Option C, the render-before-reveal window (`9f7010f`), measured for the
+  [shipping resize deadline](../../../docs/research/2026-09-24/shipping-resize-deadline.md)).
+- Render before reveal (`9f7010f`), measured for the
   first time.
-- Option B′, paced resizing with the busy work skipped during a resize.
+- Resize pacing with yield: resize pacing with the busy work skipped during
+  a resize.
 - Everything off: no busy work and no animation. This shows how smooth
-  resizing gets at best, and whether option D costs anything then.
+  resizing gets at best, and whether resize deadline costs anything then.
 
 Pass, as before: no out-of-step frames. All four edge markers stay at their
 rest offset (±1 px) and visible.
@@ -57,8 +58,12 @@ timed with `probe.ts`.
 The tool delivers a whole path in well under a second, and AppKit coalesces
 it. Outward drags therefore produced 2–4 size changes, and inward drags
 6–22. Top and left drags cannot be expressed with this tool (see the
-[overlay record](../resize-rate-overlay/README.md)). They were covered for option D on
+[overlay record](../resize-rate-overlay/README.md)). They were covered for resize deadline on
 the external display in [the deadline patch record](../resize-deadline-patch/README.md).
+
+Run labels keep the letters used when they were recorded (as in the data
+file): `d` resize deadline, `bprime` resize pacing with yield, `c` render
+before reveal, `base` stock Electron.
 
 | Run          | Electron | Settings                                                    |
 | ------------ | -------- | ----------------------------------------------------------- |
@@ -86,40 +91,40 @@ The analyser merges drags separated by less than 0.6 s, which happened in
 
 ### Observations
 
-- **Option D holds on this display, with the switches set by the app:** 0
+- **Resize deadline holds on this display, with the switches set by the app:** 0
   out-of-step frames with busy work and without.
-- **With nothing to render, option D costs nothing measurable here.** The
+- **With nothing to render, resize deadline costs nothing measurable here.** The
   resize interval is 20.8 ms against 20.5 ms for stock Electron, bound by
   the input. Stock Electron is still out of step then, by up to 40 px when
   shrinking.
-- **With 30 ms of busy work, option D resizes about three times less
+- **With 30 ms of busy work, resize deadline resizes about three times less
   often** (64 ms against 19 ms), as on the external display. This is the
   accepted trade: fewer size changes, all in step.
-- **Option C does not help.**
+- **Render before reveal does not help.**
   - Growing was nearly in step: the only deviations were 2 px on the moving
     edge.
   - Shrinking trailed by up to 140 px. The page shrinks #root first, and the
     window follows only after the acknowledgement two frames later. The
     canvas shows in between, as predicted.
-  - It was the slowest option (127 ms per step): each step waits for two
+  - It was the slowest approach (127 ms per step): each step waits for two
     busy frames.
   - One glitch: at the start of the bottom-outward drag, the window's top
     edge jumped 75 pt up for two frames. The window briefly took a size
-    other than the one C applies, probably the macOS `will-resize` proposal
+    other than the one render before reveal applies, probably the macOS `will-resize` proposal
     that keeps the bottom-left corner fixed.
-- **Option B′ reduces the error but does not remove it:** at most 40 px
+- **Resize pacing with yield reduces the error but does not remove it:** at most 40 px
   instead of 180 px. The resize rate stays at the input's (18.7 ms).
 
 ## Conclusion and limits
 
 - **Pass:**
   - `m-d` and `m-off-d`.
-  - Option D, with its switches set by the app, keeps content in step on
+  - Resize deadline, with its switches set by the app, keeps content in step on
     the built-in display, and costs nothing measurable when the page has
     little to do.
 - **Fail:**
   - `m-base`, `m-off-base`, `m-bprime` and `m-c`.
-  - C fails when shrinking by design. The top-edge glitch is unexplained.
+  - Render before reveal fails when shrinking by design. The top-edge glitch is unexplained.
 - **Limits:**
   - Synthetic input: whole paths per drag, coalesced by AppKit. The size
     changes are fewer and larger than in a person's drag.
@@ -130,6 +135,6 @@ The analyser merges drags separated by less than 0.6 s, which happened in
 
 ## Next step
 
-- A person's continuous drag with option D and everything off, to judge
+- A person's continuous drag with resize deadline and everything off, to judge
   smoothness directly.
-- Drop option C, or keep it only for growing.
+- Drop render before reveal, or keep it only for growing.

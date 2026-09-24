@@ -1,4 +1,4 @@
-# Shipping option D
+# Shipping resize deadline
 
 Date: 2026-09-24\
 Status: source patch written and checked to apply, not built; app-set switches confirmed on screen\
@@ -7,7 +7,7 @@ Evidence: source at Chromium 152.0.7977.130 and Electron v44.4.5 ([S]), local pr
 ## Question and scope
 
 The [deadline patch experiment](../../../experiments/2026-09-24/resize-deadline-patch/README.md)
-showed that option D keeps the content in step with the window frame when
+showed that resize deadline keeps the content in step with the window frame when
 three things hold:
 
 1. Resizing the web contents view embeds the renderer's new surface with a
@@ -33,7 +33,7 @@ scope.
   With `ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES=30` (see `apps/demo/src/main/main.ts`, now through `enableResizeDeadline` in `packages/resize-deadline`),
   the GPU and renderer processes were launched with
   `--disable-features=…,RemoteCoreAnimationAPI,…`. [R]
-- On screen, option D with the switches set this way kept content in step in
+- On screen, resize deadline with the switches set this way kept content in step in
   every drag on the built-in display
   ([resize matrix](../../../experiments/2026-09-24/resize-matrix-builtin/README.md), `m-d`, `m-off-d`). [R]
 
@@ -91,7 +91,7 @@ cross-process navigation goes through it too.
    the unpatched Electron with both stays out of step (`c1` in the
    experiment).
 
-The cost is the same for 1 and 2 and is measured in the experiment:
+The cost is the same for the source patch and the binary patch and is measured in the experiment:
 
 - The window resizes at most at the renderer's frame rate.
 - The browser main thread waits up to one renderer frame per step, or up to
@@ -101,7 +101,7 @@ The cost is the same for 1 and 2 and is measured in the experiment:
 ## Unknowns and next check
 
 - Build Electron with the source patch and repeat the recording series;
-  until then option 1 is unverified.
+  until then the source patch is unverified.
 - A forced deadline also applies to the first frame after a scale change or
   when the view is shown. Whether that delays anything visible was not
   checked.

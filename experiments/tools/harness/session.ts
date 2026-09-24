@@ -13,7 +13,12 @@ const demoDir = path.join(repoRoot, "apps", "demo");
 export interface HudSettings {
   busyMs: number;
   playing: boolean;
-  dither: boolean;
+  /** true/false (older builds) or "off" | "spatial" | "temporal"; the app reads both. */
+  dither: boolean | "off" | "spatial" | "temporal";
+  /**
+   * Resize pacing. No longer a HUD setting: the harness turns it
+   * into ELECTRON_RESIZE_SYNC_PACING for the launch.
+   */
   resizeSync: boolean;
   yieldOnResize?: boolean;
 }
@@ -57,7 +62,12 @@ export async function launchSession({
     [`--inspect=${inspectPort}`, ".", `--remote-debugging-port=${cdpPort}`, ...args],
     {
       cwd: demoDir,
-      env: { ...process.env, ...env, ELECTRON_RESIZE_SYNC_USER_DATA: userDataDir },
+      env: {
+        ...process.env,
+        ...env,
+        ...(settings.resizeSync && { ELECTRON_RESIZE_SYNC_PACING: "1" }),
+        ELECTRON_RESIZE_SYNC_USER_DATA: userDataDir,
+      },
       stdio: "ignore",
     },
   );
