@@ -31,3 +31,40 @@ body,
 #root {
   background-color: var(--surface);
 }
+
+/*
+ * Native-app defaults: an Electron window should behave like a native one, not
+ * a web page. Text is not selectable and shows the arrow cursor, except where
+ * it is editable; images and links do not drag out of the window; scrolling
+ * does not rubber-band the whole page. Opt text back in with `select-text`.
+ */
+@layer base {
+  html {
+    cursor: default;
+    user-select: none;
+    overscroll-behavior: none;
+  }
+
+  /* Not inherited, so set on the elements that are draggable by default. */
+  img,
+  a {
+    -webkit-user-drag: none;
+  }
+
+  input,
+  textarea,
+  [contenteditable]:not([contenteditable="false"]) {
+    cursor: text;
+    user-select: text;
+  }
+
+  /* Native controls show the arrow, not the web's pointing hand. */
+  a,
+  button,
+  [role="button"],
+  [role="radio"],
+  [role="switch"],
+  [role="slider"] {
+    cursor: default;
+  }
+}
