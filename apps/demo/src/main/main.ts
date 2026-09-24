@@ -23,10 +23,18 @@ const devServerUrl = process.env["VITE_DEV_SERVER_URL"];
 // structure, so it is chosen at launch rather than with a HUD switch.
 const revealMode = Boolean(process.env["ELECTRON_RESIZE_SYNC_REVEAL"]);
 
-// Option D's switches, set by the app. They take effect only with an Electron
-// that waits for the page on resize (see experiments/tools/deadline-patch).
+// Option D's switches, set by the app. On a patched Electron they make resizes
+// wait for the page (see experiments/tools/deadline-patch); enableResizeDeadline
+// no-ops on an unpatched one unless forced. RESIZE_DEADLINE_FORCED bakes them
+// into a package (for Windows/Linux, where there is no framework patch to
+// detect); the env var sets the frame count for development.
+declare const __RESIZE_DEADLINE_FORCED__: boolean;
 const deadlineFrames = process.env["ELECTRON_RESIZE_SYNC_DEADLINE_FRAMES"];
-if (deadlineFrames) enableResizeDeadline({ frames: Number(deadlineFrames) });
+if (__RESIZE_DEADLINE_FORCED__) {
+  enableResizeDeadline({ frames: Number(deadlineFrames ?? 30), force: true });
+} else if (deadlineFrames) {
+  enableResizeDeadline({ frames: Number(deadlineFrames) });
+}
 
 // Lets experiments run against a fresh profile without touching the user's settings.
 const userDataDir = process.env["ELECTRON_RESIZE_SYNC_USER_DATA"];

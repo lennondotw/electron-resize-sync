@@ -48,7 +48,11 @@ export function enableResizeDeadline({
     return status;
   }
   app.commandLine.appendSwitch("deadline-to-synchronize-surfaces", String(frames));
-  app.commandLine.appendSwitch("disable-features", "RemoteCoreAnimationAPI");
+  // RemoteCoreAnimationAPI is a macOS-only feature; disabling it elsewhere does
+  // nothing, so only touch it there.
+  if (process.platform === "darwin") {
+    app.commandLine.appendSwitch("disable-features", "RemoteCoreAnimationAPI");
+  }
   return status;
 }
 

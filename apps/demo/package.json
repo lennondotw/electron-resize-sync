@@ -9,6 +9,8 @@
     "dev": "node scripts/dev.ts",
     "dev:patched": "node scripts/dev-patched.ts",
     "build": "vite build && vite build -c vite.main.config.ts && vite build -c vite.preload.config.ts",
+    "package:linux": "node scripts/package.ts --platform linux --arch x64",
+    "package:win": "node scripts/package.ts --platform win32 --arch x64",
     "start": "electron .",
     "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json"
   },
@@ -24,6 +26,7 @@
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
+    "@electron/packager": "^20.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.6",
     "@types/react": "^19.3.0",

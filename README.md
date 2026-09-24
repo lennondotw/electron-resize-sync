@@ -93,6 +93,23 @@ A pnpm workspace:
 `tmp/` on first use, which downloads the release's symbols, about 129 MB), with
 the two switches set.
 
+## Windows and Linux test builds
+
+The binary patch is macOS only. Whether the resize problem exists on Windows
+and Linux, and whether the `--deadline-to-synchronize-surfaces` switch (the
+one cross-platform lever) changes anything there, is untested — these builds
+are to find out.
+
+```bash
+pnpm --filter @electron-resize-sync/demo package:linux  # or package:win
+```
+
+Each writes two portable zips under `tmp/packages/`: a **baseline** (stock,
+no switches) and a **patched** (the switch baked in) variant. Unzip and run
+the executable on the target OS, resize the window, and compare. The patched
+variant here only sets the switch; it does not binary-patch the framework, so
+it may behave the same as baseline.
+
 ### Package builds
 
 Each package builds with `tsc` to ESM and declarations in `dist/`. In the
